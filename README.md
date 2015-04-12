@@ -14,3 +14,8 @@ ________________________________________________________________________________
 _____________________________________________________________________________________
 ###MOCKUPS
 
+
+_____________________________________________________________________________________
+###DISCLAIMERS
+* This site is not intended for consecutive use as sleep deprevation is a serious issue. If you can, please try to get sleep rather than stay up all night.
+* The tips and research used on the site are found from credible sources online, but are not clinically proven. Please use your discretion when utilizing this tool.
