@@ -2,7 +2,7 @@
 _____________________________________________________________________________________
 ###WHAT
 AllNightLong is a ~~dating site~~ tool for those who neeed to stay up all night 
-to get work done. We incorporte multiple studies and tips found throughout the web. 
+to get work done. We incorportate multiple studies and tips found throughout the web. 
 _____________________________________________________________________________________
 ###IDEAS
 * Sexual innuendos
