@@ -11,6 +11,30 @@ ________________________________________________________________________________
 _____________________________________________________________________________________
 ###TODO
 
+- Mockups (landing page) (2 page site) - S
+- Sexy graphics (clock) - M
+- Basic Design of site
+        - Bootstrap - A, S
+        - GAE - M, S
+- Creating a schedule
+    - more research - A
+    - based on user input - A
+    - sexy graphics and JS - M, A
+    - rollover non-invasive sidebar with extra info on what each event means - S
+- Notifications
+    - modals - S
+    - user feedback - A
+    - schedule events - A
+    - yelling to get off Facebook, Twitter, etc. - M, S
+        - Might have issues with privacy
+- Schedule Adjustment - M, S
+    - “UNCLE!” button - make it a sexual safety word (pineapple,  bananaanana)
+      based off science and user feedback from notifications
+- Extreme Motivation
+    - fun surprises (motivational quotes n stuff)
+- Prettify
+
+
 _____________________________________________________________________________________
 ###MOCKUPS
 
