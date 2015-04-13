@@ -1,0 +1,61 @@
+#clock {
+    display: block;
+    margin: 8% auto;
+}
+
+
+#legend {
+    margin-top: 50%;
+     -moz-border-radius: 10px;
+    border-radius: 10px;
+
+    -moz-box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    -webkit-box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    box-shadow: 0 0 5px rgba(0,0,0,0.75);
+    border: 1px solid gray;
+
+    background-color: #f2f2f2;
+}
+
+#keys {
+    margin-left: auto;
+    margin-right: auto;
+    width: 75%;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.red {
+    color: red;
+}
+
+.blue {
+    color: blue;
+}
+
+.yellow {
+    color: #cccc00;
+}
+
+.rainbow {
+  background-image: -webkit-gradient( linear, left top, right top, color-stop(0, #f22), color-stop(0.15, #f2f), color-stop(0.3, #22f), color-stop(0.45, #2ff), color-stop(0.6, #2f2),color-stop(0.75, #2f2), color-stop(0.9, #cccc00), color-stop(1, #f22) );
+  background-image: gradient( linear, left top, right top, color-stop(0, #f22), color-stop(0.15, #f2f), color-stop(0.3, #22f), color-stop(0.45, #2ff), color-stop(0.6, #2f2),color-stop(0.75, #2f2), color-stop(0.9, #cccc00), color-stop(1, #f22) );
+  color:transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+
+/********* TODO REMOVE **************/
+
+#clock_container {
+    border: 1px solid black;
+    
+}
+
+
+canvas {
+    border: 1px solid black;
+}
