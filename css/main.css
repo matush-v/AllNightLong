@@ -1,10 +1,6 @@
 #clock {
-    background: url('../img/clock-60percent.jpg') no-repeat center;
-    background-size: 60%;
-}
-
-#clock_inside {
-    padding-top: 75%
+    display: block;
+    margin: 8% auto;
 }
 
 
