@@ -43,3 +43,10 @@ ________________________________________________________________________________
 ###DISCLAIMERS
 * This site is not intended for consecutive use as sleep deprivation is a serious issue. If you can, please try to get sleep rather than stay up all night.
 * The tips and research used on the site are found from credible sources online, but are not clinically proven. Please use your discretion when utilizing this tool.
+
+
+_____________________________________________________________________________________
+###Notes
+
+* Example circular icons for our dots around clock: http://stackoverflow.com/questions/12813573/position-icons-into-circle 
+    - JS fiddle generalizing example above that might be even more useful: http://jsfiddle.net/sajjansarkar/zgcgq8cg/

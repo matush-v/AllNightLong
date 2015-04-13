@@ -46,3 +46,16 @@
   -webkit-background-clip: text;
   background-clip: text;
 }
+
+
+/********* TODO REMOVE **************/
+
+#clock_container {
+    border: 1px solid black;
+    
+}
+
+
+canvas {
+    border: 1px solid black;
+}
