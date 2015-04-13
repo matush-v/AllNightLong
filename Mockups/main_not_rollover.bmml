@@ -7,7 +7,7 @@
     </control>
     <control controlID="9" controlTypeID="com.balsamiq.mockups::Image" x="311" y="112" w="300" h="300" measuredW="626" measuredH="640" zOrder="1" locked="false" isInGroup="-1">
       <controlProperties>
-        <src>../img/modern-wall-clocks.jpg</src>
+        <src>../img/clock.jpg</src>
         <text/>
       </controlProperties>
     </control>
@@ -27,7 +27,7 @@
         <text>Event%20Color%20Scheme</text>
       </controlProperties>
     </control>
-    <control controlID="21" controlTypeID="com.balsamiq.mockups::List" x="842" y="207" w="100" h="109" measuredW="100" measuredH="126" zOrder="5" locked="false" isInGroup="-1">
+    <control controlID="21" controlTypeID="com.balsamiq.mockups::List" x="819" y="207" w="157" h="109" measuredW="100" measuredH="126" zOrder="5" locked="false" isInGroup="-1">
       <controlProperties>
         <text>Red%3A%20Nap%0ABlue%3A%20Water%0AGray/Black%3A%20Exercise%0AYellow%3A%20Food</text>
       </controlProperties>

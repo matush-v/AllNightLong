@@ -7,7 +7,7 @@
     </control>
     <control controlID="9" controlTypeID="com.balsamiq.mockups::Image" x="311" y="112" w="300" h="300" measuredW="626" measuredH="640" zOrder="1" locked="false" isInGroup="-1">
       <controlProperties>
-        <src>../img/modern-wall-clocks.jpg</src>
+        <src>../img/clock.jpg</src>
         <text/>
       </controlProperties>
     </control>
