@@ -47,6 +47,6 @@ ________________________________________________________________________________
 
 _____________________________________________________________________________________
 ###Notes
-
+* [Google Doc](https://docs.google.com/document/d/1HefTgwVjsmFp0Rb51QlaaActSngOeAcsKkvKXkPsM9g/edit)
 * Example circular icons for our dots around clock: http://stackoverflow.com/questions/12813573/position-icons-into-circle 
     - JS fiddle generalizing example above that might be even more useful: http://jsfiddle.net/sajjansarkar/zgcgq8cg/
