@@ -20,7 +20,7 @@ ________________________________________________________________________________
  + Landing page
   * Input will be saved as cookies that expire in 12 hours
   * Copyright and small hr needs to be shifted to the bottom
-  * Title and subtitle need to be pulled up a bit
+  * Title and subtitle need to be pulled up a bit                                  --- DONE
   * Needs larger space between the two inputs
   * “Lets do this!” button needs to be bigger
  + Clock page
