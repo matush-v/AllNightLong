@@ -15,14 +15,23 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 
 class MainHandler(webapp2.RequestHandler):
     '''
-    Main handler for entire site
+    Main handler for splash page
     '''
     def get(self):
         template_values = {}
         template = JINJA_ENVIRONMENT.get_template('index.html')
         self.response.write(template.render(template_values))
 
+class Clock(webapp2.RequestHandler):
+    '''
+    Handler for clock and events page
+    '''
+    def get(self):
+        template_values = {}
+        template = JINJA_ENVIRONMENT.get_template('clock.html')
+        self.response.write(template.render(template_values))
 
 app = webapp2.WSGIApplication([
-    ('/', MainHandler)
+    ('/', MainHandler),
+    ('/clock.html', Clock)
     ], debug=True)
