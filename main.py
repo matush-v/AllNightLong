@@ -1,3 +1,7 @@
+'''
+GAE server for All Night Long
+'''
+
 import webapp2
 import logging
 import jinja2
@@ -10,6 +14,9 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 
 
 class MainHandler(webapp2.RequestHandler):
+    '''
+    Main handler for entire site
+    '''
     def get(self):
         template_values = {}
         template = JINJA_ENVIRONMENT.get_template('index.html')
