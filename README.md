@@ -11,16 +11,25 @@ ________________________________________________________________________________
 _____________________________________________________________________________________
 ###TODO
 
-* Mockups (landing page) (2 page site) - S
+* Mockups (landing page) (2 page site) - S                                         --- DONE
+* Basic Design of site                                                             --- DONE
+  * Bootstrap - A, S                                                               --- DONE
+  * GAE - M, S                                                                     --- DONE
 * Sexy graphics (clock) - M
-* Basic Design of site
-  * Bootstrap - A, S
-  * GAE - M, S
+ + Landing page asking for two inputs and “Lets do this!” button
+  * Input will be saved as cookies that expire in 12 hours
+ + Clock page
+  * I’M DONE!! button
+  * I’m too tired! button
+   + Anything user does is added to the localstorage 
+  * Very nice clock with hour and minute hand (no second hand)
+  * Should be able to put colored dots between hours in clock
 * Creating a schedule
   * more research - A
   * based on user input - A
   * sexy graphics and JS - M, A
   * rollover non-invasive sidebar with extra info on what each event means - S
+  * Every time a user completes or does not complete an event, add it to localstorage
 * Notifications
   * modals - S
   * user feedback - A
