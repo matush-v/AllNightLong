@@ -17,8 +17,12 @@ ________________________________________________________________________________
   * Bootstrap - A, S                                                               --- DONE
   * GAE - M, S                                                                     --- DONE
 * Sexy graphics (clock) - M
- + Landing page asking for two inputs and “Lets do this!” button
+ + Landing page
   * Input will be saved as cookies that expire in 12 hours
+  * Copyright and small hr needs to be shifted to the bottom
+  * Title and subtitle need to be pulled up a bit
+  * Needs larger space between the two inputs
+  * “Lets do this!” button needs to be bigger
  + Clock page
   * I’M DONE!! button
   * I’m too tired! button
