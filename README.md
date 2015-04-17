@@ -7,10 +7,11 @@ ________________________________________________________________________________
 ###IDEAS
 * Sexual innuendos
 * Review raizlabs slides
-
+* Red: Nap, Blue: Water, Black: Exercise, Yellow: Food
 _____________________________________________________________________________________
 ###TODO
 
+* ALWAYS USE UNDERSCORE CASING
 * Mockups (landing page) (2 page site) - S                                         --- DONE
 * Basic Design of site                                                             --- DONE
   * Bootstrap - A, S                                                               --- DONE
@@ -42,6 +43,8 @@ ________________________________________________________________________________
 * Extreme Motivation
   * fun surprises (motivational quotes n stuff)
 * Prettify
+* YSLOW and Audit
+* Optimization!
 
 
 _____________________________________________________________________________________
