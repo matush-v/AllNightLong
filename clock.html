@@ -15,7 +15,10 @@
         <link href="css/bootstrap.min.css" rel="stylesheet">
 
         <!-- Custom CSS -->
-        <link href="css/stylish-portfolio.css" rel="stylesheet">
+        <link href="css/allnightlong.css" rel="stylesheet">
+
+        <!-- Clock CSS -->
+        <link href="css/clock.css" rel="stylesheet">        
 
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -26,13 +29,34 @@
     </head>
 
     <body>
-        I will be a clock
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div id="liveclock" class="outer_face">
+                        <div class="marker oneseven"></div>
+                        <div class="marker twoeight"></div>
+                        <div class="marker fourten"></div>
+                        <div class="marker fiveeleven"></div>
+
+                        <div class="inner_face">
+                            <div class="hand hour"></div>
+                            <div class="hand minute"></div>
+                            <div class="hand second"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- jQuery -->
         <script src="js/jquery-1.11.1.js"></script>
 
         <!-- Bootstrap Core JavaScript -->
         <script src="js/bootstrap.min.js"></script>
+
+        <!-- Clock Animation JS-->
+        <script src="js/clock.js"></script>
+
     </body>
 
 </html>

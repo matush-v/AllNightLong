@@ -33,6 +33,10 @@ ________________________________________________________________________________
   * more research - A
   * based on user input - A
   * sexy graphics and JS - M, A
+    * Dot schedule for the current hour in outtermost rim
+    * Faded dot schedule for the next hour in inner rim
+    * Most faded dot schedule for the next next hour in innermost rim
+  * Scroll down to see later events, scroll up to see recent events 
   * rollover non-invasive sidebar with extra info on what each event means - S
   * Every time a user completes or does not complete an event, add it to localstorage
 * Notifications
@@ -47,8 +51,10 @@ ________________________________________________________________________________
 * Extreme Motivation
   * fun surprises (motivational quotes n stuff)
 * Prettify
+  * Optional minute hand
 * YSLOW and Audit
 * Optimization!
+
 
 
 _____________________________________________________________________________________
