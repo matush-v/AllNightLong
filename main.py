@@ -55,14 +55,36 @@ class Schedule(webapp2.RequestHandler):
         wake_up_time = self.request.get("wake_up_time")
         end_time = self.request.get("end_time")
         name = self.request.get("name")
+        description = self.request.get("description")
         rating = self.request.get("rating") # assumed to be {"rating": x, "time": y}
 
-        if name and rating:
-            return self.add_rating(name, rating)
+        if name and description:
+            # adds event
+            return self.add_event(self, name, description)
 
         elif wake_up_time and end_time:
-            # returns json list of events for user
-            return json.dumps(self.find_events(wake_up_time, end_time))
+            # creates schedule for user
+            return json.dumps(self.get_schedule(wake_up_time, end_time))
+
+        elif name and rating:
+            # adds rating
+            return self.add_rating(name, rating)
+
+    def add_event(self, name, description):
+        '''
+        Adds a new event to the database
+        '''
+        # TODO
+        pass
+
+    def get_schedule(self, wake_up_time, end_time):
+        '''
+        Returns list of times and events that should be done at those times
+        '''
+        pass
+        # TODO
+        # run algorithm and create array of event objects
+        # return array
 
     def add_rating(self, name, rating):
         '''
@@ -79,14 +101,7 @@ class Schedule(webapp2.RequestHandler):
 
         return True
 
-    def find_events(self, wake_up_time, end_time):
-        '''
-        Returns list of times and events that should be done at those times
-        '''
-        pass
-        # TODO
-        # run algorithm and create array of event objects
-        # return array
+
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
