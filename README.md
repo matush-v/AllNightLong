@@ -19,15 +19,16 @@ ________________________________________________________________________________
 * Sexy graphics (clock) - M
  + Landing page
   * Input will be saved as cookies that expire in 12 hours
-  * Copyright and small hr needs to be shifted to the bottom
+  * Copyright and small hr needs to be shifted to the bottom - S
   * Title and subtitle need to be pulled up a bit                                  --- DONE
-  * Needs larger space between the two inputs
-  * “Lets do this!” button needs to be bigger
+  * Needs larger space between the two inputs - S
+  * “Lets do this!” button needs to be bigger - S
  + Clock page
   * I’M DONE!! button
   * I’m too tired! button
    + Anything user does is added to the localstorage 
-  * Very nice clock with hour and minute hand (no second hand)
+  * Very nice clock with hour and minute hand (optional second hand) - M, S
+    * Make Hour and Minute hand pointed like in luxury watches
   * Should be able to put colored dots between hours in clock
 * Creating a schedule
   * more research - A
@@ -36,13 +37,15 @@ ________________________________________________________________________________
     * Dot schedule for the current hour in outtermost rim
     * Faded dot schedule for the next hour in inner rim
     * Most faded dot schedule for the next next hour in innermost rim
-  * Scroll down to see later events, scroll up to see recent events 
+  * Scroll down to see later events, scroll up to see recent events
   * rollover non-invasive sidebar with extra info on what each event means - S
   * Every time a user completes or does not complete an event, add it to localstorage
 * Notifications
+  * Desktop notifications
   * modals - S
   * user feedback - A
   * schedule events - A
+    * events known about previous event completion (e.g. you didn't walk last time)
   * yelling to get off Facebook, Twitter, etc. - M, S
     * Might have issues with privacy
 * Schedule Adjustment - M, S
@@ -52,14 +55,11 @@ ________________________________________________________________________________
   * fun surprises (motivational quotes n stuff)
 * Prettify
   * Optional minute hand
+* Eyes Hurt?
+  * Recommend F.lux
+* Ergonomic Recommendations under tips
 * YSLOW and Audit
 * Optimization!
-
-
-
-_____________________________________________________________________________________
-###MOCKUPS
-
 
 _____________________________________________________________________________________
 ###DISCLAIMERS
