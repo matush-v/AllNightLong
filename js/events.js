@@ -7,17 +7,11 @@
     // incomplete tag is added
 
 function draw_event(color, minute, depth) {
-    var min_in_hour = 60, degrees_in_clock = 2 * Math.PI;
-    var radius = parseInt($('.outer_face').css('border-radius'));
-    var origin = $('.inner_face').position();
-    var angle = (minute / min_in_hour) * degrees_in_clock;
-    console.log(angle);
-
-    var new_x = origin.left + (radius * Math.cos(angle));
-    var new_y = origin.top + (radius * Math.sin(angle));
-
-    console.log(origin.left, origin.top, new_x, new_y);
     // draw colored circle at that point at the passed in depth
-    $('.outer_face').append('<img src="/img/dot.jpg" style="width:auto;height:auto;position:absolute;left:' + new_x + ';top:' + new_y + '"/>');
-
+    
+    radius = ($(".outer_face").width()) / 2;
+    tmpTop = (($(".outer_face").height() / 2) + radius * Math.sin(1.57));
+    tmpLeft = (($(".outer_face").width() / 2) + radius * Math.cos(1.57));
+    
+    $('.outer_face').append('<img src="/img/dot.jpg" style="width:auto;height:auto;position:absolute;left:' + tmpLeft + 'px;top:' + tmpTop + 'px"/>');
 }
