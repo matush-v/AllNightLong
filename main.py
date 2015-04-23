@@ -112,7 +112,7 @@ class Schedule(webapp2.RequestHandler):
         '''
         Returns list of times and events that should be done at those times
         '''
-        pass
+        return {"test": "test"}
         # TODO
         # run algorithm and create array of event objects
         # return array
