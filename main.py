@@ -56,6 +56,9 @@ class Schedule(webapp2.RequestHandler):
         API for adding an event, getting a schedule, or adding a rating
         rating must be an integer 
         '''
+        self.response.headers['Access-Control-Allow-Origin'] = '*'
+        self.response.headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept'
+        
         wake_up_time = self.request.get("wake_up_time")
         end_time = self.request.get("end_time")
         name = self.request.get("name")

@@ -61,3 +61,27 @@ $('#go_btn').click(function () {
         console.log(data);
     });
 });
+
+
+
+// TEST ICON: http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png
+function notify_user(title, icon, message) {
+    if (!Notification) {
+        alert('Please upgrade to a modern version of Chrome, Firefox, Opera or Firefox.');
+        return;
+    }
+
+    if (Notification.permission !== 'granted')
+        // TODO add unique way to tell user why we want this functionality
+        Notification.requestPermission();
+
+    var notification = new Notification(title, {
+        // TODO change icon based on event
+        icon: icon,
+        body: message
+    });
+
+    notification.onclick = function() {
+        window.focus();
+    };
+}
