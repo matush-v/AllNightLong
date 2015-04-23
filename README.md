@@ -33,7 +33,7 @@ ________________________________________________________________________________
   * rollover non-invasive sidebar with extra info on what each event means - S
   * Every time a user completes or does not complete an event, add it to localstorage
 * Notifications
-  * Desktop notifications
+  * change notification icon TODO exists
   * modals - S
   * user feedback - A
   * schedule events - A
@@ -47,11 +47,13 @@ ________________________________________________________________________________
   * fun surprises (motivational quotes n stuff)
 * Prettify
   * Optional minute hand
+  * Add unique way to tell user why we want desktop notifications TODO exists
 * Eyes Hurt?
   * Recommend F.lux
 * Ergonomic Recommendations under tips
 * YSLOW and Audit
 * Optimization!
+* Restrict CORS access
 
 _____________________________________________________________________________________
 ###DISCLAIMERS
