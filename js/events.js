@@ -15,12 +15,12 @@ function draw_event(color, minute, depth) {
     var spacing_factor = 2; /* Determines space between depth levels */
     var top_z_index = 1001; /* So dots appear on top of inner face */
     angle = (minute / minutes_in_hour) * rads_in_circle - Math.PI / 2;
-    radius = ($(".outer_face").width()) / 2;
-    new_top = (($(".outer_face").height() / 2) + radius * Math.sin(angle));
-    new_left = (($(".outer_face").width() / 2) + radius * Math.cos(angle));
+    radius = ($('.outer_face').width()) / 2;
+    new_top = (($('.outer_face').height() / 2) + radius * Math.sin(angle));
+    new_left = (($('.outer_face').width() / 2) + radius * Math.cos(angle));
     
-    var dot_width = parseInt(getCSS("width", "dot"));
-    var dot_height = parseInt(getCSS("height", "dot"));
+    var dot_width = parseInt(getCSS('width', 'dot'));
+    var dot_height = parseInt(getCSS('height', 'dot'));
 
     /* Distance to move toward center of circle */
     var dist = (depth + initial_offset) * dot_width * spacing_factor;
@@ -40,11 +40,24 @@ function draw_event(color, minute, depth) {
 /* Gets the CSS property of a class that hasn't been used yet in the DOM */
 var getCSS = function (prop, fromClass) {
 
-    var $inspector = $("<div>").css('display', 'none').addClass(fromClass);
-    $("body").append($inspector); // add to DOM, in order to read the CSS property
+    var $inspector = $('<div>').css('display', 'none').addClass(fromClass);
+    $('body').append($inspector); // add to DOM, in order to read the CSS property
     try {
         return $inspector.css(prop);
     } finally {
         $inspector.remove(); // and remove from DOM
     }
 };
+
+
+$('#go_btn').click(function () {
+    /* TODO validate */
+    var end_time = $('#end_time').val();
+    var start_time = $('#wake_up_time').val();
+    console.log(end_time, start_time);
+    window.location.replace('clock.html');
+    var params = {'wake_up_time': toString(wake_up_time), 'end_time': toString(end_time)};
+    $.post('/schedule', params, function (data) {
+        console.log(data);
+    });
+});
