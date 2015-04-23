@@ -58,6 +58,7 @@ class Schedule(webapp2.RequestHandler):
         '''
         self.response.headers['Access-Control-Allow-Origin'] = '*'
         self.response.headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept'
+        
         wake_up_time = self.request.get("wake_up_time")
         end_time = self.request.get("end_time")
         name = self.request.get("name")
@@ -111,7 +112,7 @@ class Schedule(webapp2.RequestHandler):
         '''
         Returns list of times and events that should be done at those times
         '''
-        pass
+        return {"test": "test"}
         # TODO
         # run algorithm and create array of event objects
         # return array
