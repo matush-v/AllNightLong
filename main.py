@@ -14,6 +14,7 @@ DATABASE
 '''
 class Events(db.Model):
     name = db.StringProperty()
+    event_type = db.StringProperty() # water, food, or exercise
     description = db.StringProperty()
     ratings = db.StringListProperty() # list of {"rating": x, "time": y} objects as strings
 
@@ -58,17 +59,20 @@ class Schedule(webapp2.RequestHandler):
         '''
         self.response.headers['Access-Control-Allow-Origin'] = '*'
         self.response.headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept'
-        
+
         wake_up_time = self.request.get("wake_up_time")
         end_time = self.request.get("end_time")
+
         name = self.request.get("name")
+        event_type = self.request.get("event_type")
         description = self.request.get("description")
+        
         rating = self.request.get("rating") # assumed to be {"rating": x, "time": y}
         rating = int(rating) if rating else rating # convert to int
 
-        if name and description:
+        if name and event_type and description:
             # adds event
-            if self.add_event(name, description):
+            if self.add_event(name, event_type, description):
                 self.response.out.write("Successfully Added!")
             else:
                 self.response.out.write("Error in Adding Event!")
@@ -88,7 +92,7 @@ class Schedule(webapp2.RequestHandler):
         else:
             self.response.out.write("Please provide correct parameters")
 
-    def add_event(self, name, description):
+    def add_event(self, name, event_type, description):
         '''
         Adds a new event to the database
         Event cannot exist already
@@ -102,7 +106,7 @@ class Schedule(webapp2.RequestHandler):
                 logging.error("Event already exists")
                 raise
 
-            Events(name=name, description=description, ratings=[]).put()
+            Events(name=name, event_type=event_type, description=description, ratings=[]).put()
         except Exception:
             return False
 
