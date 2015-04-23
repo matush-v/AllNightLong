@@ -12,15 +12,9 @@ ________________________________________________________________________________
 ###TODO
 
 * ALWAYS USE UNDERSCORE CASING
-* Mockups (landing page) (2 page site) - S                                         --- DONE
-* Basic Design of site                                                             --- DONE
-  * Bootstrap - A, S                                                               --- DONE
-  * GAE - M, S                                                                     --- DONE
 * Sexy graphics (clock) - M
  + Landing page
   * Input will be saved as cookies that expire in 12 hours
-  * Copyright and small hr needs to be shifted to the bottom - S
-  * Title and subtitle need to be pulled up a bit                                  --- DONE
   * Needs larger space between the two inputs - S
   * “Lets do this!” button needs to be bigger - S
  + Clock page
@@ -31,9 +25,7 @@ ________________________________________________________________________________
     * Make Hour and Minute hand pointed like in luxury watches
   * Should be able to put colored dots between hours in clock
 * Creating a schedule
-  * more research - A
-  * based on user input - A
-  * sexy graphics and JS - M, A
+  * sexy graphics and JS - M
     * Dot schedule for the current hour in outtermost rim
     * Faded dot schedule for the next hour in inner rim
     * Most faded dot schedule for the next next hour in innermost rim
