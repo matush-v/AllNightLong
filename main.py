@@ -52,30 +52,58 @@ class Clock(webapp2.RequestHandler):
 
 class Schedule(webapp2.RequestHandler):
     def post(self):
+        '''
+        API for adding an event, getting a schedule, or adding a rating
+        rating must be an integer 
+        '''
         wake_up_time = self.request.get("wake_up_time")
         end_time = self.request.get("end_time")
         name = self.request.get("name")
         description = self.request.get("description")
         rating = self.request.get("rating") # assumed to be {"rating": x, "time": y}
+        rating = int(rating) if rating else rating # convert to int
 
         if name and description:
             # adds event
-            return self.add_event(self, name, description)
+            if self.add_event(name, description):
+                self.response.out.write("Successfully Added!")
+            else:
+                self.response.out.write("Error in Adding Event!")
 
         elif wake_up_time and end_time:
             # creates schedule for user
-            return json.dumps(self.get_schedule(wake_up_time, end_time))
+            schedule = self.get_schedule(wake_up_time, end_time)
+
+            self.response.out.write(json.dumps(schedule))
 
         elif name and rating:
             # adds rating
-            return self.add_rating(name, rating)
+            if self.add_rating(name, rating):
+                self.response.out.write("Successfully Added!")
+            else:
+                self.response.out.write("Error in Adding Rating!")
+        else:
+            self.response.out.write("Please provide correct parameters")
 
     def add_event(self, name, description):
         '''
         Adds a new event to the database
+        Event cannot exist already
+        Returns True if successful, False if failed
         '''
-        # TODO
-        pass
+        try:
+            all_events = Events.all()
+            all_events.filter("name =", name) # query event
+
+            if all_events.count():
+                logging.error("Event already exists")
+                raise
+
+            Events(name=name, description=description, ratings=[]).put()
+        except Exception:
+            return False
+
+        return True
 
     def get_schedule(self, wake_up_time, end_time):
         '''
@@ -89,13 +117,26 @@ class Schedule(webapp2.RequestHandler):
     def add_rating(self, name, rating):
         '''
         Adds rating to specified event
+        Event must exist
+        Rating must be 1 - 5
         Returns True if successful, False if failed
         '''
+
         try:
+            if rating > 5 or rating < 1:
+                logging.error("Rating " + str(rating) + " is out of range")
+                raise
+
             all_events = Events.all()
-            all_events.filter(name=name) # get event
-            all_events.ratings.append(rating) # add rating
-            all_events.put() # update event
+            all_events.filter("name =", name) # query event
+            specific_event = all_events.get() # get event instance
+
+            if specific_event:
+                specific_event.ratings.append(str(rating)) # add rating
+                specific_event.put() # update event
+            else:
+                logging.error("Event does not exist")
+                raise
         except Exception:
             return False
 
@@ -105,5 +146,6 @@ class Schedule(webapp2.RequestHandler):
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
-    ('/clock.html', Clock)
+    ('/clock.html', Clock),
+    ('/schedule', Schedule)
     ], debug=True)
