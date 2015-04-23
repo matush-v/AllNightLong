@@ -15,7 +15,6 @@ ________________________________________________________________________________
 * Sexy graphics (clock) - M
  + Landing page
   * Input will be saved as cookies that expire in 12 hours
-  * Copyright and small hr needs to be shifted to the bottom - S
   * Needs larger space between the two inputs - S
   * “Lets do this!” button needs to be bigger - S
  + Clock page
