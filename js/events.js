@@ -76,11 +76,14 @@ $('#times_form').submit(function(e) {
     $.post('/schedule', params, function(data) {
         // TODO
         // Events are drawn on the clock and saved in local storage
+        // [{name: event1, type: water, description: info, time: 1pm}]
         // If user completes an event
             // completed tag is added to event with user rating
         // Else
             // incomplete tag is added
         console.log(data);
+        // Notification is set for first event in the queue
+        set_up_notification(cur_event);
     });
 });
 
@@ -106,8 +109,26 @@ function create_cookie(name, value, days) {
 ******************************************************************************/
 
 $(document).ready(function() {
-    // setTimeout(notify_user, 2000, "title!", "http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png", "message")
+    setTimeout(notify_user, 2000, "title!", "http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png", "message");
+    cur_event = 0; // Start with first event
+    ICONS = {"type1": "icon1", "type2": "icon2", "type3": "icon3"}; // TODO fill this out
+});
+
+/* The notification for the cur_event in the queue is set up
+ * based on its event time */
+function set_up_notification(cur_event) {
+    // TODO make sure item name is correct
+    var events_list = localStorage.getItem('events');
+    // TODO must catch out of bounds error (all events completed)
+    var event_to_notify = events_list[cur_event];
+    var now = new Date();
+    // TODO must correctly deal with the time event_time gives back
+    var milli_till_event = new Date(event_to_notify.time) - now;
+
+    setTimeout(notify_user, milli_till_event, 'BREAK TIME!', ICONS.event_to_notify.type, event_to_notify.name);
+    cur_event++;
 }
+
 
 // TEST ICON: http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png
 function notify_user(title, icon, message) {
@@ -118,6 +139,8 @@ function notify_user(title, icon, message) {
 
     if (Notification.permission !== 'granted')
         // TODO add unique way to tell user why we want this functionality
+        // TODO if user says no, we must not set the notification to display
+        // TODO if user says yes, notifcation must display. Right now it doesn't wait for a response
         Notification.requestPermission();
 
     var notification = new Notification(title, {
@@ -128,7 +151,13 @@ function notify_user(title, icon, message) {
 
     notification.onclick = function() {
         window.focus();
+
+        // TODO show modal
+        $('#event_info').modal('show');
     };
+
+    // Notification is set for next event in the queue
+    set_up_notification(cur_event); 
 }
 
 function get_cookie(name) {
