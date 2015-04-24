@@ -15,6 +15,7 @@ ________________________________________________________________________________
 * Sexy graphics (clock) - M
  + Landing page
   * Input will be saved as cookies that expire in 12 hours
+  * Validate that input is required
  + Clock page
   * I’M DONE!! button
   * I’m too tired! button
@@ -44,7 +45,7 @@ ________________________________________________________________________________
 * Extreme Motivation
   * fun surprises (motivational quotes n stuff)
 * Prettify
-  * Optional minute hand
+  * Optional seconds hand
   * Add unique way to tell user why we want desktop notifications TODO exists
 * Eyes Hurt?
   * Recommend F.lux

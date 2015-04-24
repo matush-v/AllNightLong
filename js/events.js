@@ -51,15 +51,24 @@ var getCSS = function (prop, fromClass) {
 
 
 $('#go_btn').click(function () {
-    /* TODO validate */
-    var end_time = $('#end_time').val();
-    var start_time = $('#wake_up_time').val();
-    console.log(end_time, start_time);
-    window.location.replace('clock.html');
-    var params = {'wake_up_time': toString(wake_up_time), 'end_time': toString(end_time)};
-    $.post('/schedule', params, function (data) {
-        console.log(data);
-    });
+    // TODO validation
+    if ($('#wake_up_time')[0].checkValidity()) {
+        if ($('#wake_up_time')[0].checkValidity()) {
+            var start_time = $('#wake_up_time').val();
+            var end_time = $('#end_time').val();
+            window.location.replace('clock.html');
+            var params = {'wake_up_time': toString(wake_up_time), 'end_time': toString(end_time)};
+            $.post('/schedule', params, function (data) {
+                // TODO do stuff with data
+                console.log(data);
+            });
+        } else {
+        // TODO better error handling
+        alert("Please full out the two fields.")
+        }
+    } else {
+        alert("Please full out the two fields.")
+    }
 });
 
 
