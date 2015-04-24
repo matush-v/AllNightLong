@@ -35,21 +35,6 @@ function draw_event(color, minute, depth) {
 
 
 
-/* Gets the CSS property of a class that hasn't been used yet in the DOM */
-var get_css = function(prop, fromClass) {
-    var $inspector = $('<div>').css('display', 'none').addClass(fromClass);
-
-    $('body').append($inspector); // add to DOM, in order to read the CSS property
-
-    try {
-        return $inspector.css(prop);
-    }
-    finally {
-        $inspector.remove(); // and remove from DOM
-    }
-};
-
-
 
 /******************************************************************************
 *
@@ -84,20 +69,6 @@ $('#times_form').submit(function(e) {
     });
 });
 
-function create_cookie(name, value, days) {
-    var expires = null;
-
-    if (days) {
-        var date = new Date();
-
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-        expires = '; expires=' + date.toGMTString();
-    }
-    else expires = '';
-
-    document.cookie = name + '=' + value + expires + '; path=/';
-}
-
 
 /******************************************************************************
 *
@@ -107,7 +78,7 @@ function create_cookie(name, value, days) {
 
 $(document).ready(function() {
     // setTimeout(notify_user, 2000, "title!", "http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png", "message")
-}
+});
 
 // TEST ICON: http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png
 function notify_user(title, icon, message) {
@@ -130,6 +101,45 @@ function notify_user(title, icon, message) {
         window.focus();
     };
 }
+
+
+
+/******************************************************************************
+*
+*                            HELPERS
+*
+******************************************************************************/
+
+
+/* Gets the CSS property of a class that hasn't been used yet in the DOM */
+var get_css = function(prop, fromClass) {
+    var $inspector = $('<div>').css('display', 'none').addClass(fromClass);
+
+    $('body').append($inspector); // add to DOM, in order to read the CSS property
+
+    try {
+        return $inspector.css(prop);
+    }
+    finally {
+        $inspector.remove(); // and remove from DOM
+    }
+};
+
+function create_cookie(name, value, days) {
+    var expires = null;
+
+    if (days) {
+        var date = new Date();
+
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = '; expires=' + date.toGMTString();
+    }
+    else expires = '';
+
+    document.cookie = name + '=' + value + expires + '; path=/';
+}
+
+
 
 function get_cookie(name) {
     var value = '; ' + document.cookie;
