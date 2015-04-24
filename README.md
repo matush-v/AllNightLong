@@ -13,9 +13,6 @@ ________________________________________________________________________________
 
 * ALWAYS USE UNDERSCORE CASING
 * Sexy graphics (clock) - M
- + Landing page
-  * Input will be saved as cookies that expire in 12 hours
-  * Validate that input is required
  + Clock page
   * I’M DONE!! button
   * I’m too tired! button
