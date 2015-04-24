@@ -22,33 +22,37 @@ ________________________________________________________________________________
   * I’M DONE!! button
   * I’m too tired! button
    + Anything user does is added to the localstorage 
-  * Very nice clock with hour and minute hand (optional second hand) - M, S
+  * Very nice clock with hour and minute hand (optional second hand)
     * Make Hour and Minute hand pointed like in luxury watches
   * Should be able to put colored dots between hours in clock
+  * Quote box that gives a new quote every hour
+    * Also displays event info onmouseover
 * Creating a schedule
-  * sexy graphics and JS - M
+  * sexy graphics and JS 
     * Dot schedule for the current hour in outtermost rim
     * Faded dot schedule for the next hour in inner rim
     * Most faded dot schedule for the next next hour in innermost rim
-  * Scroll down to see later events, scroll up to see recent events
-  * rollover non-invasive sidebar with extra info on what each event means - S
-  * Every time a user completes or does not complete an event, add it to localstorage
+  * EC: Scroll down to see later events, scroll up to see recent events
 * Notifications
   * change notification icon TODO exists
-  * modals - S
-  * user feedback - A
-  * schedule events - A
-    * events known about previous event completion (e.g. you didn't walk last time)
-  * yelling to get off Facebook, Twitter, etc. - M, S
+  * modals for each event
+    * Every time a user does not complete an event, add it to localstorage and adjust schedule
+    * If completed, ask for user feedback
+  * EC: yelling to get off Facebook, Twitter, etc. - M, S
     * Might have issues with privacy
 * Schedule Adjustment - M, S
+  * events known about previous event completion (e.g. you didn't walk last time)
   * “UNCLE!” button - make it a sexual safety word (pineapple,  bananaanana)
+    * uncle changes to other sex safety words randomly
   * based off science and user feedback from notifications
 * Extreme Motivation
   * fun surprises (motivational quotes n stuff)
 * Prettify
   * Optional minute hand
   * Add unique way to tell user why we want desktop notifications TODO exists
+  * Info box parts like curtains to show event info onmouseover and animates back after
+  * Have progress bar to let person know how close they are to finishing the all nighter
+    * Bar is along clock based on hour hand and goes from light green to dark green with % next to it
 * Eyes Hurt?
   * Recommend F.lux
 * Ergonomic Recommendations under tips

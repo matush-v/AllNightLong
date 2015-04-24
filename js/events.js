@@ -19,8 +19,8 @@ function draw_event(color, minute, depth) {
     new_top = (($('.outer_face').height() / 2) + radius * Math.sin(angle));
     new_left = (($('.outer_face').width() / 2) + radius * Math.cos(angle));
 
-    var dot_width = parseInt(getCSS('width', 'dot'));
-    var dot_height = parseInt(getCSS('height', 'dot'));
+    var dot_width = parseInt(get_CSS('width', 'dot'));
+    var dot_height = parseInt(get_CSS('height', 'dot'));
 
     /* Distance to move toward center of circle */
     var dist = (depth + initial_offset) * dot_width * spacing_factor;
@@ -38,7 +38,7 @@ function draw_event(color, minute, depth) {
 
 
 /* Gets the CSS property of a class that hasn't been used yet in the DOM */
-var getCSS = function(prop, fromClass) {
+var get_CSS = function(prop, fromClass) {
     var $inspector = $('<div>').css('display', 'none').addClass(fromClass);
 
     // add to DOM, in order to read the CSS property
@@ -52,8 +52,16 @@ var getCSS = function(prop, fromClass) {
     }
 };
 
+
+function get_cookie(name) {
+    var value = '; ' + document.cookie;
+    var parts = value.split('; ' + name + '=');
+
+    if (parts.length == 2) return parts.pop().split(';').shift();
+}
+
 $(document).ready(function() {
-    setTimeout(notify_user, 2000, "title!", "http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png", "message")
+    // setTimeout(notify_user, 2000, "title!", "http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png", "message")
 });
 
 // TEST ICON: http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png
