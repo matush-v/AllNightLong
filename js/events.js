@@ -1,12 +1,10 @@
-// Data for each event on the server
-// Based on times send in, server returns events and times
-// Events are drawn on the clock and saved in local storage
-// If user completes an event
-    // completed tag is added to event with user rating
-// Else
-    // incomplete tag is added
+/******************************************************************************
+*
+*                            SCHEDULING
+*
+******************************************************************************/
 
-// draw colored circle based off minute at the passed in depth
+/* draw colored circle based off minute at the passed in depth */
 function draw_event(color, minute, depth) {
     var minutes_in_hour = 60, rads_in_circle = 2 * Math.PI;
     /* Moves the dots of 0 depth slightly inward so they
@@ -19,8 +17,8 @@ function draw_event(color, minute, depth) {
     new_top = (($('.outer_face').height() / 2) + radius * Math.sin(angle));
     new_left = (($('.outer_face').width() / 2) + radius * Math.cos(angle));
 
-    var dot_width = parseInt(get_CSS('width', 'dot'));
-    var dot_height = parseInt(get_CSS('height', 'dot'));
+    var dot_width = parseInt(get_css('width', 'dot'));
+    var dot_height = parseInt(get_css('height', 'dot'));
 
     /* Distance to move toward center of circle */
     var dist = (depth + initial_offset) * dot_width * spacing_factor;
@@ -38,11 +36,10 @@ function draw_event(color, minute, depth) {
 
 
 /* Gets the CSS property of a class that hasn't been used yet in the DOM */
-var get_CSS = function(prop, fromClass) {
+var get_css = function(prop, fromClass) {
     var $inspector = $('<div>').css('display', 'none').addClass(fromClass);
 
-    // add to DOM, in order to read the CSS property
-    $('body').append($inspector);
+    $('body').append($inspector); // add to DOM, in order to read the CSS property
 
     try {
         return $inspector.css(prop);
@@ -53,16 +50,64 @@ var get_CSS = function(prop, fromClass) {
 };
 
 
-function get_cookie(name) {
-    var value = '; ' + document.cookie;
-    var parts = value.split('; ' + name + '=');
 
-    if (parts.length == 2) return parts.pop().split(';').shift();
+/******************************************************************************
+*
+*                            TIMES FORM
+*
+******************************************************************************/
+
+$('#times_form').submit(function(e) {
+    e.preventDefault();
+
+    var wake_up_time = $('#wake_up_time').val();
+    var end_time = $('#end_time').val();
+    var expires_in = 1; // days
+    var params = null;
+
+    create_cookie('wake_up_time', wake_up_time, expires_in);
+    create_cookie('end_time', end_time, expires_in);
+
+    window.location.replace('clock.html');
+
+    params = {'wake_up_time': toString(wake_up_time), 'end_time': toString(end_time)};
+
+
+    $.post('/schedule', params, function(data) {
+        // TODO
+        // Events are drawn on the clock and saved in local storage
+        // If user completes an event
+            // completed tag is added to event with user rating
+        // Else
+            // incomplete tag is added
+        console.log(data);
+    });
+});
+
+function create_cookie(name, value, days) {
+    var expires = null;
+
+    if (days) {
+        var date = new Date();
+
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = '; expires=' + date.toGMTString();
+    }
+    else expires = '';
+
+    document.cookie = name + '=' + value + expires + '; path=/';
 }
+
+
+/******************************************************************************
+*
+*                            NOTIFICATIONS
+*
+******************************************************************************/
 
 $(document).ready(function() {
     // setTimeout(notify_user, 2000, "title!", "http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png", "message")
-});
+}
 
 // TEST ICON: http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png
 function notify_user(title, icon, message) {
@@ -84,4 +129,11 @@ function notify_user(title, icon, message) {
     notification.onclick = function() {
         window.focus();
     };
+}
+
+function get_cookie(name) {
+    var value = '; ' + document.cookie;
+    var parts = value.split('; ' + name + '=');
+
+    if (parts.length == 2) return parts.pop().split(';').shift();
 }

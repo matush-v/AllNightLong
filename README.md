@@ -12,12 +12,8 @@ ________________________________________________________________________________
 ###TODO
 
 * ALWAYS USE UNDERSCORE CASING
+* DECLARE ALL VARAIBLES AT THE TOP OF THE FUNCTION
 * Sexy graphics (clock) - M
- + Landing page
-  * Input will be saved as cookies that expire in 12 hours
-  * Copyright and small hr needs to be shifted to the bottom - S
-  * Needs larger space between the two inputs - S
-  * “Lets do this!” button needs to be bigger - S
  + Clock page
   * I’M DONE!! button
   * I’m too tired! button
@@ -48,7 +44,7 @@ ________________________________________________________________________________
 * Extreme Motivation
   * fun surprises (motivational quotes n stuff)
 * Prettify
-  * Optional minute hand
+  * Optional seconds hand
   * Add unique way to tell user why we want desktop notifications TODO exists
   * Info box parts like curtains to show event info onmouseover and animates back after
   * Have progress bar to let person know how close they are to finishing the all nighter
