@@ -12,6 +12,7 @@ function draw_event(color, minute, depth) {
     var initial_offset = 0.5;
     var spacing_factor = 2; /* Determines space between depth levels */
     var top_z_index = 1001; /* So dots appear on top of inner face */
+
     angle = (minute / minutes_in_hour) * rads_in_circle - Math.PI / 2;
     radius = ($('.outer_face').width()) / 2;
     new_top = (($('.outer_face').height() / 2) + radius * Math.sin(angle));
