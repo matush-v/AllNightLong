@@ -13,7 +13,13 @@ ________________________________________________________________________________
 
 * ALWAYS USE UNDERSCORE CASING
 * DECLARE ALL VARAIBLES AT THE TOP OF THE FUNCTION
-* Sexy graphics (clock) - M
+* Creating a schedule
+  * sexy graphics and JS 
+    * Dot schedule for the current hour in outtermost rim
+    * Faded dot schedule for the next hour in inner rim
+    * Most faded dot schedule for the next next hour in innermost rim
+  * EC: Scroll down to see later events, scroll up to see recent events
+* Sexy graphics (clock)
  + Clock page
   * I’M DONE!! button
   * I’m too tired! button
@@ -23,20 +29,14 @@ ________________________________________________________________________________
   * Should be able to put colored dots between hours in clock
   * Quote box that gives a new quote every hour
     * Also displays event info onmouseover
-* Creating a schedule
-  * sexy graphics and JS 
-    * Dot schedule for the current hour in outtermost rim
-    * Faded dot schedule for the next hour in inner rim
-    * Most faded dot schedule for the next next hour in innermost rim
-  * EC: Scroll down to see later events, scroll up to see recent events
 * Notifications
   * change notification icon TODO exists
   * modals for each event
     * Every time a user does not complete an event, add it to localstorage and adjust schedule
     * If completed, ask for user feedback
-  * EC: yelling to get off Facebook, Twitter, etc. - M, S
+  * EC: yelling to get off Facebook, Twitter, etc.
     * Might have issues with privacy
-* Schedule Adjustment - M, S
+* EC: Schedule Adjustment
   * events known about previous event completion (e.g. you didn't walk last time)
   * “UNCLE!” button - make it a sexual safety word (pineapple,  bananaanana)
     * uncle changes to other sex safety words randomly
@@ -52,7 +52,7 @@ ________________________________________________________________________________
 * Eyes Hurt?
   * Recommend F.lux
 * Ergonomic Recommendations under tips
-* YSLOW and Audit
+* YSLOW, Audit, and W3 validator (last validated 4/24 7:58)
 * Optimization!
 * Restrict CORS access
 
