@@ -267,8 +267,9 @@ function notify_user(title, icon, short_message, long_description) {
             keyboard: false
         });
 
-        $('#event_modal').find('.modal-header').empty();
-        $('#event_modal').find('.modal-header').prepend("<div class='modal-icon'><img src='" + icon + "' alt='event icon'></div>");
+
+        $('#event_modal').find('#modal-image').empty()
+        $('#event_modal').find('#modal-image').append("<div class='modal-icon'><img src='" + icon + "' alt='event icon'>");
         $('#event_modal').find('.modal-title').text(title);
         $('#event_modal').find('.modal-body').append(long_description);
         $('#event_modal').modal('show');
@@ -292,8 +293,8 @@ $('#tired_btn').click(function() {
     rand = Math.floor(rand);
     var choice = extras[rand];
 
-
-    $('#event_modal').find('.modal-header').prepend("<div class='modal-icon'><img src='" + choice.icon + "' alt='event icon'></div>");
+    $('#event_modal').find('#modal-image').empty()
+    $('#event_modal').find('#modal-image').append("<div class='modal-icon'><img src='" + choice.icon + "' alt='event icon'></div>");
     $('#event_modal').find('.modal-title').text(choice.name);
     $('#event_modal').find('.modal-body').append(choice.description);
     $('#event_modal').modal('show');
