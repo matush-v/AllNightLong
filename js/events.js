@@ -130,8 +130,8 @@ $('#times_form').submit(function(e) {
 
         end_time = Math.floor(end_date.getTime() / 1000); // send timestamp to server
         cur_time = Math.floor((new Date()).getTime() / 1000);
-        
-        params = {'wake_up_time': toString(wake_up_time), 'end_time': end_time, 'cur_time': cur_time};
+
+        params = {'wake_up_time': wake_up_time, 'end_time': end_time, 'cur_time': cur_time};
         get_schedule(params);
     }
 });
@@ -144,7 +144,7 @@ function get_schedule(params) {
         var events = JSON.parse(data);
 
         localStorage.setItem(EVENTS_LIST, events);
-        window.location.replace('clock.html');
+        window.location.href('clock.html');
     });
 }
 
