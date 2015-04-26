@@ -143,6 +143,8 @@ class Schedule(webapp2.RequestHandler):
         water_time = cur_time + timedelta(minutes=45)
         
         while water_time < end_time:
+            logging.warn("WATER TIME ================= " + str(water_time))
+            logging.warn("END TIME ================= " + str(end_time))
             events.append({'name': event_name, 'type': event_type, 'description': description, 'datetime': calendar.timegm((water_time + timedelta(hours=4)).timetuple())})
             water_time += timedelta(hours=1)
 
