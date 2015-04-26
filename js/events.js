@@ -43,7 +43,7 @@ function draw_event(color, index, datetime) {
         aren't right on the edge of the clock */
     var initial_offset = 0.5;
     var spacing_factor = 2; /* Determines space between depth levels */
-    var fade_factor = 0.2; /* Lower = more faded */
+    var fade_factor = 0.1; /* Lower = more faded */
     var dot_width = parseInt(get_css('width', 'dot'));
     var dot_height = parseInt(get_css('height', 'dot'));
     var max_depth = 3;
@@ -57,8 +57,7 @@ function draw_event(color, index, datetime) {
     if (depth > max_depth - 1) {
         return; // don't draw events that close to the center
     } else if (depth < 0) {
-        console.warn("Oops. Depth is negative in draw_event!");
-        return;
+        return; // don't draw past events
     }
 
     var hour = datetime.getHours();
@@ -113,6 +112,20 @@ $('#times_form').submit(function(e) {
 
     var wake_up_time = $('#wake_up_time').val();
     var end_time = $('#end_time').val();
+    var wake_hour_min = get_hour_min(wake_up_time);
+    var wake_err_msg = '<p class="alert alert-danger">Sorry, but All Night Long currently does not support nocturnal schedules. Please wait for the release of All Day Long. Thank you for your patience.</p>';
+    if (wake_hour_min.hour == 15) {
+        if (wake_hour_min.min > 0) {
+            $('#error').append(wake_err_msg);
+            return;
+        }
+    } else if (wake_hour_min.hour > 15) {
+        $('#error').append(wake_err_msg);
+        return;
+    } else if (wake_hour_min.hour < 3) {
+        $('#error').append(wake_err_msg);
+        return;
+    }
     var expires_in = 1; // days
     var params = null;
 
@@ -200,6 +213,7 @@ function notify_user(title, icon, message) {
    ( i.e. {'hour: 19', 'minute: 30'} ) 
  */
 function get_hour_min(time_string) {
+    console.log(time_string);
     var time_arr = time_string.split(':');
     var hour = time_arr[0];
     var minute = time_arr[1];
