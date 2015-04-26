@@ -221,3 +221,45 @@ label.star:before {
   content: '\f006';
   font-family: FontAwesome;
 }
+
+/* The Animation */ 
+#expander {
+    background-color: #000;
+    -webkit-transition-duration: 2s;
+    -webkit-transition-property: all;
+    -webkit-transition-timing-function: ease-in-out;
+    overflow: hidden;
+    position: absolute;
+    z-index: 1002;
+    border-radius: 100px;
+    border: 8px solid gray;
+    text-align: center;
+    vertical-align: middle;
+    visibility: hidden;
+    color: white;
+}
+
+#finish_text {
+    font-size: 72px;
+    position: relative;
+    top: 40%;
+    transform: translateY(-60%);
+}
+
+#reward_btn {
+    position: absolute;
+    width: 150px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    bottom: 25%;
+}
+
+
+.notransition {
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
+  -o-transition: none !important;
+  -ms-transition: none !important;
+  transition: none !important;
+}

@@ -2,13 +2,24 @@ $(document).ready(function() {
     EVENTS_LIST = 'events'; // Const name of schedule item in localStorage
 
     if (top.location.pathname == '/clock.html') {
+        QUOTES = ['With the new day comes new strength and new thoughts.',
+                  'In the middle of every difficulty lies opportunity.',
+                  'All we have to decide is what to do with the time that is given us.',
+                  'Don&#39;t let the muggles get you down.',
+                  'Good things come to people who wait, but better things come to those who go out and get them.',
+                  'If you do what you always did, you will get what you always got.',
+                  'If you&#39;re going through hell keep going.',
+                  'No masterpiece was ever created by a lazy artist.'];
+
         var events = JSON.parse(localStorage.getItem(EVENTS_LIST));
         var len = events.length;
         var today = new Date();
 
         cur_event = 0; // Global counter for event list index
-        cur_msg = $('#motivate_box').text().trim(); // Global var for quote
+        cur_quote = 0; // Global counter for quote list index
+        $('#motivate_box').append('<p>' + QUOTES[cur_quote] + '</p>');
         ICONS = {"exercise": "img/exercise_icon.png", "hydration": "img/water_icon.png", "food": "img/food_icon.png", "walk": "img/walk_icon.png", "nap": "img/nap_icon.png", "caffeine": "img/caffeine_icon.png"}; // Const icon locations
+
 
         /* Drawing events from localStorage */
         for (i = 0; i < len; i++) {
@@ -33,6 +44,21 @@ $(document).ready(function() {
         $('#event_modal').modal('show')
         // Notification is set for first event in the queue
         set_up_notification();
+
+        /* For fancy end animation */
+        document.getElementById("expander").addEventListener( 
+         'webkitTransitionEnd', function( e ) { 
+            if (event.propertyName == 'height') {
+                $("#finish_text").text('Congratulations champ! You nailed it!');
+                $("#expander").append('<button id="reward_btn" class="btn btn-success">Reap your reward</button>');
+                $("#done_btn").unbind();
+
+                $("#reward_btn").click(function () {
+                    location.href = "https://www.youtube.com/watch?v=wDajqW561KM";
+                })
+            }
+         }, false
+        );
     }
 });
 
@@ -99,15 +125,29 @@ function set_up_event_mouseover() {
 
         $(this).mouseover(function() {
             var event_index = $(this).attr('id').slice(ID_LENGTH);
+            var date = (new Date(events_list[event_index].datetime * 1000));
+            var hour = date.getHours();
+            am_pm = "am"
+            if (hour > 12) {
+                hour -= 12;
+                am_pm = "pm"
+            }
 
-            var text = events_list[event_index].description + "\n" + (new Date(events_list[event_index].datetime * 1000))
+            var time = "Time: " + hour + ":" + date.getMinutes() + am_pm;
             $('#motivate_box').empty();
-            $('#motivate_box').append('<p>' + text + '</p>');
+            $('#motivate_box').append('<p>' + events_list[event_index].description + '</p>');
+            $('#motivate_box').append('<p>' + time + '</p>');
         });
 
         $(this).mouseleave(function() {
+            var start_time = new Date(get_cookie('start_time'));
+            var num = (new Date()) - start_time; 
+            var den = (new Date(get_cookie('end_time'))) - start_time;
+
+            // Update quote based on how far into all nighter the user is
+            cur_quote = Math.floor(num / den * QUOTES.length);
             $('#motivate_box').empty()
-            $('#motivate_box').append('<p>' + cur_msg + '</p>');
+            $('#motivate_box').append('<p>' + QUOTES[cur_quote] + '</p>');
         });
     });
 }
@@ -129,20 +169,21 @@ $('#times_form').submit(function(e) {
     var expires_in = 1; // days
     var params = null;
     var end_date = new Date();
-    var wake_up_date = new Date();
-    var wake_hour_min = get_hour_min(wake_up_time);
     var end_hour_min = get_hour_min(end_time);
     var cur_time = new Date();
 
     if (validate_times(wake_up_time, end_time)) {
-        create_cookie('wake_up_time', wake_up_time, expires_in);
-        create_cookie('end_time', end_time, expires_in);
 
         if (end_hour_min.hour <= cur_time.getHours()) {
             end_date.setDate(end_date.getDate() + 1);
         }
+
         end_date.setHours(end_hour_min.hour);
         end_date.setMinutes(end_hour_min.min);
+
+        create_cookie('wake_up_time', wake_up_time, expires_in);
+        create_cookie('end_time', end_date, expires_in);
+        create_cookie('start_time', cur_time);
 
         end_time = Math.floor(end_date.getTime() / 1000); // send timestamp to server
         cur_time = Math.floor(cur_time.getTime() / 1000);
@@ -160,7 +201,7 @@ function get_schedule(params) {
     $.post('/schedule', params, function(data) {
 
         localStorage.setItem(EVENTS_LIST, data);
-        window.location.replace('clock.html');
+        window.location.href = 'clock.html';
     });
 }
 
@@ -234,11 +275,45 @@ function notify_user(title, icon, short_message, long_description) {
 *
 ******************************************************************************/
 
-$('#done_btn').click(function () {
-    
+$('#done_btn').mousedown(function() {
+    expand();
+}).bind('mouseup mouseleave', function() {
+    minimize();
 });
 
 
+function expand () {
+    $("#expander").addClass('notransition'); // Disable transitions
+    // $("#expander").css('height', '1%');
+    // $("#expander").css('width', '100%');
+
+    var done_btn_pos = $("#done_btn").offset();
+    $("#expander").css(done_btn_pos);
+    $("#expander").css('width', $("#done_btn").css('width'));
+    $("#expander").css('height', $("#done_btn").css('height'));
+    $("#expander").css('visibility', 'visible');
+    $("#expander")[0].offsetHeight; // Trigger a reflow, flushing the CSS changes
+    $("#expander").removeClass('notransition'); // Re-enable transitions
+
+    // $("#expander").css('height', '100%');
+
+    $("#expander").css('top', 0);
+    $("#expander").css('bottom', 0);
+    $("#expander").css('right', 0);
+    $("#expander").css('left', 0);
+    $("#expander").css('width', '100%');
+    $("#expander").css('height', '100%');
+}
+
+function minimize () {
+    var expander = $("#expander");
+    expander.addClass('notransition'); // Disable transitions
+
+    $("#expander").css('visibility', 'hidden');
+
+    expander[0].offsetHeight; // Trigger a reflow, flushing the CSS changes
+    expander.removeClass('notransition'); // Re-enable transitions
+}
 
 
 
