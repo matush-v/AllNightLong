@@ -36,6 +36,22 @@ $(document).ready(function() {
             // completed tag is added to event with user rating
         // Else
             // incomplete tag is added
+
+
+    /* For fancy end animation */
+    document.getElementById("expander").addEventListener( 
+     'webkitTransitionEnd', function( e ) { 
+        if (event.propertyName == 'height') {
+            $("#finish_text").text('Congratulations champ! You nailed it!');
+            $("#expander").append('<button id="reward_btn" class="btn btn-success">Reap your reward</button>');
+            $("#done_btn").unbind();
+
+            $("#reward_btn").click(function () {
+                location.href = "https://www.youtube.com/watch?v=wDajqW561KM";
+            })
+        }
+     }, false
+);
     }
 });
 
@@ -161,7 +177,7 @@ function get_schedule(params) {
     $.post('/schedule', params, function(data) {
 
         localStorage.setItem(EVENTS_LIST, data);
-        window.location.replace('clock.html');
+        window.location.href = 'clock.html';
     });
 }
 
@@ -226,11 +242,45 @@ function notify_user(title, icon, message) {
 *
 ******************************************************************************/
 
-$('#done_btn').click(function () {
-    
+$('#done_btn').mousedown(function() {
+    expand();
+}).bind('mouseup mouseleave', function() {
+    minimize();
 });
 
 
+function expand () {
+    $("#expander").addClass('notransition'); // Disable transitions
+    // $("#expander").css('height', '1%');
+    // $("#expander").css('width', '100%');
+
+    var done_btn_pos = $("#done_btn").offset();
+    $("#expander").css(done_btn_pos);
+    $("#expander").css('width', $("#done_btn").css('width'));
+    $("#expander").css('height', $("#done_btn").css('height'));
+    $("#expander").css('visibility', 'visible');
+    $("#expander")[0].offsetHeight; // Trigger a reflow, flushing the CSS changes
+    $("#expander").removeClass('notransition'); // Re-enable transitions
+
+    // $("#expander").css('height', '100%');
+
+    $("#expander").css('top', 0);
+    $("#expander").css('bottom', 0);
+    $("#expander").css('right', 0);
+    $("#expander").css('left', 0);
+    $("#expander").css('width', '100%');
+    $("#expander").css('height', '100%');
+}
+
+function minimize () {
+    var expander = $("#expander");
+    expander.addClass('notransition'); // Disable transitions
+
+    $("#expander").css('visibility', 'hidden');
+
+    expander[0].offsetHeight; // Trigger a reflow, flushing the CSS changes
+    expander.removeClass('notransition'); // Re-enable transitions
+}
 
 
 
