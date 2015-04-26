@@ -126,4 +126,5 @@ body > .header {
     -webkit-border-radius: 50%;
     -moz-border-radius: 50%;
     border-radius: 50%;
+    z-index: 1001; /* Shows up in the front */
 }

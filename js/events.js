@@ -15,8 +15,9 @@ $(document).ready(function() {
         for (i = 0; i < len; i++) {
             // Convert from Python datetime to JS Date
             events[i].datetime = new Date(events[i].datetime);
-            draw_event('blue', i, events[i].datetime);
+            draw_event('red', i, events[i].datetime);
         }
+        console.log(events);
         // Notification is set for first event in the queue
         // set_up_notification(cur_event); TODO uncomment
 
@@ -41,17 +42,18 @@ function draw_event(color, index, datetime) {
         aren't right on the edge of the clock */
     var initial_offset = 0.5;
     var spacing_factor = 2; /* Determines space between depth levels */
-    var top_z_index = 1001; /* So dots appear on top of inner face */
+    var fade_factor = 0.2; /* Lower = more faded */
     var dot_width = parseInt(get_css('width', 'dot'));
     var dot_height = parseInt(get_css('height', 'dot'));
+    var max_depth = 3;
     var now = new Date();
     var dist = null;
     var x_offset = null;
     var y_offset = null;
 
     // depth is difference in hours
-    var depth = Math.floor(Math.abs(datetime - now) / (1000 * 60 * 60)); // milliseconds/sec * sec/min * min/hr
-    if (depth > 2) {
+    var depth = Math.round((datetime - now) / (1000 * 60 * 60)); // milliseconds/sec * sec/min * min/hr
+    if (depth > max_depth - 1) {
         return; // don't draw events past third level
     } else if (depth < 0) {
         console.log("Oops. Depth is negative in draw_event!");
@@ -77,7 +79,7 @@ function draw_event(color, index, datetime) {
     new_left = new_left - dot_height / 2 + x_offset;
     new_top = new_top - dot_height / 2 + y_offset;
     $('.outer_face').append('<div id="event_' + index + '" class="dot" style="left:' + new_left + 'px;top:' + new_top + 'px; background-color: ' + color + '"></div>');
-    $('.dot').css('z-index', top_z_index);
+    $('#event_' + index).css('opacity', (max_depth - depth + fade_factor) / (max_depth + fade_factor)); // faded based on depth: 1.0 opacity is fully visible, and 0.0 is fully transparent
 }
 
 
