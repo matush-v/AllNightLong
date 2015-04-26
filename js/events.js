@@ -1,5 +1,4 @@
 $(document).ready(function() {
-
     EVENTS_LIST = 'events'; // Const name of schedule item in localStorage
 
     if (top.location.pathname == '/clock.html') {
@@ -27,9 +26,13 @@ $(document).ready(function() {
         }
 
         set_up_event_mouseover();
-
+        // TODO remove this after testing
+        $('#event_modal').find('.modal-header').prepend("<img src='img/water_icon.png' alt='event icon'>" );
+        $('#event_modal').find('.modal-title').text("t icon" );
+        $('#event_modal').find('.modal-body').append("long_description");
+        $('#event_modal').modal('show')
         // Notification is set for first event in the queue
-        set_up_notification(cur_event);
+        set_up_notification();
     }
 });
 
@@ -55,15 +58,17 @@ function draw_event(color, index, datetime) {
     var x_offset = null;
     var y_offset = null;
 
+    if (datetime < now) {
+        return; // event is in the past
+    }
     // depth is difference in hours
     var depth = Math.abs(datetime.getHours() - now.getHours())
+
     if (depth > max_depth - 1) {
         return; // don't draw events that close to the center
     } else if (depth < 0) {
         return; // don't draw past events
     }
-    console.log(depth);
-    console.log("\n");
 
     var hour = datetime.getHours();
     var minute = datetime.getMinutes();
@@ -167,7 +172,7 @@ function get_schedule(params) {
 
 /* The notification for the cur_event in the queue is set up
  * based on its event time */
-function set_up_notification(cur_event) {
+function set_up_notification() {
     var events_list = JSON.parse(localStorage.getItem(EVENTS_LIST));
     var events_len = events_list.length;
 
@@ -178,17 +183,19 @@ function set_up_notification(cur_event) {
     var event_type = event_to_notify.type;
     var now = new Date();
     var milli_till_event = new Date(event_to_notify.datetime * 1000);
-    console.log(milli_till_event);
     milli_till_event -= now;
 
-    console.log("milli till event " + milli_till_event);
-    setTimeout(notify_user, milli_till_event, 'BREAK TIME!', ICONS.type, event_to_notify.name);
+    if (milli_till_event < 0) 
+        console.log("bad time for event: " + event_to_notify.name);
+    else
+        setTimeout(notify_user, milli_till_event, 'BREAK TIME!', ICONS[event_type], event_to_notify.name, event_to_notify.description);
+
     cur_event++;
 }
 
 
 // TEST ICON: http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png
-function notify_user(title, icon, message) {
+function notify_user(title, icon, short_message, long_description) {
     if (!Notification) {
         alert('Please upgrade to a modern version of Chrome, Firefox, Opera or Firefox.');
         return;
@@ -202,22 +209,21 @@ function notify_user(title, icon, message) {
 
     var notification = new Notification(title, {
         icon: icon,
-        body: message
+        body: short_message
     });
 
     notification.onclick = function() {
         window.focus();
 
         // TODO show modal
-        swal({
-          title: "Sweet!",
-          text: "Here's a custom image.",
-          imageUrl: 'img/water_icon.png'
-        });
+        $('#event_modal').find('.modal-header').prepend("<img src='" + icon + "' alt='event icon'>");
+        $('#event_modal').find('.modal-title').text(title);
+        $('#event_modal').find('.modal-body').append(long_description);
+        $('#event_modal').modal('show')
     };
 
     // Notification is set for next event in the queue
-    set_up_notification(cur_event); 
+    set_up_notification(); 
 }
 
 

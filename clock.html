@@ -10,6 +10,7 @@
         <meta name="author" content="">
 
         <title>All Night Long</title>
+        <link rel="icon" type="image/png" href="img/favicon.png">
 
         <!-- Bootstrap Core CSS -->
         <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -21,7 +22,7 @@
         <link href="css/clock.css" rel="stylesheet">        
 
         <!-- Modal CSS -->
-        <link rel="stylesheet" href="http://lipis.github.io/bootstrap-sweetalert/lib/sweet-alert.css">
+        <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
 
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -70,6 +71,40 @@
         </div>
 
 
+        <div class="modal fade" id="event_modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title"></h4>
+                    </div>
+                    <div class="modal-body">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger">Pass on this one</button>
+                        <div class="stars">
+                            <form action="">
+                              <input class="star star-5" id="star-5-2" type="radio" name="star"/>
+                              <label class="star star-5" for="star-5-2"></label>
+                              <input class="star star-4" id="star-4-2" type="radio" name="star"/>
+                              <label class="star star-4" for="star-4-2"></label>
+                              <input class="star star-3" id="star-3-2" type="radio" name="star"/>
+                              <label class="star star-3" for="star-3-2"></label>
+                              <input class="star star-2" id="star-2-2" type="radio" name="star"/>
+                              <label class="star star-2" for="star-2-2"></label>
+                              <input class="star star-1" id="star-1-2" type="radio" name="star"/>
+                              <label class="star star-1" for="star-1-2"></label>
+                            </form>
+                            <p>How beneficial was it?</p>
+                        </div>
+                        <button type="button" class="btn btn-success">Done!</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
+
+
+
         <!-- jQuery -->
         <script src="js/jquery-1.11.1.js"></script>
 
@@ -81,10 +116,6 @@
 
         <!-- Events JS -->
         <script src="js/events.js"></script>
-
-        <!-- Modal JS -->
-        <script src="http://lipis.github.io/bootstrap-sweetalert/lib/sweet-alert.js"></script>
-
     </body>
 
 </html>

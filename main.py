@@ -253,6 +253,8 @@ class Schedule(webapp2.RequestHandler):
 
         ######################################################
 
+        events = sorted(events, key=lambda k: k['datetime'])
+
         return events
 
     def add_rating(self, name, rating):
