@@ -1,3 +1,12 @@
+$(document).ready(function() {
+    // Test for notification
+    // setTimeout(notify_user, 2000, "title!", "http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png", "message");
+
+    cur_event = 0; // Start with first event when doing notification
+    ICONS = {"type1": "icon1", "type2": "icon2", "type3": "icon3"}; // icon locations // TODO fill this out
+    EVENTS_LIST = 'events' // name of schedule item in localStorage 
+});
+
 /******************************************************************************
 *
 *                            SCHEDULING
@@ -49,6 +58,17 @@ function draw_event(color, index, time) {
     $('.dot').css('z-index', top_z_index);
 }
 
+
+$('dot').each(function() {
+    var ID_LENGTH = 6; // length of unnecessary chars in "event_#"
+    var events_list = localStorage.getItem(EVENTS_LIST); // TODO name might be wrong
+    
+    $(this).mouseover(function() {
+        var event_index = $(this).attr('id').slice(ID_LENGTH)
+        
+        $('#motive_box').text(events_list[event_index].description)
+    });
+});
 
 
 
@@ -107,17 +127,11 @@ function get_schedule(params) {
 *
 ******************************************************************************/
 
-$(document).ready(function() {
-    // setTimeout(notify_user, 2000, "title!", "http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png", "message");
-    cur_event = 0; // Start with first event
-    ICONS = {"type1": "icon1", "type2": "icon2", "type3": "icon3"}; // TODO fill this out
-});
-
 /* The notification for the cur_event in the queue is set up
  * based on its event time */
 function set_up_notification(cur_event) {
     // TODO make sure item name is correct
-    var events_list = localStorage.getItem('events');
+    var events_list = localStorage.getItem(EVENTS_LIST);
     // TODO must catch out of bounds error (all events completed)
     var event_to_notify = events_list[cur_event];
     var now = new Date();

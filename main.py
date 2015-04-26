@@ -8,6 +8,7 @@ import jinja2
 import json
 import os
 from google.appengine.ext import db
+from datetime import datetime, timedelta
 
 '''
 DATABASE
@@ -116,10 +117,26 @@ class Schedule(webapp2.RequestHandler):
         '''
         Returns list of times and events that should be done at those times
         '''
-        return {"test": "test"}
-        # TODO
-        # run algorithm and create array of event objects
+        # TODO run algorithm and create array of event objects
+
         # return array
+        return self.serialize(Events)
+
+    def serialize(self, database):
+        '''
+        Returns json list of all elements in the database
+        '''
+        all_instances = database.all() # fetching every instance in database
+        items_list = [] # initial empty list
+        test_time = datetime.now() # TODO time is fake
+
+        for instance in all_instances:
+            dict_instance = db.to_dict(instance)
+            dict_instance["time"] = format(test_time, '%H:%M')
+            test_time += timedelta(hours=1)
+            items_list.append(dict_instance)
+
+        return json.dumps(items_list)
 
     def add_rating(self, name, rating):
         '''
