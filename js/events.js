@@ -1,6 +1,4 @@
 $(document).ready(function() {
-    // Test for notification
-    // setTimeout(notify_user, 2000, "title!", "http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png", "message");
     EVENTS_LIST = 'events'; // Const name of schedule item in localStorage
 
     if (top.location.pathname == '/clock.html') {
@@ -10,7 +8,7 @@ $(document).ready(function() {
 
         cur_event = 0; // Global counter for event list index
         cur_msg = $('#motivate_box').text().trim(); // Global var for quote
-        ICONS = {"type1": "icon1", "type2": "icon2", "type3": "icon3"}; // Const icon locations // TODO fill this out
+        ICONS = {"exercise": "img/exercise_icon.png", "hydration": "img/water_icon.png", "food": "img/food_icon.png", "walk": "img/walk_icon.png", "nap": "img/nap_icon.png", "caffeine": "img/caffeine_icon.png"}; // Const icon locations // TODO fill this out
 
         /* Drawing events from localStorage */
         for (i = 0; i < len; i++) {
@@ -28,14 +26,9 @@ $(document).ready(function() {
         }
 
         set_up_event_mouseover();
-        // Notification is set for first event in the queue
-        // set_up_notification(cur_event); TODO uncomment
 
-        // [{name: event1, type: water, description: info, time: 1pm}]
-        // If user completes an event
-            // completed tag is added to event with user rating
-        // Else
-            // incomplete tag is added
+        // Notification is set for first event in the queue
+        set_up_notification(cur_event);
     }
 });
 
@@ -166,16 +159,18 @@ function get_schedule(params) {
  * based on its event time */
 function set_up_notification(cur_event) {
     var events_list = JSON.parse(localStorage.getItem(EVENTS_LIST));
-    var events_len = events_list.length();
+    var events_len = events_list.length;
 
     if (cur_event >= events_len)
         return; // all events completed
 
-    var event_to_notify = events_list[cur_event]; 
+    var event_to_notify = events_list[cur_event];
+    var event_type = event_to_notify.type;
     var now = new Date();
     var milli_till_event = new Date(event_to_notify.datetime) - now;
 
-    setTimeout(notify_user, milli_till_event, 'BREAK TIME!', ICONS.event_to_notify.type, event_to_notify.name);
+    console.log(event_to_notify);
+    setTimeout(notify_user, milli_till_event, 'BREAK TIME!', ICONS.event_type, event_to_notify.name);
     cur_event++;
 }
 

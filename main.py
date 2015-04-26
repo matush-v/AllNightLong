@@ -174,7 +174,7 @@ class Schedule(webapp2.RequestHandler):
         #######################################################
 
         ########################### WALK ######################
-        event_type = "exercise"
+        event_type = "walk"
         event_name = "Freshen Up"
         description = "Go for a 10 minute walk"
 
