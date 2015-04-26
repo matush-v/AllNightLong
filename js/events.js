@@ -4,12 +4,23 @@ $(document).ready(function() {
     EVENTS_LIST = 'events'; // Const name of schedule item in localStorage
 
     if (top.location.pathname == '/clock.html') {
+        QUOTES = ['With the new day comes new strength and new thoughts.',
+                  'In the middle of every difficulty lies opportunity.',
+                  'All we have to decide is what to do with the time that is given us.',
+                  'Don&#39;t let the muggles get you down.',
+                  'Good things come to people who wait, but better things come to those who go out and get them.',
+                  'If you do what you always did, you will get what you always got.',
+                  'If you&#39;re going through hell keep going.',
+                  'No masterpiece was ever created by a lazy artist.'];
+
         var events = JSON.parse(localStorage.getItem(EVENTS_LIST));
         var len = events.length;
         var today = new Date();
 
         cur_event = 0; // Global counter for event list index
-        cur_msg = $('#motivate_box').text().trim(); // Global var for quote
+        cur_quote = 0; // Global counter for quote list index
+        $('#motivate_box').append('<p>' + QUOTES[cur_quote] + '</p>');
+
         ICONS = {"type1": "icon1", "type2": "icon2", "type3": "icon3"}; // Const icon locations // TODO fill this out
 
         /* Drawing events from localStorage */
@@ -131,8 +142,14 @@ function set_up_event_mouseover() {
         });
 
         $(this).mouseleave(function() {
+            var start_time = new Date(get_cookie('start_time'));
+            var num = (new Date()) - start_time; 
+            var den = (new Date(get_cookie('end_time'))) - start_time;
+
+            // Update quote based on how far into all nighter the user is
+            cur_quote = Math.floor(num / den * QUOTES.length);
             $('#motivate_box').empty()
-            $('#motivate_box').append('<p>' + cur_msg + '</p>');
+            $('#motivate_box').append('<p>' + QUOTES[cur_quote] + '</p>');
         });
     });
 }
@@ -154,20 +171,21 @@ $('#times_form').submit(function(e) {
     var expires_in = 1; // days
     var params = null;
     var end_date = new Date();
-    var wake_up_date = new Date();
-    var wake_hour_min = get_hour_min(wake_up_time);
     var end_hour_min = get_hour_min(end_time);
     var cur_time = new Date();
 
     if (validate_times(wake_up_time, end_time)) {
-        create_cookie('wake_up_time', wake_up_time, expires_in);
-        create_cookie('end_time', end_time, expires_in);
 
         if (end_hour_min.hour <= cur_time.getHours()) {
             end_date.setDate(end_date.getDate() + 1);
         }
+
         end_date.setHours(end_hour_min.hour);
         end_date.setMinutes(end_hour_min.min);
+
+        create_cookie('wake_up_time', wake_up_time, expires_in);
+        create_cookie('end_time', end_date, expires_in);
+        create_cookie('start_time', cur_time);
 
         end_time = Math.floor(end_date.getTime() / 1000); // send timestamp to server
         cur_time = Math.floor(cur_time.getTime() / 1000);
