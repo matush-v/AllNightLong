@@ -36,12 +36,14 @@ $(document).ready(function() {
             draw_event('red', i, events[i].datetime);
         }
 
+        /* Remove default modal dismissal */
+        $('#event_modal').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
+
         set_up_event_mouseover();
-        // TODO remove this after testing
-        $('#event_modal').find('.modal-header').prepend("<div id='modal_icon'><img src='img/water_icon.png' alt='event icon'></div>" );
-        $('#event_modal').find('.modal-title').text("Is It In You" );
-        $('#event_modal').find('.modal-body').append("Get some liquids in your body and keep killin it. Science recommends water because we are made of it and so it must be good for you.");
-        $('#event_modal').modal('show')
+
         // Notification is set for first event in the queue
         set_up_notification();
 
@@ -262,10 +264,14 @@ function notify_user(title, icon, short_message, long_description) {
     notification.onclick = function() {
         window.focus();
 
-        $('#event_modal').find('.modal-header').prepend("<img id='modal_icon' src='" + icon + "' alt='event icon'>");
+        $('#event_modal').find('.modal-header').prepend("<div class='modal-icon'><img src='" + icon + "' alt='event icon'>");
         $('#event_modal').find('.modal-title').text(title);
         $('#event_modal').find('.modal-body').append(long_description);
-        $('#event_modal').modal('show')
+        $('#event_modal').modal('show');
+
+        $("#event_done_btn").click(function () {
+            $('#event_modal').modal('dismiss');            
+        });
     };
 
     // Notification is set for next event in the queue

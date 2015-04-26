@@ -230,7 +230,7 @@ label.star:before {
     text-align: center;
 }
 
-#modal_icon {
+.modal-icon {
     max-height: 40px;
     max-width: 40px;
     text-align: center;
@@ -240,7 +240,7 @@ label.star:before {
     margin-bottom: 25px;
 }
 
-#modal_icon img {
+.modal-icon img {
     max-height: 100%;
     max-width: 100%;
 }
