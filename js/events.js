@@ -144,13 +144,15 @@ function get_schedule(params) {
 /* The notification for the cur_event in the queue is set up
  * based on its event time */
 function set_up_notification(cur_event) {
-    // TODO make sure item name is correct
-    var events_list = localStorage.getItem(EVENTS_LIST);
-    // TODO must catch out of bounds error (all events completed)
-    var event_to_notify = events_list[cur_event];
+    var events_list = JSON.parse(localStorage.getItem(EVENTS_LIST));
+    var events_len = events_list.length();
+
+    if (cur_event >= events_len)
+        return; // all events completed
+
+    var event_to_notify = events_list[cur_event]; 
     var now = new Date();
-    // TODO must correctly deal with the time event_time gives back
-    var milli_till_event = new Date(event_to_notify.time) - now;
+    var milli_till_event = new Date(event_to_notify.datetime) - now;
 
     setTimeout(notify_user, milli_till_event, 'BREAK TIME!', ICONS.event_to_notify.type, event_to_notify.name);
     cur_event++;
@@ -171,7 +173,6 @@ function notify_user(title, icon, message) {
         Notification.requestPermission();
 
     var notification = new Notification(title, {
-        // TODO change icon based on event
         icon: icon,
         body: message
     });

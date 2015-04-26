@@ -113,12 +113,36 @@ class Schedule(webapp2.RequestHandler):
 
         return True
 
-    def get_schedule(self, wake_up_time, end_time):
+    def get_schedule(self, wake_up_time, end_time, cur_time):
         '''
         Returns list of times and events that should be done at those times
         '''
         # TODO run algorithm and create array of event objects
+        # TODO get cur_time from client
 
+        cur_time = datetime.fromtimestamp(cur_time)
+        end_time = datetime.fromtimestamp(end_time)
+        
+        best_nap_time_shift = (wake_up_time[0:2] / 2) - 1.5 # slice to get the hour
+        best_nap_time = cur_time
+        
+        if (cur_time.hour >= 12): # PM so we need to add a day for nap
+            best_nap_time = best_nap_time.replace(day=best_nap_time.day + 1)
+
+        best_nap_time = best_nap_time.replace(hour=int(best_nap_time_shift))
+        
+        if best_nap_time_shift % 1 != 0: # has .5 so we need to add 30 min
+            half_hour = 30
+            best_nap_time = best_nap_time.replace(minute=best_nap_time.minute + half_hour)
+
+
+    
+        if end_time.hour < 5 and cur_time.hour < 24: # end_time is before 5 AM and it's currently before midnight
+            # walk should be set to near beginning
+            best_walk_time = 
+        else:
+            # walk should be set to near end
+            best_walk_time = 
         # return array
         return self.serialize(Events)
 
