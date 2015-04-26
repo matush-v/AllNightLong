@@ -52,7 +52,7 @@ $(document).ready(function() {
          'webkitTransitionEnd', function( e ) { 
             if (event.propertyName == 'height') {
                 $("#finish_text").text('Congratulations champ! You nailed it!');
-                $("#expander").append('<button id="reward_btn" class="btn btn-success">Reap your reward</button>');
+                $("#expander").append('<button id="reward_btn" class="btn btn-info">Reap your reward</button>');
                 $("#done_btn").unbind();
 
                 $("#reward_btn").click(function () {
@@ -287,6 +287,7 @@ function notify_user(title, icon, short_message, long_description) {
 ******************************************************************************/
 
 $('#done_btn').mousedown(function() {
+    $('body').css('user-select','none').prop('unselectable','on').on('selectstart',false);
     expand();
 }).bind('mouseup mouseleave', function() {
     minimize();
