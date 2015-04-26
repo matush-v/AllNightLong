@@ -1,4 +1,5 @@
 $(document).ready(function() {
+
     EVENTS_LIST = 'events'; // Const name of schedule item in localStorage
 
     if (top.location.pathname == '/clock.html') {
@@ -8,7 +9,7 @@ $(document).ready(function() {
 
         cur_event = 0; // Global counter for event list index
         cur_msg = $('#motivate_box').text().trim(); // Global var for quote
-        ICONS = {"exercise": "img/exercise_icon.png", "hydration": "img/water_icon.png", "food": "img/food_icon.png", "walk": "img/walk_icon.png", "nap": "img/nap_icon.png", "caffeine": "img/caffeine_icon.png"}; // Const icon locations // TODO fill this out
+        ICONS = {"exercise": "img/exercise_icon.png", "hydration": "img/water_icon.png", "food": "img/food_icon.png", "walk": "img/walk_icon.png", "nap": "img/nap_icon.png", "caffeine": "img/caffeine_icon.png"}; // Const icon locations
 
         /* Drawing events from localStorage */
         for (i = 0; i < len; i++) {
@@ -167,10 +168,12 @@ function set_up_notification(cur_event) {
     var event_to_notify = events_list[cur_event];
     var event_type = event_to_notify.type;
     var now = new Date();
-    var milli_till_event = new Date(event_to_notify.datetime) - now;
+    var milli_till_event = new Date(event_to_notify.datetime * 1000);
+    console.log(milli_till_event);
+    milli_till_event -= now;
 
-    console.log(event_to_notify);
-    setTimeout(notify_user, milli_till_event, 'BREAK TIME!', ICONS.event_type, event_to_notify.name);
+    console.log("milli till event " + milli_till_event);
+    setTimeout(notify_user, milli_till_event, 'BREAK TIME!', ICONS.type, event_to_notify.name);
     cur_event++;
 }
 
@@ -197,7 +200,11 @@ function notify_user(title, icon, message) {
         window.focus();
 
         // TODO show modal
-        $('#event_info').modal('show');
+        swal({
+          title: "Sweet!",
+          text: "Here's a custom image.",
+          imageUrl: 'img/water_icon.png'
+        });
     };
 
     // Notification is set for next event in the queue
