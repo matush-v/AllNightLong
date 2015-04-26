@@ -8,7 +8,7 @@ import jinja2
 import json
 import os
 from google.appengine.ext import db
-from datetime import datetime, timedelta
+from datetime import datetime, date, timedelta
 
 '''
 DATABASE
@@ -132,11 +132,11 @@ class Schedule(webapp2.RequestHandler):
 
         for instance in all_instances:
             dict_instance = db.to_dict(instance)
-            dict_instance["time"] = format(test_time, '%H:%M')
+            dict_instance["datetime"] = test_time
             test_time += timedelta(hours=1)
             items_list.append(dict_instance)
 
-        return json.dumps(items_list)
+        return json.dumps(items_list, default=dthandler)
 
     def add_rating(self, name, rating):
         '''
@@ -166,7 +166,11 @@ class Schedule(webapp2.RequestHandler):
 
         return True
 
-
+dthandler = lambda obj: (
+    obj.isoformat()
+    if isinstance(obj, datetime)
+    or isinstance(obj, date)
+    else None)
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
