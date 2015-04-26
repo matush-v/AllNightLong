@@ -177,7 +177,7 @@ body > .header {
     height: 35px;
 }
 
-label {
+.big-label {
     font-size: 18px;
 }
 
@@ -186,7 +186,10 @@ input[type=time] {
     height: 50px;
 }
 
+/****************/
 /* Rating Modal */
+/****************/
+
 div.stars {
   width: 270px;
   display: inline-block;
@@ -221,6 +224,46 @@ label.star:before {
   content: '\f006';
   font-family: FontAwesome;
 }
+
+.stars {
+    margin-right: 25%;
+    text-align: center;
+}
+
+#modal_icon {
+    max-height: 40px;
+    max-width: 40px;
+    text-align: center;
+    vertical-align: middle;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 25px;
+}
+
+#modal_icon img {
+    max-height: 100%;
+    max-width: 100%;
+}
+
+#modal_pass_btn {
+    margin-left: 0px;
+    float: left;
+}
+
+.modal-title {
+    font-weight: bold;
+    text-align: center;
+}
+
+.modal-label {
+    padding-right: 0px;
+}
+
+/****************/
+/*              */
+/****************/
+
+
 
 /* The Animation */ 
 #expander {

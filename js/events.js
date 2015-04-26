@@ -38,9 +38,9 @@ $(document).ready(function() {
 
         set_up_event_mouseover();
         // TODO remove this after testing
-        $('#event_modal').find('.modal-header').prepend("<img src='img/water_icon.png' alt='event icon'>" );
-        $('#event_modal').find('.modal-title').text("t icon" );
-        $('#event_modal').find('.modal-body').append("long_description");
+        $('#event_modal').find('.modal-header').prepend("<div id='modal_icon'><img src='img/water_icon.png' alt='event icon'></div>" );
+        $('#event_modal').find('.modal-title').text("Is It In You" );
+        $('#event_modal').find('.modal-body').append("Get some liquids in your body and keep killin it. Science recommends water because we are made of it and so it must be good for you.");
         $('#event_modal').modal('show')
         // Notification is set for first event in the queue
         set_up_notification();
@@ -127,13 +127,19 @@ function set_up_event_mouseover() {
             var event_index = $(this).attr('id').slice(ID_LENGTH);
             var date = (new Date(events_list[event_index].datetime * 1000));
             var hour = date.getHours();
-            am_pm = "am"
+            var minutes = date.getMinutes();
+            am_pm = "am";
+
             if (hour > 12) {
                 hour -= 12;
                 am_pm = "pm"
             }
 
-            var time = "Time: " + hour + ":" + date.getMinutes() + am_pm;
+            if (minutes < 10) {
+                minutes = "0" + minutes;
+            }
+
+            var time = "Time: " + hour + ":" + minutes + am_pm;
             $('#motivate_box').empty();
             $('#motivate_box').append('<p>' + events_list[event_index].description + '</p>');
             $('#motivate_box').append('<p>' + time + '</p>');
@@ -256,8 +262,7 @@ function notify_user(title, icon, short_message, long_description) {
     notification.onclick = function() {
         window.focus();
 
-        // TODO show modal
-        $('#event_modal').find('.modal-header').prepend("<img src='" + icon + "' alt='event icon'>");
+        $('#event_modal').find('.modal-header').prepend("<img id='modal_icon' src='" + icon + "' alt='event icon'>");
         $('#event_modal').find('.modal-title').text(title);
         $('#event_modal').find('.modal-body').append(long_description);
         $('#event_modal').modal('show')
