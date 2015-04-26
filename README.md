@@ -51,6 +51,7 @@ ________________________________________________________________________________
     * Bar is along clock based on hour hand and goes from light green to dark green with % next to it
 * Eyes Hurt?
   * Recommend F.lux
+* Ensure that everything still works with bad user input
 * Checkbox for caffine option and reminder to not drink beforehand
 * Ergonomic Recommendations under tips
 * YSLOW, Audit, and W3 validator (last validated 4/24 7:58)

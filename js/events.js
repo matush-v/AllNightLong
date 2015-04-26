@@ -15,7 +15,7 @@ $(document).ready(function() {
         for (i = 0; i < len; i++) {
             // Convert from Python datetime to JS Date
             events[i].datetime = new Date(events[i].datetime);
-            draw_event('blue', i, events[i].datetime);
+            draw_event('red', i, events[i].datetime);
         }
 
         set_up_event_mouseover();
@@ -43,22 +43,21 @@ function draw_event(color, index, datetime) {
         aren't right on the edge of the clock */
     var initial_offset = 0.5;
     var spacing_factor = 2; /* Determines space between depth levels */
-    var top_z_index = 1001; /* So dots appear on top of inner face */
+    var fade_factor = 0.1; /* Lower = more faded */
     var dot_width = parseInt(get_css('width', 'dot'));
     var dot_height = parseInt(get_css('height', 'dot'));
+    var max_depth = 3;
     var now = new Date();
     var dist = null;
     var x_offset = null;
     var y_offset = null;
 
     // depth is difference in hours
-    var depth = Math.floor(Math.abs(datetime - now) / (1000 * 60 * 60)); // milliseconds/sec * sec/min * min/hr
-
-    if (depth > 2) {
-        return; // don't draw events past third level
+    var depth = Math.round((datetime - now) / (1000 * 60 * 60)); // milliseconds/sec * sec/min * min/hr
+    if (depth > max_depth - 1) {
+        return; // don't draw events that close to the center
     } else if (depth < 0) {
-        console.warn("Oops. Depth is negative in draw_event!");
-        return;
+        return; // don't draw past events
     }
 
     var hour = datetime.getHours();
@@ -80,7 +79,7 @@ function draw_event(color, index, datetime) {
     new_left = new_left - dot_height / 2 + x_offset;
     new_top = new_top - dot_height / 2 + y_offset;
     $('.outer_face').append('<div id="event_' + index + '" class="dot" style="left:' + new_left + 'px;top:' + new_top + 'px; background-color: ' + color + '"></div>');
-    $('.dot').css('z-index', top_z_index);
+    $('#event_' + index).css('opacity', (max_depth - depth + fade_factor) / (max_depth + fade_factor)); // faded based on depth: 1.0 opacity is fully visible, and 0.0 is fully transparent
 }
 
 function set_up_event_mouseover() {
@@ -108,6 +107,7 @@ function set_up_event_mouseover() {
 *
 ******************************************************************************/
 
+/* Invariant: the end time is always the next day */
 $('#times_form').submit(function(e) {
     e.preventDefault();
 
@@ -115,12 +115,25 @@ $('#times_form').submit(function(e) {
     var end_time = $('#end_time').val();
     var expires_in = 1; // days
     var params = null;
+    var end_date = new Date();
+    var wake_up_date = new Date();
+    var wake_hour_min = get_hour_min(wake_up_time);
+    var end_hour_min = get_hour_min(end_time);
 
-    create_cookie('wake_up_time', wake_up_time, expires_in);
-    create_cookie('end_time', end_time, expires_in);
+    if (validate_times(wake_up_time, end_time)) {
+        create_cookie('wake_up_time', wake_up_time, expires_in);
+        create_cookie('end_time', end_time, expires_in);
 
-    params = {'wake_up_time': toString(wake_up_time), 'end_time': toString(end_time)};
-    get_schedule(params);
+        end_date.setDate(end_date.getDate() + 1);
+        end_date.setHours(end_hour_min.hour);
+        end_date.setMinutes(end_hour_min.min);
+
+        end_time = Math.floor(end_date.getTime() / 1000); // send timestamp to server
+        cur_time = Math.floor((new Date()).getTime() / 1000);
+        
+        params = {'wake_up_time': toString(wake_up_time), 'end_time': end_time, 'cur_time': cur_time};
+        get_schedule(params);
+    }
 });
 
 
@@ -196,19 +209,44 @@ function notify_user(title, icon, message) {
 *
 ******************************************************************************/
 
+
+/* Validate that the range of wake_up_time is within 3am to 3pm */
+function validate_times(wake_up_time, end_time) {
+    var wake_hour_min = get_hour_min(wake_up_time);
+    var end_hour_min = get_hour_min(end_time);
+    var wake_err_msg = '<p class="alert alert-danger">Sorry, but All Night Long currently does not support nocturnal schedules. Please wait for the release of All Day Long. Thank you for your patience.</p>';
+
+    $('#error').empty();
+    if (wake_hour_min.hour == 15) {
+        if (wake_hour_min.min > 0) {
+            $('#error').append(wake_err_msg);
+            return false;
+        }
+    } else if (wake_hour_min.hour > 15) {
+        $('#error').append(wake_err_msg);
+        return false;
+    } else if (wake_hour_min.hour < 3) {
+        $('#error').append(wake_err_msg);
+        return false;
+    }
+
+    // TODO check to make sure end_time is before their standard wake_up_time
+
+    return true;
+}
+
+
+
 /* Given a 24hr time string (i.e. 19:30), return the dictionary
    with separate fields for both the hour and minute 
-   ( i.e. {'hour: 19', 'minute: 30'} ) 
+   ( i.e. {'hour: 19', 'min: 30'} ) 
  */
 function get_hour_min(time_string) {
     var time_arr = time_string.split(':');
     var hour = time_arr[0];
     var minute = time_arr[1];
-    return {'hour': parseInt(hour), 'minute': parseInt(minute)};
+    return {'hour': parseInt(hour), 'min': parseInt(minute)};
 }
-
-
-
 
 
 /* Gets the CSS property of a class that hasn't been used yet in the DOM */
