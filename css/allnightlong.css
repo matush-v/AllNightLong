@@ -75,7 +75,7 @@ label {
 
 #go_btn {
     margin-top: 30px;
-    font-size: 38px;
+    font-size: 50px;
 }
 
 
@@ -175,4 +175,13 @@ body > .header {
     display: block;
     font-size: 14px;
     height: 35px;
+}
+
+label {
+    font-size: 18px;
+}
+
+input[type=time] {
+    font-size: 25px;
+    height: 50px;
 }
