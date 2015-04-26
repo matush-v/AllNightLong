@@ -9,6 +9,7 @@ import json
 import os
 import time
 import calendar
+import random
 from google.appengine.ext import db
 from datetime import datetime, date, timedelta
 
@@ -133,7 +134,7 @@ class Schedule(webapp2.RequestHandler):
         end_time = datetime.fromtimestamp(end_time)
         end_time = end_time - timedelta(hours=4) 
 
-        halfway_time = cur_time + (end_time - cur_time / 2)
+        halfway_time = cur_time + (end_time - cur_time) / 2
 
         ###################### WATER ##########################
         event_type = "hydration"
@@ -142,7 +143,7 @@ class Schedule(webapp2.RequestHandler):
         water_time = cur_time + timedelta(minutes=45)
         
         while water_time < end_time:
-            events.append({'name': event_name, 'type': event_type, 'description': description, 'datetime': calendar.timegm(water_time.timetuple())})
+            events.append({'name': event_name, 'type': event_type, 'description': description, 'datetime': calendar.timegm((water_time + timedelta(hours=4)).timetuple())})
             water_time += timedelta(hours=1)
 
         #######################################################
@@ -166,7 +167,7 @@ class Schedule(webapp2.RequestHandler):
 
         best_nap_time = best_nap_time + timedelta(hours=4)
         
-        events.append({'name': event_name, 'type': event_type, 'description': description, 'datetime': calendar.timegm(best_nap_time.timetuple())})
+        events.append({'name': event_name, 'type': event_type, 'description': description, 'datetime': calendar.timegm((best_nap_time + timedelta(hours=4)).timetuple())})
 
         # TODO: Check to make sure there is no water break overlap with the nap
 
@@ -180,16 +181,16 @@ class Schedule(webapp2.RequestHandler):
         if end_time.hour < 5 and cur_time.hour <= 23: # end_time is before 5 AM and it's currently before midnight
             # walk should be set to near beginning
             best_walk_time = cur_time + timedelta(hours=1)
-            rand_min = randrange(0, 60)
+            rand_min = random.randrange(0, 60)
             # TODO add while loop to catch for time collisions
             best_walk_time = best_walk_time + timedelta(minutes=rand_min)
         else:
             # walk should be set to near end
             best_walk_time = end_time - timedelta(hours=1)
-            rand_min = randrange(0, 60)
+            rand_min = random.randrange(0, 60)
             best_walk_time = best_walk_time - timedelta(minutes=rand_min)
 
-        events.append({'name': event_name, 'type': event_type, 'description': description, 'datetime': calendar.timegm(best_walk_time.timetuple())})
+        events.append({'name': event_name, 'type': event_type, 'description': description, 'datetime': calendar.timegm((best_walk_time + timedelta(hours=4)).timetuple())})
 
         ######################################################
 
@@ -202,7 +203,7 @@ class Schedule(webapp2.RequestHandler):
 
         best_caffeine_time = best_nap_time - timedelta(minutes=5)
 
-        events.append({'name': event_name, 'type': event_type, 'description': description, 'datetime': calendar.timegm(best_caffeine_time.timetuple())})
+        events.append({'name': event_name, 'type': event_type, 'description': description, 'datetime': calendar.timegm((best_caffeine_time + timedelta(hours=4)).timetuple())})
 
         ######################################################
 
@@ -216,7 +217,7 @@ class Schedule(webapp2.RequestHandler):
         food_time = cur_time + timedelta(hours=1)
 
         while food_time < end_time:
-            events.append({'name': event_name, 'type': event_type, 'description': description, 'datetime': calendar.timegm(food_time.timetuple())})
+            events.append({'name': event_name, 'type': event_type, 'description': description, 'datetime': calendar.timegm((food_time + timedelta(hours=4)).timetuple())})
 
             if food_time >= halfway_time:
                 food_time += timedelta(hours=1)
@@ -241,7 +242,7 @@ class Schedule(webapp2.RequestHandler):
 
         while exercise_time < end_time:
             exercise = random.choice(exercises)
-            events.append({'name': exercise['name'], 'type': event_type, 'description': exercise['description'], 'datetime': calendar.timegm(exercise_time.timetuple())})
+            events.append({'name': exercise['name'], 'type': event_type, 'description': exercise['description'], 'datetime': calendar.timegm((exercise_time + timedelta(hours=4)).timetuple())})
 
             if exercise_time >= halfway_time:
                 exercise_time += timedelta(hours=1)
