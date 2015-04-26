@@ -2,6 +2,8 @@ $(document).ready(function() {
     EVENTS_LIST = 'events'; // Const name of schedule item in localStorage
 
     if (top.location.pathname == '/clock.html') {
+        document.documentElement.style.overflowX = 'hidden';
+
         QUOTES = ['With the new day comes new strength and new thoughts.',
                   'In the middle of every difficulty lies opportunity.',
                   'All we have to decide is what to do with the time that is given us.',
