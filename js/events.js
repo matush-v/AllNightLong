@@ -1,10 +1,33 @@
 $(document).ready(function() {
     // Test for notification
     // setTimeout(notify_user, 2000, "title!", "http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png", "message");
+    EVENTS_LIST = 'events'; // Const name of schedule item in localStorage
 
-    cur_event = 0; // Start with first event when doing notification
-    ICONS = {"type1": "icon1", "type2": "icon2", "type3": "icon3"}; // icon locations // TODO fill this out
-    EVENTS_LIST = 'events' // name of schedule item in localStorage 
+    if (top.location.pathname == '/clock.html') {
+        var events = JSON.parse(localStorage.getItem(EVENTS_LIST));
+        var len = events.length;
+
+        cur_event = 0; // Global counter for event list index
+        cur_msg = $('#motivate_box').text().trim(); // Global var for quote
+        ICONS = {"type1": "icon1", "type2": "icon2", "type3": "icon3"}; // Const icon locations // TODO fill this out
+
+        /* Drawing events from localStorage */
+        for (i = 0; i < len; i++) {
+            // Convert from Python datetime to JS Date
+            events[i].datetime = new Date(events[i].datetime);
+            draw_event('blue', i, events[i].datetime);
+        }
+
+        set_up_event_mouseover();
+        // Notification is set for first event in the queue
+        // set_up_notification(cur_event); TODO uncomment
+
+        // [{name: event1, type: water, description: info, time: 1pm}]
+        // If user completes an event
+            // completed tag is added to event with user rating
+        // Else
+            // incomplete tag is added
+    }
 });
 
 /******************************************************************************
@@ -14,7 +37,7 @@ $(document).ready(function() {
 ******************************************************************************/
 
 /* draw colored circle based off minute at the passed in depth */
-function draw_event(color, index, time) {
+function draw_event(color, index, datetime) {
     var minutes_in_hour = 60, rads_in_circle = 2 * Math.PI;
     /* Moves the dots of 0 depth slightly inward so they
         aren't right on the edge of the clock */
@@ -27,17 +50,19 @@ function draw_event(color, index, time) {
     var dist = null;
     var x_offset = null;
     var y_offset = null;
-    var hour_min = get_hour_min(time)
-    var hour = hour_min.hour;
-    var minute = hour_min.minute;
 
-    var depth = hour - now.getHours();
+    // depth is difference in hours
+    var depth = Math.floor(Math.abs(datetime - now) / (1000 * 60 * 60)); // milliseconds/sec * sec/min * min/hr
+
     if (depth > 2) {
         return; // don't draw events past third level
     } else if (depth < 0) {
-        console.log("Oops. Depth is negative in draw_event!");
+        console.warn("Oops. Depth is negative in draw_event!");
         return;
     }
+
+    var hour = datetime.getHours();
+    var minute = datetime.getMinutes();
 
     angle = (minute / minutes_in_hour) * rads_in_circle - Math.PI / 2;
 
@@ -58,17 +83,22 @@ function draw_event(color, index, time) {
     $('.dot').css('z-index', top_z_index);
 }
 
+function set_up_event_mouseover() {
+    $('.dot').each(function() {
+        var ID_LENGTH = 6; // length of unnecessary chars in "event_#"
+        var events_list = JSON.parse(localStorage.getItem(EVENTS_LIST));
 
-$('dot').each(function() {
-    var ID_LENGTH = 6; // length of unnecessary chars in "event_#"
-    var events_list = localStorage.getItem(EVENTS_LIST); // TODO name might be wrong
-    
-    $(this).mouseover(function() {
-        var event_index = $(this).attr('id').slice(ID_LENGTH)
-        
-        $('#motive_box').text(events_list[event_index].description)
+        $(this).mouseover(function() {
+            var event_index = $(this).attr('id').slice(ID_LENGTH);
+
+            $('#motivate_box').text(events_list[event_index].description);
+        });
+
+        $(this).mouseleave(function() {
+            $('#motivate_box').text(cur_msg);
+        });
     });
-});
+}
 
 
 
@@ -89,10 +119,7 @@ $('#times_form').submit(function(e) {
     create_cookie('wake_up_time', wake_up_time, expires_in);
     create_cookie('end_time', end_time, expires_in);
 
-    window.location.replace('clock.html');
-
     params = {'wake_up_time': toString(wake_up_time), 'end_time': toString(end_time)};
-
     get_schedule(params);
 });
 
@@ -101,24 +128,10 @@ $('#times_form').submit(function(e) {
  * then calls the draw_event function */
 function get_schedule(params) {
     $.post('/schedule', params, function(data) {
-        // TODO
-        // Events are drawn on the clock and saved in local storage
         var events = JSON.parse(data);
-        var len = events.length;
+
         localStorage.setItem(EVENTS_LIST, events);
-
-        for (i = 0; i < len; i++) {
-            draw_event('blue', i, events[i].time);
-        }
-
-        // [{name: event1, type: water, description: info, time: 1pm}]
-        // If user completes an event
-            // completed tag is added to event with user rating
-        // Else
-            // incomplete tag is added
-
-        // Notification is set for first event in the queue
-        set_up_notification(cur_event);
+        window.location.replace('clock.html');
     });
 }
 
@@ -190,7 +203,7 @@ function get_hour_min(time_string) {
     var time_arr = time_string.split(':');
     var hour = time_arr[0];
     var minute = time_arr[1];
-    return {'hour': hour, 'minute': minute};
+    return {'hour': parseInt(hour), 'minute': parseInt(minute)};
 }
 
 
