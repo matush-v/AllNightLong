@@ -8,6 +8,7 @@ import jinja2
 import json
 import os
 import time
+import calendar
 from google.appengine.ext import db
 from datetime import datetime, date, timedelta
 
@@ -143,7 +144,7 @@ class Schedule(webapp2.RequestHandler):
             best_nap_time = best_nap_time.replace(minute=half_hour)
 
         best_nap_time = best_nap_time + timedelta(hours=4)
-        return [{"datetime": int(time.mktime(best_nap_time.timetuple()))}]
+        return [{"datetime": calendar.timegm(best_nap_time.timetuple())}]
     
         # if end_time.hour < 5 and cur_time.hour < 24: # end_time is before 5 AM and it's currently before midnight
         #     # walk should be set to near beginning
