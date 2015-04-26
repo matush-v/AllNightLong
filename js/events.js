@@ -1,23 +1,24 @@
 $(document).ready(function() {
     // Test for notification
     // setTimeout(notify_user, 2000, "title!", "http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png", "message");
+    EVENTS_LIST = 'events'; // Const name of schedule item in localStorage
 
-    cur_event = 0; // Start with first event when doing notification
-    ICONS = {"type1": "icon1", "type2": "icon2", "type3": "icon3"}; // icon locations // TODO fill this out
-    EVENTS_LIST = 'events' // name of schedule item in localStorage
-
-    /* Drawing events from localStorage */
-    if (top.location.pathname == "/clock.html") {
+    if (top.location.pathname == '/clock.html') {
         var events = JSON.parse(localStorage.getItem(EVENTS_LIST));
-
-
         var len = events.length;
+
+        cur_event = 0; // Global counter for event list index
+        cur_msg = $('#motivate_box').text().trim(); // Global var for quote
+        ICONS = {"type1": "icon1", "type2": "icon2", "type3": "icon3"}; // Const icon locations // TODO fill this out
+
+        /* Drawing events from localStorage */
         for (i = 0; i < len; i++) {
             // Convert from Python datetime to JS Date
             events[i].datetime = new Date(events[i].datetime);
             draw_event('red', i, events[i].datetime);
         }
-        console.log(events);
+
+        set_up_event_mouseover();
         // Notification is set for first event in the queue
         // set_up_notification(cur_event); TODO uncomment
 
@@ -52,11 +53,12 @@ function draw_event(color, index, datetime) {
     var y_offset = null;
 
     // depth is difference in hours
+<<<<<<< HEAD
     var depth = Math.round((datetime - now) / (1000 * 60 * 60)); // milliseconds/sec * sec/min * min/hr
     if (depth > max_depth - 1) {
-        return; // don't draw events past third level
+        return; // don't draw events that close to the center
     } else if (depth < 0) {
-        console.log("Oops. Depth is negative in draw_event!");
+        console.warn("Oops. Depth is negative in draw_event!");
         return;
     }
 
@@ -82,17 +84,22 @@ function draw_event(color, index, datetime) {
     $('#event_' + index).css('opacity', (max_depth - depth + fade_factor) / (max_depth + fade_factor)); // faded based on depth: 1.0 opacity is fully visible, and 0.0 is fully transparent
 }
 
+function set_up_event_mouseover() {
+    $('.dot').each(function() {
+        var ID_LENGTH = 6; // length of unnecessary chars in "event_#"
+        var events_list = JSON.parse(localStorage.getItem(EVENTS_LIST));
 
-$('dot').each(function() {
-    var ID_LENGTH = 6; // length of unnecessary chars in "event_#"
-    var events_list = localStorage.getItem(EVENTS_LIST); // TODO name might be wrong
-    
-    $(this).mouseover(function() {
-        var event_index = $(this).attr('id').slice(ID_LENGTH)
-        
-        $('#motive_box').text(events_list[event_index].description)
+        $(this).mouseover(function() {
+            var event_index = $(this).attr('id').slice(ID_LENGTH);
+
+            $('#motivate_box').text(events_list[event_index].description);
+        });
+
+        $(this).mouseleave(function() {
+            $('#motivate_box').text(cur_msg);
+        });
     });
-});
+}
 
 
 
@@ -122,7 +129,6 @@ $('#times_form').submit(function(e) {
  * then calls the draw_event function */
 function get_schedule(params) {
     $.post('/schedule', params, function(data) {
-
         var events = JSON.parse(data);
 
         localStorage.setItem(EVENTS_LIST, events);
