@@ -114,6 +114,10 @@ $('#times_form').submit(function(e) {
     var end_time = $('#end_time').val();
     var wake_hour_min = get_hour_min(wake_up_time);
     var wake_err_msg = '<p class="alert alert-danger">Sorry, but All Night Long currently does not support nocturnal schedules. Please wait for the release of All Day Long. Thank you for your patience.</p>';
+    var expires_in = 1; // days
+    var params = null;
+    
+    $('#error').empty();
     if (wake_hour_min.hour == 15) {
         if (wake_hour_min.min > 0) {
             $('#error').append(wake_err_msg);
@@ -126,8 +130,6 @@ $('#times_form').submit(function(e) {
         $('#error').append(wake_err_msg);
         return;
     }
-    var expires_in = 1; // days
-    var params = null;
 
     create_cookie('wake_up_time', wake_up_time, expires_in);
     create_cookie('end_time', end_time, expires_in);
@@ -210,14 +212,13 @@ function notify_user(title, icon, message) {
 
 /* Given a 24hr time string (i.e. 19:30), return the dictionary
    with separate fields for both the hour and minute 
-   ( i.e. {'hour: 19', 'minute: 30'} ) 
+   ( i.e. {'hour: 19', 'min: 30'} ) 
  */
 function get_hour_min(time_string) {
-    console.log(time_string);
     var time_arr = time_string.split(':');
     var hour = time_arr[0];
     var minute = time_arr[1];
-    return {'hour': parseInt(hour), 'minute': parseInt(minute)};
+    return {'hour': parseInt(hour), 'min': parseInt(minute)};
 }
 
 
