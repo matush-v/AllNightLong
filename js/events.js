@@ -4,7 +4,25 @@ $(document).ready(function() {
 
     cur_event = 0; // Start with first event when doing notification
     ICONS = {"type1": "icon1", "type2": "icon2", "type3": "icon3"}; // icon locations // TODO fill this out
-    EVENTS_LIST = 'events' // name of schedule item in localStorage 
+    EVENTS_LIST = 'events' // name of schedule item in localStorage
+
+    /* Drawing events from localStorage */
+    if (top.location.pathname == "/clock.html") {
+        var events = JSON.parse(localStorage.getItem(EVENTS_LIST));
+        var len = events.length;
+
+        for (i = 0; i < len; i++) {
+            draw_event('blue', i, events[i].datetime);
+        }
+        // Notification is set for first event in the queue
+        // set_up_notification(cur_event); TODO uncomment
+
+        // [{name: event1, type: water, description: info, time: 1pm}]
+        // If user completes an event
+            // completed tag is added to event with user rating
+        // Else
+            // incomplete tag is added
+    }
 });
 
 /******************************************************************************
@@ -14,7 +32,7 @@ $(document).ready(function() {
 ******************************************************************************/
 
 /* draw colored circle based off minute at the passed in depth */
-function draw_event(color, index, time) {
+function draw_event(color, index, datetime) {
     var minutes_in_hour = 60, rads_in_circle = 2 * Math.PI;
     /* Moves the dots of 0 depth slightly inward so they
         aren't right on the edge of the clock */
@@ -27,11 +45,8 @@ function draw_event(color, index, time) {
     var dist = null;
     var x_offset = null;
     var y_offset = null;
-    var hour_min = get_hour_min(time)
-    var hour = hour_min.hour;
-    var minute = hour_min.minute;
 
-    var depth = hour - now.getHours();
+    var depth = Math.abs(datetime - now) / 36000; // depth is difference in hours
     if (depth > 2) {
         return; // don't draw events past third level
     } else if (depth < 0) {
@@ -89,10 +104,7 @@ $('#times_form').submit(function(e) {
     create_cookie('wake_up_time', wake_up_time, expires_in);
     create_cookie('end_time', end_time, expires_in);
 
-    window.location.replace('clock.html');
-
     params = {'wake_up_time': toString(wake_up_time), 'end_time': toString(end_time)};
-
     get_schedule(params);
 });
 
@@ -100,24 +112,13 @@ $('#times_form').submit(function(e) {
 /* Handles post request to get event schedule based on input times and
  * then calls the draw_event function */
 function get_schedule(params) {
-    $.post('/schedule', params, function(data) {
-        // TODO
-        // Events are drawn on the clock and saved in local storage
-        var events = JSON.parse(data);
-        var len = events.length;
+    $.post('/schedule', params, function(events) {
+
+        // Convert from Python datetime to JS Date
+        events.datetime = new Date(events.datetime);
+
         localStorage.setItem(EVENTS_LIST, events);
-        for (i = 0; i < len; i++) {
-            draw_event('blue', i, events[i].time);
-        }
-
-        // [{name: event1, type: water, description: info, time: 1pm}]
-        // If user completes an event
-            // completed tag is added to event with user rating
-        // Else
-            // incomplete tag is added
-
-        // Notification is set for first event in the queue
-        set_up_notification(cur_event);
+        window.location.replace('clock.html');
     });
 }
 
@@ -189,7 +190,7 @@ function get_hour_min(time_string) {
     var time_arr = time_string.split(':');
     var hour = time_arr[0];
     var minute = time_arr[1];
-    return {'hour': hour, 'minute': minute};
+    return {'hour': parseInt(hour), 'minute': parseInt(minute)};
 }
 
 
