@@ -268,6 +268,21 @@ function notify_user(title, icon, short_message, long_description) {
 }
 
 
+$('#tired_btn').click(function() {
+    var extras = [{"name": "Quick Spark" , "description": "Splash yourself with cold water", "icon": "img/discomfort_icon.jpg"}, 
+    {"name": "Why you hittin’ yourself?", "description": "Pinch your thigh, eyebrow, or cheek", "icon": "img/discomfort_icon.jpg"}, 
+    {"name": "Get your jam on", "description": "Put some rousing tunes on and pump yourself up for an intense night", "icon": "img/music_icon.jpg"}];
+    var rand = Math.random();
+    rand *= extras.length;
+    rand = Math.floor(rand);
+    var choice = extras[rand];
+
+    $('#event_modal').find('.modal-header').prepend("<img src='" + choice.icon + "' alt='event icon'>");
+    $('#event_modal').find('.modal-title').text(choice.name);
+    $('#event_modal').find('.modal-body').append(choice.description);
+    $('#event_modal').modal('show');
+});
+
 
 /******************************************************************************
 *
