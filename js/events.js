@@ -100,13 +100,11 @@ $('#times_form').submit(function(e) {
 /* Handles post request to get event schedule based on input times and
  * then calls the draw_event function */
 function get_schedule(params) {
-    console.log("tyring!");
     $.post('/schedule', params, function(data) {
         // TODO
         // Events are drawn on the clock and saved in local storage
         var events = JSON.parse(data);
         var len = events.length;
-        console.log("got data!");
         localStorage.setItem(EVENTS_LIST, events);
 
         for (i = 0; i < len; i++) {
