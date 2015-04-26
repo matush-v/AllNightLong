@@ -6,6 +6,7 @@ $(document).ready(function() {
     if (top.location.pathname == '/clock.html') {
         var events = JSON.parse(localStorage.getItem(EVENTS_LIST));
         var len = events.length;
+        var today = new Date();
 
         cur_event = 0; // Global counter for event list index
         cur_msg = $('#motivate_box').text().trim(); // Global var for quote
@@ -14,7 +15,15 @@ $(document).ready(function() {
         /* Drawing events from localStorage */
         for (i = 0; i < len; i++) {
             // Convert from Python datetime to JS Date
-            events[i].datetime = new Date(events[i].datetime);
+            // if (today.dst()) {
+            //     events[i].datetime = new Date(events[i].datetime * 1000)
+            //     events[i].datetime = new Date(events[i].datetime + "GMT+60");
+            // }
+            // else {
+            //     events[i].datetime = new Date(events[i].datetime * 1000)
+            //     events[i].datetime = new Date(events[i].datetime + "GMT");
+            // }
+            events[i].datetime = new Date(events[i].datetime * 1000);
             draw_event('red', i, events[i].datetime);
         }
 
@@ -141,10 +150,9 @@ $('#times_form').submit(function(e) {
  * then calls the draw_event function */
 function get_schedule(params) {
     $.post('/schedule', params, function(data) {
-        var events = JSON.parse(data);
 
-        localStorage.setItem(EVENTS_LIST, events);
-        window.location.href('clock.html');
+        localStorage.setItem(EVENTS_LIST, data);
+        window.location.replace('clock.html');
     });
 }
 
@@ -157,13 +165,15 @@ function get_schedule(params) {
 /* The notification for the cur_event in the queue is set up
  * based on its event time */
 function set_up_notification(cur_event) {
-    // TODO make sure item name is correct
-    var events_list = localStorage.getItem(EVENTS_LIST);
-    // TODO must catch out of bounds error (all events completed)
-    var event_to_notify = events_list[cur_event];
+    var events_list = JSON.parse(localStorage.getItem(EVENTS_LIST));
+    var events_len = events_list.length();
+
+    if (cur_event >= events_len)
+        return; // all events completed
+
+    var event_to_notify = events_list[cur_event]; 
     var now = new Date();
-    // TODO must correctly deal with the time event_time gives back
-    var milli_till_event = new Date(event_to_notify.time) - now;
+    var milli_till_event = new Date(event_to_notify.datetime) - now;
 
     setTimeout(notify_user, milli_till_event, 'BREAK TIME!', ICONS.event_to_notify.type, event_to_notify.name);
     cur_event++;
@@ -184,7 +194,6 @@ function notify_user(title, icon, message) {
         Notification.requestPermission();
 
     var notification = new Notification(title, {
-        // TODO change icon based on event
         icon: icon,
         body: message
     });
@@ -207,6 +216,16 @@ function notify_user(title, icon, message) {
 *                            HELPERS
 *
 ******************************************************************************/
+
+Date.prototype.stdTimezoneOffset = function() {
+    var jan = new Date(this.getFullYear(), 0, 1);
+    var jul = new Date(this.getFullYear(), 6, 1);
+    return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+}
+
+Date.prototype.dst = function() {
+    return this.getTimezoneOffset() < this.stdTimezoneOffset();
+}
 
 
 /* Validate that the range of wake_up_time is within 3am to 3pm */
