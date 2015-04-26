@@ -5,31 +5,47 @@
 ******************************************************************************/
 
 /* draw colored circle based off minute at the passed in depth */
-function draw_event(color, minute, depth) {
+function draw_event(color, index, time) {
     var minutes_in_hour = 60, rads_in_circle = 2 * Math.PI;
     /* Moves the dots of 0 depth slightly inward so they
         aren't right on the edge of the clock */
     var initial_offset = 0.5;
     var spacing_factor = 2; /* Determines space between depth levels */
     var top_z_index = 1001; /* So dots appear on top of inner face */
+    var dot_width = parseInt(get_css('width', 'dot'));
+    var dot_height = parseInt(get_css('height', 'dot'));
+    var now = new Date();
+    var dist = null;
+    var x_offset = null;
+    var y_offset = null;
+    var hour_min = get_hour_min(time)
+    var hour = hour_min.hour;
+    var minute = hour_min.minute;
+
+    var depth = hour - now.getHours();
+    if (depth > 2) {
+        return; // don't draw events past third level
+    } else if (depth < 0) {
+        console.log("Oops. Depth is negative in draw_event!");
+        return;
+    }
+
     angle = (minute / minutes_in_hour) * rads_in_circle - Math.PI / 2;
+
+    /* Distance to move toward center of circle */
+    dist = (depth + initial_offset) * dot_width * spacing_factor;
+    x_offset = dist * Math.cos(Math.PI - angle);
+    y_offset = dist * Math.sin(Math.PI + angle);
+
     radius = ($('.outer_face').width()) / 2;
     new_top = (($('.outer_face').height() / 2) + radius * Math.sin(angle));
     new_left = (($('.outer_face').width() / 2) + radius * Math.cos(angle));
-
-    var dot_width = parseInt(get_css('width', 'dot'));
-    var dot_height = parseInt(get_css('height', 'dot'));
-
-    /* Distance to move toward center of circle */
-    var dist = (depth + initial_offset) * dot_width * spacing_factor;
-    var x_offset = dist * Math.cos(Math.PI - angle);
-    var y_offset = dist * Math.sin(Math.PI + angle);
 
     /* Center dots at point on circle border, and then add offset
         needed to bring them closer to the center. */
     new_left = new_left - dot_height / 2 + x_offset;
     new_top = new_top - dot_height / 2 + y_offset;
-    $('.outer_face').append('<div class="dot" style="left:' + new_left + 'px;top:' + new_top + 'px; background-color: ' + color + '"></div>');
+    $('.outer_face').append('<div id="event_' + index + '" class="dot" style="left:' + new_left + 'px;top:' + new_top + 'px; background-color: ' + color + '"></div>');
     $('.dot').css('z-index', top_z_index);
 }
 
@@ -57,21 +73,33 @@ $('#times_form').submit(function(e) {
 
     params = {'wake_up_time': toString(wake_up_time), 'end_time': toString(end_time)};
 
+    get_schedule(params);
+});
 
+
+/* Handles post request to get event schedule based on input times and
+ * then calls the draw_event function */
+function get_schedule(params) {
     $.post('/schedule', params, function(data) {
         // TODO
         // Events are drawn on the clock and saved in local storage
+        var events = JSON.parse(data);
+        var len = events.length;
+        localStorage.setItem(EVENTS_LIST, events);
+        for (i = 0; i < len; i++) {
+            draw_event('blue', i, events[i].time);
+        }
+
         // [{name: event1, type: water, description: info, time: 1pm}]
         // If user completes an event
             // completed tag is added to event with user rating
         // Else
             // incomplete tag is added
-        console.log(data);
+
         // Notification is set for first event in the queue
         set_up_notification(cur_event);
     });
-});
-
+}
 
 /******************************************************************************
 *
@@ -138,6 +166,20 @@ function notify_user(title, icon, message) {
 *                            HELPERS
 *
 ******************************************************************************/
+
+/* Given a 24hr time string (i.e. 19:30), return the dictionary
+   with separate fields for both the hour and minute 
+   ( i.e. {'hour: 19', 'minute: 30'} ) 
+ */
+function get_hour_min(time_string) {
+    var time_arr = time_string.split(':');
+    var hour = time_arr[0];
+    var minute = time_arr[1];
+    return {'hour': hour, 'minute': minute};
+}
+
+
+
 
 
 /* Gets the CSS property of a class that hasn't been used yet in the DOM */
