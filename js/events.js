@@ -6,6 +6,7 @@ $(document).ready(function() {
     if (top.location.pathname == '/clock.html') {
         var events = JSON.parse(localStorage.getItem(EVENTS_LIST));
         var len = events.length;
+        var today = new Date();
 
         cur_event = 0; // Global counter for event list index
         cur_msg = $('#motivate_box').text().trim(); // Global var for quote
@@ -14,7 +15,15 @@ $(document).ready(function() {
         /* Drawing events from localStorage */
         for (i = 0; i < len; i++) {
             // Convert from Python datetime to JS Date
-            events[i].datetime = new Date(events[i].datetime);
+            // if (today.dst()) {
+            //     events[i].datetime = new Date(events[i].datetime * 1000)
+            //     events[i].datetime = new Date(events[i].datetime + "GMT+60");
+            // }
+            // else {
+            //     events[i].datetime = new Date(events[i].datetime * 1000)
+            //     events[i].datetime = new Date(events[i].datetime + "GMT");
+            // }
+            console.log(new Date(events[i].datetime * 1000));
             draw_event('red', i, events[i].datetime);
         }
 
@@ -131,7 +140,7 @@ $('#times_form').submit(function(e) {
         end_time = Math.floor(end_date.getTime() / 1000); // send timestamp to server
         cur_time = Math.floor((new Date()).getTime() / 1000);
         
-        params = {'wake_up_time': toString(wake_up_time), 'end_time': end_time, 'cur_time': cur_time};
+        params = {'wake_up_time': wake_up_time, 'end_time': end_time, 'cur_time': cur_time};
         get_schedule(params);
     }
 });
@@ -141,9 +150,8 @@ $('#times_form').submit(function(e) {
  * then calls the draw_event function */
 function get_schedule(params) {
     $.post('/schedule', params, function(data) {
-        var events = JSON.parse(data);
-
-        localStorage.setItem(EVENTS_LIST, events);
+        console.log(data);
+        localStorage.setItem(EVENTS_LIST, data);
         window.location.replace('clock.html');
     });
 }
@@ -208,6 +216,16 @@ function notify_user(title, icon, message) {
 *                            HELPERS
 *
 ******************************************************************************/
+
+Date.prototype.stdTimezoneOffset = function() {
+    var jan = new Date(this.getFullYear(), 0, 1);
+    var jul = new Date(this.getFullYear(), 6, 1);
+    return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+}
+
+Date.prototype.dst = function() {
+    return this.getTimezoneOffset() < this.stdTimezoneOffset();
+}
 
 
 /* Validate that the range of wake_up_time is within 3am to 3pm */

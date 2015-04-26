@@ -7,8 +7,10 @@ import logging
 import jinja2
 import json
 import os
+import time
 from google.appengine.ext import db
 from datetime import datetime, date, timedelta
+
 
 '''
 DATABASE
@@ -62,7 +64,8 @@ class Schedule(webapp2.RequestHandler):
         self.response.headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept'
 
         wake_up_time = self.request.get("wake_up_time")
-        end_time = self.request.get("end_time")
+        end_time = int(self.request.get("end_time"))
+        cur_time = int(self.request.get("cur_time"))
 
         name = self.request.get("name")
         event_type = self.request.get("event_type")
@@ -78,9 +81,9 @@ class Schedule(webapp2.RequestHandler):
             else:
                 self.response.out.write("Error in Adding Event!")
 
-        elif wake_up_time and end_time:
+        elif wake_up_time and end_time and cur_time:
             # creates schedule for user
-            schedule = self.get_schedule(wake_up_time, end_time)
+            schedule = self.get_schedule(wake_up_time, end_time, cur_time)
 
             self.response.out.write(json.dumps(schedule))
 
@@ -119,11 +122,15 @@ class Schedule(webapp2.RequestHandler):
         '''
         # TODO run algorithm and create array of event objects
         # TODO get cur_time from client
+        # TODO F with timezones
 
         cur_time = datetime.fromtimestamp(cur_time)
+        cur_time = cur_time - timedelta(hours=4)
+
         end_time = datetime.fromtimestamp(end_time)
-        
-        best_nap_time_shift = (wake_up_time[0:2] / 2) - 1.5 # slice to get the hour
+        end_time = end_time - timedelta(hours=4)
+
+        best_nap_time_shift = (int(wake_up_time[0:2]) / 2) - 1.5 # slice to get the hour
         best_nap_time = cur_time
         
         if (cur_time.hour >= 12): # PM so we need to add a day for nap
@@ -133,18 +140,19 @@ class Schedule(webapp2.RequestHandler):
         
         if best_nap_time_shift % 1 != 0: # has .5 so we need to add 30 min
             half_hour = 30
-            best_nap_time = best_nap_time.replace(minute=best_nap_time.minute + half_hour)
+            best_nap_time = best_nap_time.replace(minute=half_hour)
 
-
+        best_nap_time = best_nap_time + timedelta(hours=4)
+        return [{"datetime": int(time.mktime(best_nap_time.timetuple()))}]
     
-        if end_time.hour < 5 and cur_time.hour < 24: # end_time is before 5 AM and it's currently before midnight
-            # walk should be set to near beginning
-            best_walk_time = 
-        else:
-            # walk should be set to near end
-            best_walk_time = 
-        # return array
-        return self.serialize(Events)
+        # if end_time.hour < 5 and cur_time.hour < 24: # end_time is before 5 AM and it's currently before midnight
+        #     # walk should be set to near beginning
+        #     best_walk_time = 
+        # else:
+        #     # walk should be set to near end
+        #     best_walk_time = 
+        # # return array
+        # return self.serialize(Events)
 
     def serialize(self, database):
         '''
