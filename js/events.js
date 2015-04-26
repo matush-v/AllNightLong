@@ -36,12 +36,6 @@ $(document).ready(function() {
             draw_event('red', i, events[i].datetime);
         }
 
-        /* Remove default modal dismissal */
-        $('#event_modal').modal({
-            backdrop: 'static',
-            keyboard: false
-        });
-
         set_up_event_mouseover();
 
         // Notification is set for first event in the queue
@@ -263,6 +257,12 @@ function notify_user(title, icon, short_message, long_description) {
 
     notification.onclick = function() {
         window.focus();
+
+        /* Remove default modal dismissal */
+        $('#event_modal').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
 
         $('#event_modal').find('.modal-header').prepend("<div class='modal-icon'><img src='" + icon + "' alt='event icon'>");
         $('#event_modal').find('.modal-title').text(title);
