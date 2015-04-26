@@ -116,10 +116,18 @@ function set_up_event_mouseover() {
 
         $(this).mouseover(function() {
             var event_index = $(this).attr('id').slice(ID_LENGTH);
+            var date = (new Date(events_list[event_index].datetime * 1000));
+            var hour = date.getHours();
+            am_pm = "am"
+            if (hour > 12) {
+                hour -= 12;
+                am_pm = "pm"
+            }
 
-            var text = events_list[event_index].description + "\n" + (new Date(events_list[event_index].datetime * 1000))
+            var time = "Time: " + hour + ":" + date.getMinutes() + am_pm;
             $('#motivate_box').empty();
-            $('#motivate_box').append('<p>' + text + '</p>');
+            $('#motivate_box').append('<p>' + events_list[event_index].description + '</p>');
+            $('#motivate_box').append('<p>' + time + '</p>');
         });
 
         $(this).mouseleave(function() {
