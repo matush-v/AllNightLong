@@ -38,10 +38,10 @@ $(document).ready(function() {
 
         set_up_event_mouseover();
         // TODO remove this after testing
-        $('#event_modal').find('.modal-header').prepend("<img src='img/water_icon.png' alt='event icon'>" );
-        $('#event_modal').find('.modal-title').text("t icon" );
-        $('#event_modal').find('.modal-body').append("long_description");
-        $('#event_modal').modal('show')
+        // $('#event_modal').find('.modal-header').prepend("<img src='img/water_icon.png' alt='event icon'>" );
+        // $('#event_modal').find('.modal-title').text("t icon" );
+        // $('#event_modal').find('.modal-body').append("long_description");
+        // $('#event_modal').modal('show')
         // Notification is set for first event in the queue
         set_up_notification();
 
@@ -50,7 +50,7 @@ $(document).ready(function() {
          'webkitTransitionEnd', function( e ) { 
             if (event.propertyName == 'height') {
                 $("#finish_text").text('Congratulations champ! You nailed it!');
-                $("#expander").append('<button id="reward_btn" class="btn btn-success">Reap your reward</button>');
+                $("#expander").append('<button id="reward_btn" class="btn btn-info">Reap your reward</button>');
                 $("#done_btn").unbind();
 
                 $("#reward_btn").click(function () {
@@ -276,6 +276,7 @@ function notify_user(title, icon, short_message, long_description) {
 ******************************************************************************/
 
 $('#done_btn').mousedown(function() {
+    $('body').css('user-select','none').prop('unselectable','on').on('selectstart',false);
     expand();
 }).bind('mouseup mouseleave', function() {
     minimize();
