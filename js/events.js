@@ -51,7 +51,7 @@ function draw_event(color, index, datetime) {
     /* Moves the dots of 0 depth slightly inward so they
         aren't right on the edge of the clock */
     var initial_offset = 0.5;
-    var spacing_factor = 2; /* Determines space between depth levels */
+    var spacing_factor = 2.5; /* Determines space between depth levels */
     var fade_factor = 0.1; /* Lower = more faded */
     var dot_width = parseInt(get_css('width', 'dot'));
     var dot_height = parseInt(get_css('height', 'dot'));
@@ -62,12 +62,14 @@ function draw_event(color, index, datetime) {
     var y_offset = null;
 
     // depth is difference in hours
-    var depth = Math.round((datetime - now) / (1000 * 60 * 60)); // milliseconds/sec * sec/min * min/hr
+    var depth = Math.abs(datetime.getHours() - now.getHours())
     if (depth > max_depth - 1) {
         return; // don't draw events that close to the center
     } else if (depth < 0) {
         return; // don't draw past events
     }
+    console.log(depth);
+    console.log("\n");
 
     var hour = datetime.getHours();
     var minute = datetime.getMinutes();
@@ -99,11 +101,14 @@ function set_up_event_mouseover() {
         $(this).mouseover(function() {
             var event_index = $(this).attr('id').slice(ID_LENGTH);
 
-            $('#motivate_box').text(events_list[event_index].description);
+            var text = events_list[event_index].description + "\n" + (new Date(events_list[event_index].datetime * 1000))
+            $('#motivate_box').empty();
+            $('#motivate_box').append('<p>' + text + '</p>');
         });
 
         $(this).mouseleave(function() {
-            $('#motivate_box').text(cur_msg);
+            $('#motivate_box').empty()
+            $('#motivate_box').append('<p>' + cur_msg + '</p>');
         });
     });
 }
@@ -128,19 +133,23 @@ $('#times_form').submit(function(e) {
     var wake_up_date = new Date();
     var wake_hour_min = get_hour_min(wake_up_time);
     var end_hour_min = get_hour_min(end_time);
+    var cur_time = new Date();
 
     if (validate_times(wake_up_time, end_time)) {
         create_cookie('wake_up_time', wake_up_time, expires_in);
         create_cookie('end_time', end_time, expires_in);
 
-        end_date.setDate(end_date.getDate() + 1);
+        if (end_hour_min.hour <= cur_time.getHours()) {
+            end_date.setDate(end_date.getDate() + 1);
+        }
         end_date.setHours(end_hour_min.hour);
         end_date.setMinutes(end_hour_min.min);
 
         end_time = Math.floor(end_date.getTime() / 1000); // send timestamp to server
-        cur_time = Math.floor((new Date()).getTime() / 1000);
+        cur_time = Math.floor(cur_time.getTime() / 1000);
 
         params = {'wake_up_time': wake_up_time, 'end_time': end_time, 'cur_time': cur_time};
+
         get_schedule(params);
     }
 });
@@ -208,6 +217,21 @@ function notify_user(title, icon, message) {
     // Notification is set for next event in the queue
     set_up_notification(cur_event); 
 }
+
+
+
+/******************************************************************************
+*
+*                          INPUT BUTTONS
+*
+******************************************************************************/
+
+$('#done_btn').click(function () {
+    
+});
+
+
+
 
 
 

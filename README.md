@@ -44,11 +44,16 @@ ________________________________________________________________________________
 * Extreme Motivation
   * fun surprises (motivational quotes n stuff)
 * Prettify
-  * Optional seconds hand
+  * Faint lines for each depth
+  * Blow up front page, especially time pickers
+
   * Add unique way to tell user why we want desktop notifications TODO exists
   * Info box parts like curtains to show event info onmouseover and animates back after
   * Have progress bar to let person know how close they are to finishing the all nighter
     * Bar is along clock based on hour hand and goes from light green to dark green with % next to it
+
+  * Optional seconds hand
+
 * Eyes Hurt?
   * Recommend F.lux
 * Ensure that everything still works with bad user input

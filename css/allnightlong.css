@@ -133,3 +133,46 @@ body > .header {
     border-radius: 50%;
     z-index: 1001; /* Shows up in the front */
 }
+
+#top_row {
+    padding-top: 2%;
+}
+
+
+#side_panel {
+    height: 600px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10% 0;
+}
+
+
+#box_container {
+    height: 50%;
+}
+
+
+#motivate_box p {
+    font-family: 'Bodoni MT', Didot, 'Didot LT STD', 'Hoefler Text', Garamond, 'Times New Roman', serif;
+    font-size: 18px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 400;
+    line-height: 30px;
+}
+
+
+#done_btn {
+    display: block;
+    font-size: 40px;
+    margin-bottom: 20px;
+}
+
+
+#tired_btn {
+    display: block;
+    font-size: 14px;
+    height: 35px;
+}
