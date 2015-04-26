@@ -23,7 +23,7 @@ $(document).ready(function() {
             //     events[i].datetime = new Date(events[i].datetime * 1000)
             //     events[i].datetime = new Date(events[i].datetime + "GMT");
             // }
-            console.log(new Date(events[i].datetime * 1000));
+            events[i].datetime = new Date(events[i].datetime * 1000);
             draw_event('red', i, events[i].datetime);
         }
 
@@ -139,7 +139,7 @@ $('#times_form').submit(function(e) {
 
         end_time = Math.floor(end_date.getTime() / 1000); // send timestamp to server
         cur_time = Math.floor((new Date()).getTime() / 1000);
-        
+
         params = {'wake_up_time': wake_up_time, 'end_time': end_time, 'cur_time': cur_time};
         get_schedule(params);
     }
@@ -150,7 +150,7 @@ $('#times_form').submit(function(e) {
  * then calls the draw_event function */
 function get_schedule(params) {
     $.post('/schedule', params, function(data) {
-        console.log(data);
+
         localStorage.setItem(EVENTS_LIST, data);
         window.location.replace('clock.html');
     });
