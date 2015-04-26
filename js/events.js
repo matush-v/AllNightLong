@@ -9,9 +9,12 @@ $(document).ready(function() {
     /* Drawing events from localStorage */
     if (top.location.pathname == "/clock.html") {
         var events = JSON.parse(localStorage.getItem(EVENTS_LIST));
-        var len = events.length;
 
+
+        var len = events.length;
         for (i = 0; i < len; i++) {
+            // Convert from Python datetime to JS Date
+            events[i].datetime = new Date(events[i].datetime);
             draw_event('blue', i, events[i].datetime);
         }
         // Notification is set for first event in the queue
@@ -46,13 +49,17 @@ function draw_event(color, index, datetime) {
     var x_offset = null;
     var y_offset = null;
 
-    var depth = Math.abs(datetime - now) / 36000; // depth is difference in hours
+    // depth is difference in hours
+    var depth = Math.floor(Math.abs(datetime - now) / (1000 * 60 * 60)); // milliseconds/sec * sec/min * min/hr
     if (depth > 2) {
         return; // don't draw events past third level
     } else if (depth < 0) {
         console.log("Oops. Depth is negative in draw_event!");
         return;
     }
+
+    var hour = datetime.getHours();
+    var minute = datetime.getMinutes();
 
     angle = (minute / minutes_in_hour) * rads_in_circle - Math.PI / 2;
 
@@ -112,10 +119,9 @@ $('#times_form').submit(function(e) {
 /* Handles post request to get event schedule based on input times and
  * then calls the draw_event function */
 function get_schedule(params) {
-    $.post('/schedule', params, function(events) {
+    $.post('/schedule', params, function(data) {
 
-        // Convert from Python datetime to JS Date
-        events.datetime = new Date(events.datetime);
+        var events = JSON.parse(data);
 
         localStorage.setItem(EVENTS_LIST, events);
         window.location.replace('clock.html');
