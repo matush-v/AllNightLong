@@ -53,7 +53,6 @@ function draw_event(color, index, datetime) {
     var y_offset = null;
 
     // depth is difference in hours
-<<<<<<< HEAD
     var depth = Math.round((datetime - now) / (1000 * 60 * 60)); // milliseconds/sec * sec/min * min/hr
     if (depth > max_depth - 1) {
         return; // don't draw events that close to the center
