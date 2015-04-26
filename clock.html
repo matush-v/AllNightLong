@@ -70,7 +70,7 @@
         </div> 
 
 
-        <div class="modal fade" id="event_modal">
+        <div id="event_modal" class="modal fade">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -79,8 +79,8 @@
                     <div class="modal-body">
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger">Pass on this one</button>
                         <div class="stars">
+                            <label class="modal-label">How much better do you feel?</label>
                             <form action="">
                               <input class="star star-5" id="star-5-2" type="radio" name="star"/>
                               <label class="star star-5" for="star-5-2"></label>
@@ -93,9 +93,11 @@
                               <input class="star star-1" id="star-1-2" type="radio" name="star"/>
                               <label class="star star-1" for="star-1-2"></label>
                             </form>
-                            <p>How beneficial was it?</p>
                         </div>
-                        <button type="button" class="btn btn-success">Done!</button>
+                        <div id="feedback_btns">
+                            <button id="modal_pass_btn" type="button" class="btn btn-danger" data-dismiss="modal" data-target="#event_modal">Pass on this one</button>
+                            <button id="event_done_btn" type="button" class="btn btn-success" data-dismiss="modal" data-target="#event_modal">Done!</button>
+                        </div>
                     </div>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->

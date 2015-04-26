@@ -2,6 +2,8 @@ $(document).ready(function() {
     EVENTS_LIST = 'events'; // Const name of schedule item in localStorage
 
     if (top.location.pathname == '/clock.html') {
+        document.documentElement.style.overflowX = 'hidden';
+
         QUOTES = ['With the new day comes new strength and new thoughts.',
                   'In the middle of every difficulty lies opportunity.',
                   'All we have to decide is what to do with the time that is given us.',
@@ -37,11 +39,7 @@ $(document).ready(function() {
         }
 
         set_up_event_mouseover();
-        // TODO remove this after testing
-        // $('#event_modal').find('.modal-header').prepend("<img src='img/water_icon.png' alt='event icon'>" );
-        // $('#event_modal').find('.modal-title').text("t icon" );
-        // $('#event_modal').find('.modal-body').append("long_description");
-        // $('#event_modal').modal('show')
+
         // Notification is set for first event in the queue
         set_up_notification();
 
@@ -127,13 +125,19 @@ function set_up_event_mouseover() {
             var event_index = $(this).attr('id').slice(ID_LENGTH);
             var date = (new Date(events_list[event_index].datetime * 1000));
             var hour = date.getHours();
-            am_pm = "am"
+            var minutes = date.getMinutes();
+            am_pm = "am";
+
             if (hour > 12) {
                 hour -= 12;
                 am_pm = "pm"
             }
 
-            var time = "Time: " + hour + ":" + date.getMinutes() + am_pm;
+            if (minutes < 10) {
+                minutes = "0" + minutes;
+            }
+
+            var time = "Time: " + hour + ":" + minutes + am_pm;
             $('#motivate_box').empty();
             $('#motivate_box').append('<p>' + events_list[event_index].description + '</p>');
             $('#motivate_box').append('<p>' + time + '</p>');
@@ -256,11 +260,20 @@ function notify_user(title, icon, short_message, long_description) {
     notification.onclick = function() {
         window.focus();
 
-        // TODO show modal
-        $('#event_modal').find('.modal-header').prepend("<img src='" + icon + "' alt='event icon'>");
+        /* Remove default modal dismissal */
+        $('#event_modal').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
+
+        $('#event_modal').find('.modal-header').prepend("<div class='modal-icon'><img src='" + icon + "' alt='event icon'>");
         $('#event_modal').find('.modal-title').text(title);
         $('#event_modal').find('.modal-body').append(long_description);
-        $('#event_modal').modal('show')
+        $('#event_modal').modal('show');
+
+        $("#event_done_btn").click(function () {
+            $('#event_modal').modal('dismiss');            
+        });
     };
 
     // Notification is set for next event in the queue
