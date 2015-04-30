@@ -231,7 +231,8 @@ function set_up_notification() {
     milli_till_event -= now;
 
     if (milli_till_event < 0) 
-        console.log("bad time for event: " + event_to_notify.name);
+        // console.log("bad time for event: " + event_to_notify.name);
+        return;
     else
         setTimeout(notify_user, milli_till_event, 'BREAK TIME!', ICONS[event_type], event_to_notify.name, event_to_notify.description);
 
@@ -265,6 +266,7 @@ function notify_user(title, icon, short_message, long_description) {
             backdrop: 'static',
             keyboard: false
         });
+
 
         $('#event_modal').find('#modal-image').empty()
         $('#event_modal').find('#modal-image').append("<div class='modal-icon'><img src='" + icon + "' alt='event icon'>");
