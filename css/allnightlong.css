@@ -156,7 +156,8 @@ body > .header {
 
 #motivate_box p {
     font-family: 'Bodoni MT', Didot, 'Didot LT STD', 'Hoefler Text', Garamond, 'Times New Roman', serif;
-    font-size: 18px;
+    font-size: 24px;
+    text-align: center;
     font-style: normal;
     font-variant: normal;
     font-weight: 400;
@@ -258,17 +259,6 @@ label.star:before {
 .modal-label {
     padding-right: 0px;
 }
-
-/****************/
-/* Motivate box */
-/****************/
-
-#motivate_box p{
-    font-size: 30px;
-    text-align: center;
-    padding-top: 30px;    
-}
-
 
 /* The Animation */ 
 #expander {
