@@ -400,8 +400,8 @@ function validate_times(wake_up_time, end_time) {
 }
 
 /* Given a 24hr time string (i.e. 19:30), return the dictionary
-   with separate fields for both the hour and minute 
-   ( i.e. {'hour: 19', 'min: 30'} ) 
+   with separate fields for both the hour and minute
+   ( i.e. {'hour: 19', 'min: 30'} )
  */
 function get_hour_min(time_string) {
     var time_arr = time_string.split(':');
@@ -425,17 +425,14 @@ var get_css = function(prop, fromClass) {
 };
 
 function create_cookie(name, value, days) {
-    var expires = null;
+    var max_age = null;
 
     if (days) {
-        var date = new Date();
-
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-        expires = '; expires=' + date.toGMTString();
+        max_age = '; max-age=' + 24 * 60 * 60;
     }
-    else expires = '';
+    else max_age = '';
 
-    document.cookie = name + '=' + value + expires + '; path=/';
+    document.cookie = name + '=' + value + max_age + '; path=/';
 }
 
 function get_cookie(name) {
