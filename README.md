@@ -15,7 +15,7 @@ ________________________________________________________________________________
 * Bugs from Hackathon presentation
   * Stop notifications when they get to Congratulations page
   * Clear modal descriptions before adding next description
-  * Fix time zones
+  * Dynamically remove event dot from clock after completion or rejection
 
 
 * ALWAYS USE UNDERSCORE CASING
@@ -27,6 +27,7 @@ ________________________________________________________________________________
   * EC: Scroll down to see later events, scroll up to see recent events
   * Fix server by using database for major events - MATHURSHAN
   * Add extras to server's database - MATHURSHAN
+  * Depth changes depending on multiple refreshes
 
 * Clock page
   * Sexy graphics (clock, box, buttons, etc.)
@@ -45,7 +46,8 @@ ________________________________________________________________________________
     * Might have issues with privacy
 
 * Prettify
-  * Faint lines for each depth - SEAN
+  * Faint lines for each depth - SEAN (got first depth done, use for loop to get next two)
+  * Bug where the Hold to Finsih overlay shows up in top left corner upon multiple refresh
 
 * Add site feedback/suggestions button - SEAN
 * Ensure that everything still works with bad user input

@@ -21,27 +21,13 @@ $(document).ready(function() {
                  'caffeine': 'img/caffeine_icon.png'}; // Const icon locations
 
         var events = JSON.parse(localStorage.getItem(EVENTS_LIST));
-        var len = events.length;
         var today = new Date();
         cur_event = 0; // Global counter for event list index
         cur_quote = 0; // Global counter for quote list index
 
         $('#motivate_box').append('<p>' + QUOTES[cur_quote] + '</p>');
 
-        // Drawing events from localStorage
-        for (i = 0; i < len; i++) {
-            // Convert from Python datetime to JS Date
-            // if (today.dst()) {
-            //     events[i].datetime = new Date(events[i].datetime * 1000)
-            //     events[i].datetime = new Date(events[i].datetime + "GMT+60");
-            // }
-            // else {
-            //     events[i].datetime = new Date(events[i].datetime * 1000)
-            //     events[i].datetime = new Date(events[i].datetime + "GMT");
-            // }
-            events[i].datetime = new Date(events[i].datetime * 1000);
-            draw_event('red', i, events[i].datetime);
-        }
+        draw_events(events);
 
         set_up_event_mouseover();
 
@@ -117,41 +103,57 @@ $('#times_form').submit(function(e) {
 *
 ******************************************************************************/
 
+function draw_events(events) {
+    // Moves the dots of 0 depth slightly inward so they
+    // aren't right on the edge of the clock
+    INITIAL_OFFSET = 0.5;
+    SPACING_FACTOR = 2.5; // Determines space between depth levels
+    FADE_FACTOR = 0.1; // Lower = more faded
+    MAX_DEPTH = 3; // number of rings in clock
+
+    // Drawing events from localStorage
+    var len = events.length;
+    for (i = 0; i < len; i++) {
+        events[i].datetime = new Date(events[i].datetime * 1000);
+        draw_event('red', i, events[i].datetime);
+    }
+
+    draw_depth_rings();
+}
+
+
+
 /* draw colored circle based off minute at the passed in depth */
 function draw_event(color, index, datetime) {
     var minutes_in_hour = 60, rads_in_circle = 2 * Math.PI;
-    // Moves the dots of 0 depth slightly inward so they
-    //  aren't right on the edge of the clock
-    var initial_offset = 0.5;
-    var spacing_factor = 2.5; // Determines space between depth levels
-    var fade_factor = 0.1; // Lower = more faded
     var dot_width = parseInt(get_css('width', 'dot'));
     var dot_height = parseInt(get_css('height', 'dot'));
-    var max_depth = 3;
     var now = new Date();
     var dist = null;
-    var x_offset = null;
-    var y_offset = null;
+    var x_offset, y_offset = null;
+    var hour, minute = null;
 
     if (datetime < now) {
         return; // event is in the past
-    }
+    } 
+
     // depth is difference in hours
-    var depth = Math.abs(datetime.getHours() - now.getHours());
+    datetime_stamp = new Date(datetime.setMinutes(0)).setMilliseconds(0);
+    now = new Date(now.setMinutes(0)).setMilliseconds(0);
+    var depth = Math.floor((datetime_stamp - now) / (1000 * 60 * 60)); // converting milliseconds difference to hours difference
 
-    if (depth > max_depth - 1) {
+    console.log(depth);
+    if (depth > MAX_DEPTH - 1) {
         return; // don't draw events that close to the center
-    } else if (depth < 0) {
-        return; // don't draw past events
     }
 
-    var hour = datetime.getHours();
-    var minute = datetime.getMinutes();
+    hour = datetime.getHours();
+    minute = datetime.getMinutes();
 
     angle = (minute / minutes_in_hour) * rads_in_circle - Math.PI / 2;
 
     // Distance to move toward center of circle
-    dist = (depth + initial_offset) * dot_width * spacing_factor;
+    dist = (depth + INITIAL_OFFSET) * dot_width * SPACING_FACTOR;
     x_offset = dist * Math.cos(Math.PI - angle);
     y_offset = dist * Math.sin(Math.PI + angle);
 
@@ -161,11 +163,36 @@ function draw_event(color, index, datetime) {
 
     // Center dots at point on circle border, and then add offset
     //  needed to bring them closer to the center.
-    new_left = new_left - dot_height / 2 + x_offset;
+    new_left = new_left - dot_width / 2 + x_offset;
     new_top = new_top - dot_height / 2 + y_offset;
     $('.outer_face').append('<div id="event_' + index + '" class="dot" style="left:' + new_left + 'px;top:' + new_top + 'px; background-color: ' + color + '"></div>');
-    $('#event_' + index).css('opacity', (max_depth - depth + fade_factor) / (max_depth + fade_factor)); // faded based on depth: 1.0 opacity is fully visible, and 0.0 is fully transparent
+    $('#event_' + index).css('opacity', (MAX_DEPTH - depth + FADE_FACTOR) / (MAX_DEPTH + FADE_FACTOR)); // faded based on depth: 1.0 opacity is fully visible, and 0.0 is fully transparent
 }
+
+
+function draw_depth_rings() {
+    var dot_width = parseInt(get_css('width', 'dot'));
+    var dot_height = parseInt(get_css('height', 'dot'));
+    var dist = INITIAL_OFFSET * dot_width * SPACING_FACTOR; // distance to first ring from outer_face
+
+    var border_radius = parseInt($('.outer_face').css('border-radius'));
+    var width = $('.outer_face').width();
+    var height = $('.outer_face').height();
+    
+    // since circle is getting smaller, have to move center to keep it in the same place
+    // as the outer_face center (i.e. keep them concentric)
+    var new_left = dist;
+    var new_top = dist;
+    border_radius -= 2 * dist;
+    width -= 2 * dist;
+    height -= 2 * dist;
+    for (var i = 0; i < MAX_DEPTH; i++) {
+        $('.outer_face').append('<div class="ring" style="left:' + new_left + 'px; top:' + new_top + 'px; border-radius:' + border_radius + 'px; width:' + width + 'px; height:' + height + 'px;"></div>');
+
+        // TODO draw other two rings
+    }
+}
+
 
 /* Sets up mouseover for events */
 function set_up_event_mouseover() {
@@ -191,6 +218,7 @@ function set_up_event_mouseover() {
 
             var time = 'Time: ' + hour + ':' + minutes + am_pm;
             $('#motivate_box').empty();
+            $('#motivate_box').append('<h1>' + events_list[event_index].name + '</h1>');
             $('#motivate_box').append('<p>' + events_list[event_index].description + '</p>');
             $('#motivate_box').append('<p>' + time + '</p>');
         });
@@ -208,8 +236,7 @@ function set_up_event_mouseover() {
     });
 }
 
-/* Handles post request to get event schedule based on input times and
- * then calls the draw_event function */
+/* Handles post request to get event schedule based on input times */
 function get_schedule(params) {
     $.post('/schedule', params, function(data) {
 
@@ -277,6 +304,7 @@ function notify_user(title, icon, short_message, long_description) {
         });
 
 
+        // TODO modularize these into helper function
         $('#event_modal').find('#modal-image').empty()
         $('#event_modal').find('#modal-image').append("<div class='modal-icon'><img src='" + icon + "' alt='event icon'>");
         $('#event_modal').find('.modal-title').text(title);
