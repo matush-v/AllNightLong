@@ -83,6 +83,7 @@ $('#times_form').submit(function(e) {
     var end_date = new Date();
     var end_hour_min = get_hour_min(end_time);
     var cur_time = new Date();
+    var offset = cur_time.getTimezoneOffset() / 60 // get difference in hours between local timezone and UTC timezone
 
     if (validate_times(wake_up_time, end_time)) {
 
@@ -101,7 +102,9 @@ $('#times_form').submit(function(e) {
         end_time = Math.floor(end_date.getTime() / 1000);
         cur_time = Math.floor(cur_time.getTime() / 1000);
 
-        params = {'wake_up_time': wake_up_time, 'end_time': end_time, 'cur_time': cur_time};
+
+
+        params = {'wake_up_time': wake_up_time, 'end_time': end_time, 'cur_time': cur_time, 'utc_offset': offset};
 
         get_schedule(params);
     }
