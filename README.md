@@ -15,6 +15,7 @@ ________________________________________________________________________________
 * Bugs from Hackathon presentation
   * Stop notifications when they get to Congratulations page
   * Clear modal descriptions before adding next description
+  * Fix time zones
 
 
 * ALWAYS USE UNDERSCORE CASING
