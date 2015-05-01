@@ -25,8 +25,7 @@ ________________________________________________________________________________
   * sexy graphics and JS
   * Color code events
   * EC: Scroll down to see later events, scroll up to see recent events
-  * Fix server by using database for major events - MATHURSHAN
-  * Add extras to server's database - MATHURSHAN
+  * I'm tired button should query db
 
 * Clock page
   * Sexy graphics (clock, box, buttons, etc.)

@@ -133,9 +133,6 @@ class Schedule(webapp2.RequestHandler):
         '''
         Returns list of times and events that should be done at those times
         '''
-        # TODO use database
-        # TODO F with timezones
-
         all_events = None # for filtering by event type
         events = []
 
@@ -262,12 +259,7 @@ class Schedule(webapp2.RequestHandler):
         item_keys = all_events.fetch(1000)
 
         # TODO get stretching pics
-        exercises = [{'name': 'Pump It', 'description': "Let's get old-fashioned with ten pushups."},
-                     {'name': 'Jumper', 'description': "Bet you can't do twenty."},
-                     {'name': 'Bend That Body', 'description': "Get flexible. Try these easy stretches."}]        
-
         exercise_time = cur_time + timedelta(hours=1) + timedelta(minutes=15)
-
 
         while exercise_time < end_time:
             exercise_key = random.choice(item_keys)
