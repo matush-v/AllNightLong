@@ -16,16 +16,19 @@ ________________________________________________________________________________
 * DECLARE ALL VARAIBLES AT THE TOP OF THE FUNCTION
 
 * Creating a schedule
-  * sexy graphics and JS 
+  * sexy graphics and JS
+  * Color code events
   * EC: Scroll down to see later events, scroll up to see recent events
+  * Fix server by using database for major events - MATHURSHAN
+  * Add extras to server's database - MATHURSHAN
 
 * Clock page
   * Sexy graphics (clock, box, buttons, etc.)
    + Anything user does is added to the localstorage
   * Very nice clock with hour and minute hand (optional second hand)
     * Make Hour and Minute hand pointed like in luxury watches
-  * Quote box that gives a new quote every hour
-  * “UNCLE!” button - make it a sexual safety word (pineapple,  bananaanana)
+  * Quote box that gives a random new quote every hour - SEAN
+  * “UNCLE!” button - make it a sexual safety word (pineapple,  bananaanana) - SEAN
     * uncle changes to other sex safety words randomly
 
 * Notifications
@@ -36,9 +39,9 @@ ________________________________________________________________________________
     * Might have issues with privacy
 
 * Prettify
-  * Faint lines for each depth
+  * Faint lines for each depth - SEAN
 
-* Add user feedback button
+* Add site feedback/suggestions button - SEAN
 * Ensure that everything still works with bad user input
 * YSLOW, Audit, and W3 validator (last validated 4/24 7:58)
 * Restrict CORS access
