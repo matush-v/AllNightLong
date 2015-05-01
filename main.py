@@ -68,6 +68,7 @@ class Schedule(webapp2.RequestHandler):
         wake_up_time = self.request.get("wake_up_time")
         end_time = int(self.request.get("end_time"))
         cur_time = int(self.request.get("cur_time"))
+        utc_offset = int(self.request.get("utc_offset"))
 
         name = self.request.get("name")
         event_type = self.request.get("event_type")
@@ -83,9 +84,9 @@ class Schedule(webapp2.RequestHandler):
             else:
                 self.response.out.write("Error in Adding Event!")
 
-        elif wake_up_time and end_time and cur_time:
+        elif wake_up_time and end_time and cur_time and utc_offset:
             # creates schedule for user
-            schedule = self.get_schedule(wake_up_time, end_time, cur_time)
+            schedule = self.get_schedule(wake_up_time, end_time, cur_time, utc_offset)
 
             self.response.out.write(json.dumps(schedule))
 
@@ -118,21 +119,20 @@ class Schedule(webapp2.RequestHandler):
 
         return True
 
-    def get_schedule(self, wake_up_time, end_time, cur_time):
+    def get_schedule(self, wake_up_time, end_time, cur_time, utc_offset):
         '''
         Returns list of times and events that should be done at those times
         '''
-        # TODO run algorithm and create array of event objects
-        # TODO get cur_time from client
+        # TODO use database
         # TODO F with timezones
 
         events = []
 
         cur_time = datetime.fromtimestamp(cur_time)
-        cur_time = cur_time - timedelta(hours=4)
+        cur_time = cur_time - timedelta(hours=utc_offset)
 
         end_time = datetime.fromtimestamp(end_time)
-        end_time = end_time - timedelta(hours=4) 
+        end_time = end_time - timedelta(hours=utc_offset) 
 
         halfway_time = cur_time + (end_time - cur_time) / 2
 
@@ -145,7 +145,7 @@ class Schedule(webapp2.RequestHandler):
         while water_time < end_time:
             logging.warn("WATER TIME ================= " + str(water_time))
             logging.warn("END TIME ================= " + str(end_time))
-            events.append({'name': event_name, 'type': event_type, 'description': description, 'datetime': calendar.timegm((water_time + timedelta(hours=4)).timetuple())})
+            events.append({'name': event_name, 'type': event_type, 'description': description, 'datetime': calendar.timegm((water_time + timedelta(hours=utc_offset)).timetuple())})
             water_time += timedelta(hours=1)
 
         #######################################################
@@ -167,9 +167,9 @@ class Schedule(webapp2.RequestHandler):
             half_hour = 30
             best_nap_time = best_nap_time.replace(minute=half_hour)
 
-        best_nap_time = best_nap_time + timedelta(hours=4)
+        best_nap_time = best_nap_time + timedelta(hours=utc_offset)
         
-        events.append({'name': event_name, 'type': event_type, 'description': description, 'datetime': calendar.timegm((best_nap_time + timedelta(hours=4)).timetuple())})
+        events.append({'name': event_name, 'type': event_type, 'description': description, 'datetime': calendar.timegm((best_nap_time + timedelta(hours=utc_offset)).timetuple())})
 
         # TODO: Check to make sure there is no water break overlap with the nap
 
@@ -192,7 +192,7 @@ class Schedule(webapp2.RequestHandler):
             rand_min = random.randrange(0, 60)
             best_walk_time = best_walk_time - timedelta(minutes=rand_min)
 
-        events.append({'name': event_name, 'type': event_type, 'description': description, 'datetime': calendar.timegm((best_walk_time + timedelta(hours=4)).timetuple())})
+        events.append({'name': event_name, 'type': event_type, 'description': description, 'datetime': calendar.timegm((best_walk_time + timedelta(hours=utc_offset)).timetuple())})
 
         ######################################################
 
@@ -205,7 +205,7 @@ class Schedule(webapp2.RequestHandler):
 
         best_caffeine_time = best_nap_time - timedelta(minutes=5)
 
-        events.append({'name': event_name, 'type': event_type, 'description': description, 'datetime': calendar.timegm((best_caffeine_time + timedelta(hours=4)).timetuple())})
+        events.append({'name': event_name, 'type': event_type, 'description': description, 'datetime': calendar.timegm((best_caffeine_time + timedelta(hours=utc_offset)).timetuple())})
 
         ######################################################
 
@@ -219,7 +219,7 @@ class Schedule(webapp2.RequestHandler):
         food_time = cur_time + timedelta(hours=1)
 
         while food_time < end_time:
-            events.append({'name': event_name, 'type': event_type, 'description': description, 'datetime': calendar.timegm((food_time + timedelta(hours=4)).timetuple())})
+            events.append({'name': event_name, 'type': event_type, 'description': description, 'datetime': calendar.timegm((food_time + timedelta(hours=utc_offset)).timetuple())})
 
             if food_time >= halfway_time:
                 food_time += timedelta(hours=1)
@@ -244,7 +244,7 @@ class Schedule(webapp2.RequestHandler):
 
         while exercise_time < end_time:
             exercise = random.choice(exercises)
-            events.append({'name': exercise['name'], 'type': event_type, 'description': exercise['description'], 'datetime': calendar.timegm((exercise_time + timedelta(hours=4)).timetuple())})
+            events.append({'name': exercise['name'], 'type': event_type, 'description': exercise['description'], 'datetime': calendar.timegm((exercise_time + timedelta(hours=utc_offset)).timetuple())})
 
             if exercise_time >= halfway_time:
                 exercise_time += timedelta(hours=1)
