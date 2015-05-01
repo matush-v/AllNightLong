@@ -158,8 +158,8 @@ class Schedule(webapp2.RequestHandler):
         best_nap_time_shift = (int(wake_up_time[0:2]) / 2) - 1.5 # slice to get the hour
         best_nap_time = cur_time
         
-        if (cur_time.hour >= 12): # PM so we need to add a day for nap
-            best_nap_time = best_nap_time.replace(day=best_nap_time.day + 1)
+        if cur_time.hour >= 12: # PM so we need to add a day for nap
+            best_nap_time += timedelta(days=1)
 
         best_nap_time = best_nap_time.replace(hour=int(best_nap_time_shift))
         
