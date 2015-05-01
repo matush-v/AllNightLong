@@ -18,7 +18,8 @@ $(document).ready(function() {
                  'food': 'img/food_icon.png', 
                  'walk': 'img/walk_icon.png', 
                  'nap': 'img/nap_icon.png', 
-                 'caffeine': 'img/caffeine_icon.png'}; // Const icon locations
+                 'caffeine': 'img/caffeine_icon.png',
+                 'extra': 'img/discomfort_icon.jpg'}; // Const icon locations
 
         var events = JSON.parse(localStorage.getItem(EVENTS_LIST));
         var len = events.length;
@@ -341,20 +342,18 @@ function minimize () {
     expander.removeClass('notransition'); // Re-enable transitions
 }
 
+/* Gets a random extra event from the server */
 $('#tired_btn').click(function() {
-    var extras = [{"name": "Quick Spark" , "description": "Splash yourself with cold water", "icon": "img/discomfort_icon.jpg"}, 
-    {"name": "Why you hittin’ yourself?", "description": "Pinch your thigh, eyebrow, or cheek", "icon": "img/discomfort_icon.jpg"}, 
-    {"name": "Get your jam on", "description": "Put some rousing tunes on and pump yourself up for an intense night", "icon": "img/music_icon.jpg"}];
-    var rand = Math.random();
-    rand *= extras.length;
-    rand = Math.floor(rand);
-    var choice = extras[rand];
+    $.post('/extra', function(data) {
+        extra_event = JSON.parse(data);
+        event_type = extra_event.type;
 
-    $('#event_modal').find('#modal-image').empty()
-    $('#event_modal').find('#modal-image').append("<div class='modal-icon'><img src='" + choice.icon + "' alt='event icon'></div>");
-    $('#event_modal').find('.modal-title').text(choice.name);
-    $('#event_modal').find('.modal-body').append(choice.description);
-    $('#event_modal').modal('show');
+        $('#event_modal').find('#modal-image').empty();
+        $('#event_modal').find('#modal-image').append("<div class='modal-icon'><img src='" + ICONS[event_type] + "' alt='event icon'></div>");
+        $('#event_modal').find('.modal-title').text(extra_event.name);
+        $('#event_modal').find('.modal-body').text(extra_event.description);
+        $('#event_modal').modal('show');
+    });
 });
 
 

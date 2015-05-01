@@ -133,6 +133,8 @@ class Schedule(webapp2.RequestHandler):
         '''
         Returns list of times and events that should be done at those times
         '''
+        # TODO create sub-routines for each section
+
         all_events = None # for filtering by event type
         events = []
 
@@ -309,6 +311,25 @@ class Schedule(webapp2.RequestHandler):
 
         return True
 
+class Extra(webapp2.RequestHandler):
+    EXTRA = "extra" # event type
+
+    def post(self):
+        '''
+        API for quick help tips when user is tired
+        '''
+        all_events = Events.all(keys_only=True)
+        all_events.filter('event_type =', self.EXTRA)
+        item_keys = all_events.fetch(1000)
+
+        specific_event = Events.get(random.choice(item_keys))
+
+        self.response.out.write(json.dumps({'name': specific_event.name,
+                                            'type': specific_event.event_type,
+                                            'description': specific_event.description}))
+
+
+
 dthandler = lambda obj: (
     obj.isoformat()
     if isinstance(obj, datetime)
@@ -318,5 +339,6 @@ dthandler = lambda obj: (
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
     ('/clock.html', Clock),
-    ('/schedule', Schedule)
+    ('/schedule', Schedule),
+    ('/extra', Extra)
     ], debug=True)
