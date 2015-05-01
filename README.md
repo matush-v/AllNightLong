@@ -11,6 +11,11 @@ ________________________________________________________________________________
 _____________________________________________________________________________________
 ###TODO
 
+* Bugs from Hackathon presentation
+  * Stop notifications when they get to Congratulations page
+  * Clear modal descriptions before adding next description
+
+
 * ALWAYS USE UNDERSCORE CASING
 * DECLARE ALL VARAIBLES AT THE TOP OF THE FUNCTION
 * Creating a schedule
