@@ -277,15 +277,10 @@ function notify_user(title, icon, short_message, long_description) {
             keyboard: false
         });
 
+        show_modal('event_modal', icon, title, description);
 
-        $('#event_modal').find('#modal-image').empty()
-        $('#event_modal').find('#modal-image').append("<div class='modal-icon'><img src='" + icon + "' alt='event icon'>");
-        $('#event_modal').find('.modal-title').text(title);
-        $('#event_modal').find('.modal-body').append(long_description);
-        $('#event_modal').modal('show');
-
-        $("#event_done_btn").click(function () {
-            $('#event_modal').modal('dismiss');            
+        $('#event_done_btn').click(function () {
+            $('#event_modal').modal('dismiss');
         });
     };
 
@@ -293,7 +288,13 @@ function notify_user(title, icon, short_message, long_description) {
     set_up_notification(); 
 }
 
-
+function show_modal(modal_name, event_icon, event_name, event_description) {
+    $('#' + modal_name).find('#modal-image').empty();
+    $('#' + modal_name).find('#modal-image').append("<div class='modal-icon'><img src='" + event_icon + "' alt='event icon'></div>");
+    $('#' + modal_name).find('.modal-title').text(event_name);
+    $('#' + modal_name).find('.modal-body').text(event_description);
+    $('#' + modal_name).modal('show');
+}
 /******************************************************************************
 *
 *                          BUTTONS
@@ -348,11 +349,7 @@ $('#tired_btn').click(function() {
         extra_event = JSON.parse(data);
         event_type = extra_event.type;
 
-        $('#event_modal').find('#modal-image').empty();
-        $('#event_modal').find('#modal-image').append("<div class='modal-icon'><img src='" + ICONS[event_type] + "' alt='event icon'></div>");
-        $('#event_modal').find('.modal-title').text(extra_event.name);
-        $('#event_modal').find('.modal-body').text(extra_event.description);
-        $('#event_modal').modal('show');
+        show_modal('event_modal', ICON[event_type], extra_event.name, extra_event.description);
     });
 });
 

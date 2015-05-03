@@ -14,9 +14,6 @@ ________________________________________________________________________________
 
 * Bugs from Hackathon presentation
   * Stop notifications when they get to Congratulations page
-  * Clear modal descriptions before adding next description
-  * Fix time zones
-
 
 * ALWAYS USE UNDERSCORE CASING
 * DECLARE ALL VARAIBLES AT THE TOP OF THE FUNCTION
@@ -25,7 +22,6 @@ ________________________________________________________________________________
   * sexy graphics and JS
   * Color code events
   * EC: Scroll down to see later events, scroll up to see recent events
-  * I'm tired button should query db
 
 * Clock page
   * Sexy graphics (clock, box, buttons, etc.)
@@ -40,6 +36,8 @@ ________________________________________________________________________________
   * modals for each event
     * Every time a user does not complete an event, add it to localstorage and adjust schedule
     * If completed, send feedback to server
+    * Modular code for modals
+    * change ".append" to ".text" 
   * EC: yelling to get off Facebook, Twitter, etc.
     * Might have issues with privacy
 
