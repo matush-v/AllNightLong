@@ -28,24 +28,18 @@ ________________________________________________________________________________
    + Anything user does is added to the localstorage
   * Very nice clock with hour and minute hand (optional second hand)
     * Make Hour and Minute hand pointed like in luxury watches
-  * “UNCLE!” button - make it a sexual safety word (pineapple,  bananaanana) - SEAN
-    * uncle changes to other sex safety words randomly
 
 * Notifications
   * modals for each event
     * Every time a user does not complete an event, add it to localstorage and adjust schedule
     * If completed, send feedback to server
-    * Modular code for modals
-    * change ".append" to ".text" 
-  * EC: yelling to get off Facebook, Twitter, etc.
-    * Might have issues with privacy
 
 * Prettify
   * Faint lines for each depth - SEAN
 
 * Add site feedback/suggestions button - SEAN
 * Ensure that everything still works with bad user input
-* YSLOW, Audit, and W3 validator (last validated 4/24 7:58)
+* YSLOW, Audit, and W3 validator (last validated 5/3 9:24 PM)
 * Restrict CORS access
 
 ###TODO for Beta Testing
