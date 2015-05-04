@@ -28,7 +28,8 @@ ________________________________________________________________________________
    + Anything user does is added to the localstorage
   * Very nice clock with hour and minute hand (optional second hand)
     * Make Hour and Minute hand pointed like in luxury watches
-  * create master function for the draw event stuff in (doc).ready() - SEAN
+  * create master function for the draw event stuff in (doc).ready. Ask me if you don't get what I mean by this - SEAN
+  * When event is over, remove the dot dynamically - SEAN
 
 * Quotes
   * curtains CSS fix up - SEAN
@@ -44,7 +45,7 @@ ________________________________________________________________________________
 * Prettify
   * Faint lines for each depth - SEAN
 
-* Add site feedback/suggestions button - SEAN
+* Add site feedback/suggestions button
 * Check for TODOs
 * Ensure that everything still works with bad user input
 * YSLOW, Audit, and W3 validator (last validated 5/3 9:24 PM)

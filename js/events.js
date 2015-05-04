@@ -7,14 +7,8 @@ $(document).ready(function() {
         // Quotes/info box
         set_up_quotes();
 
-        // Const icon locations
-        ICONS = {'exercise': 'img/exercise_icon.png',
-                 'hydration': 'img/water_icon.png',
-                 'food': 'img/food_icon.png',
-                 'walk': 'img/walk_icon.png',
-                 'nap': 'img/nap_icon.png',
-                 'caffeine': 'img/caffeine_icon.png',
-                 'extra': 'img/discomfort_icon.jpg'};
+        // Icons for notifications
+        set_up_icons();
 
         var events = JSON.parse(localStorage.getItem(EVENTS_LIST));
         var len = events.length;
@@ -174,14 +168,14 @@ function set_up_event_mouseover() {
 
             var time = 'Time: ' + hour + ':' + minutes + am_pm;
 
-            close_curtains(500);
+            close_curtains(300);
 
             setTimeout(function() {
                 $('#motivate_box').empty();
                 $('#motivate_box').append('<p>' + events_list[event_index].description + '</p>');
                 $('#motivate_box').append('<p>' + time + '</p>');
-                open_curtains(500);
-            }, 500)
+                open_curtains(300);
+            }, 300)
 
         });
 
@@ -190,12 +184,12 @@ function set_up_event_mouseover() {
             var num = (new Date()) - start_time;
             var den = (new Date(get_cookie('end_time'))) - start_time;
 
-            close_curtains(500);
+            close_curtains(300);
             setTimeout(function() {
                 $('#motivate_box').empty();
                 $('#motivate_box').append('<p>' + QUOTES[cur_quote] + '</p>');
-                open_curtains(500);
-            }, 500);
+                open_curtains(300);
+            }, 300);
         });
     });
 }
@@ -241,6 +235,16 @@ function set_up_notification() {
     cur_event++;
 }
 
+function set_up_icons() {
+    // Const, global icon file locations
+    ICONS = {'exercise': 'img/exercise_icon.png',
+             'hydration': 'img/water_icon.png',
+             'food': 'img/food_icon.png',
+             'walk': 'img/walk_icon.png',
+             'nap': 'img/nap_icon.png',
+             'caffeine': 'img/caffeine_icon.png',
+             'extra': 'img/discomfort_icon.jpg'};
+}
 
 function notify_user(title, icon, short_message, long_description) {
     if (!Notification) {
