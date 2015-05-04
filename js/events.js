@@ -28,7 +28,7 @@ $(document).ready(function() {
         cur_quote = 0; // Global counter for quote list index
 
         $('#motivate_box').append('<p>' + QUOTES[cur_quote] + '</p>');
-
+        setInterval(change_quote, 1000 * 60 * 60);
         // Drawing events from localStorage
         for (i = 0; i < len; i++) {
             // Convert from Python datetime to JS Date
@@ -285,7 +285,7 @@ function notify_user(title, icon, short_message, long_description) {
     };
 
     // Notification is set for next event in the queue
-    set_up_notification(); 
+    set_up_notification();
 }
 
 function show_modal(modal_name, event_icon, event_name, event_description) {
@@ -295,6 +295,18 @@ function show_modal(modal_name, event_icon, event_name, event_description) {
     $('#' + modal_name).find('.modal-body').text(event_description);
     $('#' + modal_name).modal('show');
 }
+
+/******************************************************************************
+*
+*                          QUOTES
+*
+******************************************************************************/
+function change_quote() {
+    random_quote = Math.floor((Math.random() * QUOTES.length) + 1);
+
+    $('#motivate_box').append('<p>' + QUOTES[random_quote] + '</p>');
+}
+
 /******************************************************************************
 *
 *                          BUTTONS

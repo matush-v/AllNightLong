@@ -28,7 +28,6 @@ ________________________________________________________________________________
    + Anything user does is added to the localstorage
   * Very nice clock with hour and minute hand (optional second hand)
     * Make Hour and Minute hand pointed like in luxury watches
-  * Quote box that gives a random new quote every hour - SEAN
   * “UNCLE!” button - make it a sexual safety word (pineapple,  bananaanana) - SEAN
     * uncle changes to other sex safety words randomly
 
