@@ -28,6 +28,13 @@ ________________________________________________________________________________
    + Anything user does is added to the localstorage
   * Very nice clock with hour and minute hand (optional second hand)
     * Make Hour and Minute hand pointed like in luxury watches
+  * create master function for the draw event stuff in (doc).ready() - SEAN
+
+* Quotes
+  * curtains CSS fix up - SEAN
+
+* Algo
+  * Check for time collisions - MATHURSHAN
 
 * Notifications
   * modals for each event
@@ -38,6 +45,7 @@ ________________________________________________________________________________
   * Faint lines for each depth - SEAN
 
 * Add site feedback/suggestions button - SEAN
+* Check for TODOs
 * Ensure that everything still works with bad user input
 * YSLOW, Audit, and W3 validator (last validated 5/3 9:24 PM)
 * Restrict CORS access

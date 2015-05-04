@@ -4,31 +4,24 @@ $(document).ready(function() {
     if (top.location.pathname == '/clock.html') {
         document.documentElement.style.overflowX = 'hidden';
 
-        QUOTES = ['With the new day comes new strength and new thoughts.',
-                  'In the middle of every difficulty lies opportunity.',
-                  'All we have to decide is what to do with the time that is given us.',
-                  'Don&#39;t let the muggles get you down.',
-                  'Good things come to people who wait, but better things come to those who go out and get them.',
-                  'If you do what you always did, you will get what you always got.',
-                  'If you&#39;re going through hell keep going.',
-                  'No masterpiece was ever created by a lazy artist.'];
+        // Quotes/info box
+        set_up_quotes();
 
-        ICONS = {'exercise': 'img/exercise_icon.png', 
-                 'hydration': 'img/water_icon.png', 
-                 'food': 'img/food_icon.png', 
-                 'walk': 'img/walk_icon.png', 
-                 'nap': 'img/nap_icon.png', 
+        // Const icon locations
+        ICONS = {'exercise': 'img/exercise_icon.png',
+                 'hydration': 'img/water_icon.png',
+                 'food': 'img/food_icon.png',
+                 'walk': 'img/walk_icon.png',
+                 'nap': 'img/nap_icon.png',
                  'caffeine': 'img/caffeine_icon.png',
-                 'extra': 'img/discomfort_icon.jpg'}; // Const icon locations
+                 'extra': 'img/discomfort_icon.jpg'};
 
         var events = JSON.parse(localStorage.getItem(EVENTS_LIST));
         var len = events.length;
         var today = new Date();
         cur_event = 0; // Global counter for event list index
-        cur_quote = 0; // Global counter for quote list index
 
-        $('#motivate_box').append('<p>' + QUOTES[cur_quote] + '</p>');
-        setInterval(change_quote, 1000 * 60 * 60);
+
         // Drawing events from localStorage
         for (i = 0; i < len; i++) {
             // Convert from Python datetime to JS Date
@@ -44,25 +37,14 @@ $(document).ready(function() {
             draw_event('red', i, events[i].datetime);
         }
 
+        // Mousing over events will change the box info
         set_up_event_mouseover();
 
         // Notification is set for first event in the queue
         set_up_notification();
 
         // For fancy end animation
-        document.getElementById("expander").addEventListener( 
-         'webkitTransitionEnd', function( e ) { 
-            if (event.propertyName == 'height') {
-                $("#finish_text").text('Congratulations champ! You nailed it!');
-                $("#expander").append('<button id="reward_btn" class="btn btn-info">Reap your reward</button>');
-                $("#done_btn").unbind();
-
-                $("#reward_btn").click(function () {
-                    location.href = "https://www.youtube.com/watch?v=wDajqW561KM";
-                })
-            }
-         }, false
-        );
+        set_up_end_animation();
     }
 });
 
@@ -191,9 +173,16 @@ function set_up_event_mouseover() {
             }
 
             var time = 'Time: ' + hour + ':' + minutes + am_pm;
-            $('#motivate_box').empty();
-            $('#motivate_box').append('<p>' + events_list[event_index].description + '</p>');
-            $('#motivate_box').append('<p>' + time + '</p>');
+
+            close_curtains(500);
+
+            setTimeout(function() {
+                $('#motivate_box').empty();
+                $('#motivate_box').append('<p>' + events_list[event_index].description + '</p>');
+                $('#motivate_box').append('<p>' + time + '</p>');
+                open_curtains(500);
+            }, 500)
+
         });
 
         $(this).mouseleave(function() {
@@ -201,10 +190,12 @@ function set_up_event_mouseover() {
             var num = (new Date()) - start_time;
             var den = (new Date(get_cookie('end_time'))) - start_time;
 
-            // Update quote based on how far into all nighter the user is
-            cur_quote = Math.floor(num / den * QUOTES.length);
-            $('#motivate_box').empty();
-            $('#motivate_box').append('<p>' + QUOTES[cur_quote] + '</p>');
+            close_curtains(500);
+            setTimeout(function() {
+                $('#motivate_box').empty();
+                $('#motivate_box').append('<p>' + QUOTES[cur_quote] + '</p>');
+                open_curtains(500);
+            }, 500);
         });
     });
 }
@@ -301,17 +292,59 @@ function show_modal(modal_name, event_icon, event_name, event_description) {
 *                          QUOTES
 *
 ******************************************************************************/
+function set_up_quotes() {
+    QUOTES = ['With the new day comes new strength and new thoughts.',
+              'In the middle of every difficulty lies opportunity.',
+              'All we have to decide is what to do with the time that is given us.',
+              'Don&#39;t let the muggles get you down.',
+              'Good things come to people who wait, but better things come to those who go out and get them.',
+              'If you do what you always did, you will get what you always got.',
+              'If you&#39;re going through hell keep going.',
+              'No masterpiece was ever created by a lazy artist.'];
+
+    cur_quote = 0; // Global counter for quote list index
+
+    open_curtains(500);
+    $('#motivate_box').append('<p>' + QUOTES[cur_quote] + '</p>');
+    // Change quote every hour
+    setInterval(change_quote, 1000 * 60 * 60);
+}
+
 function change_quote() {
     random_quote = Math.floor((Math.random() * QUOTES.length) + 1);
 
     $('#motivate_box').append('<p>' + QUOTES[random_quote] + '</p>');
 }
 
+function open_curtains(delay) {
+    $('.leftcurtain').stop().animate({width: '60px'}, delay);
+    $('.rightcurtain').stop().animate({width: '60px'}, delay);
+}
+
+function close_curtains(delay) {
+    $('.leftcurtain').stop().animate({width: '50%'}, delay);
+    $('.rightcurtain').stop().animate({width: '51%'}, delay);
+}
 /******************************************************************************
 *
 *                          BUTTONS
 *
 ******************************************************************************/
+function set_up_end_animation() {
+    document.getElementById('expander').addEventListener(
+        'webkitTransitionEnd', function(e) {
+            if (event.propertyName == 'height') {
+                $('#finish_text').text('Congratulations champ! You nailed it!');
+                $('#expander').append('<button id="reward_btn" class="btn btn-info">Reap your reward</button>');
+                $('#done_btn').unbind();
+
+                $('#reward_btn').click(function() {
+                    location.href = 'https://www.youtube.com/watch?v=wDajqW561KM';
+                });
+            }
+        }, false
+    );
+}
 
 $('#done_btn').mousedown(function() {
         $('body').css('user-select', 'none').prop('unselectable', 'on').on('selectstart', false);
