@@ -19,9 +19,9 @@ DATABASE
 '''
 class Events(db.Model):
     name = db.StringProperty()
-    event_type = db.StringProperty() # water, food, or exercise
+    event_type = db.StringProperty()  # water, food, or exercise
     description = db.StringProperty()
-    ratings = db.StringListProperty() # list of {"rating": x, "time": y} objects as strings
+    ratings = db.StringListProperty()  # list of {"rating": x, "time": y} objects as strings
 
 
 '''
@@ -57,6 +57,13 @@ class Clock(webapp2.RequestHandler):
         self.response.write(template.render(template_values))
 
 class Schedule(webapp2.RequestHandler):
+    WATER = "hydration"
+    NAP  = "nap"
+    WALK = "walk"
+    CAFFEINE = "caffeine"
+    FOOD = "fuel"
+    EXERCISE = "exercise"
+
     def post(self):
         '''
         API for adding an event, getting a schedule, or adding a rating
@@ -66,9 +73,12 @@ class Schedule(webapp2.RequestHandler):
         self.response.headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept'
 
         wake_up_time = self.request.get("wake_up_time")
-        end_time = int(self.request.get("end_time"))
-        cur_time = int(self.request.get("cur_time"))
-        utc_offset = int(self.request.get("utc_offset"))
+        end_time = self.request.get("end_time")
+        end_time = int(end_time) if end_time else end_time
+        cur_time = self.request.get("cur_time")
+        cur_time = int(cur_time) if cur_time else cur_time
+        utc_offset = self.request.get("utc_offset")
+        utc_offset = int(utc_offset) if utc_offset else utc_offset
 
         name = self.request.get("name")
         event_type = self.request.get("event_type")
@@ -123,42 +133,45 @@ class Schedule(webapp2.RequestHandler):
         '''
         Returns list of times and events that should be done at those times
         '''
-        # TODO use database
-        # TODO F with timezones
+        # TODO create sub-routines for each section
 
+        all_events = None # for filtering by event type
         events = []
 
         cur_time = datetime.fromtimestamp(cur_time)
         cur_time = cur_time - timedelta(hours=utc_offset)
 
         end_time = datetime.fromtimestamp(end_time)
-        end_time = end_time - timedelta(hours=utc_offset) 
+        end_time = end_time - timedelta(hours=utc_offset)
 
         halfway_time = cur_time + (end_time - cur_time) / 2
 
         ###################### WATER ##########################
-        event_type = "hydration"
-        event_name = "Is It In You"
-        description = "Drink a glass of water."
+        all_events = Events.all()
+        all_events.filter('event_type =', self.WATER)
+        specific_event = all_events.get()  # assumes only one water event
+
         water_time = cur_time + timedelta(minutes=45)
-        
+
         while water_time < end_time:
-            logging.warn("WATER TIME ================= " + str(water_time))
-            logging.warn("END TIME ================= " + str(end_time))
-            events.append({'name': event_name, 'type': event_type, 'description': description, 'datetime': calendar.timegm((water_time + timedelta(hours=utc_offset)).timetuple())})
+            events.append({'name': specific_event.name,
+                           'type': specific_event.event_type,
+                           'description': specific_event.description,
+                           'datetime': calendar.timegm((water_time + timedelta(hours=utc_offset)).timetuple())})
             water_time += timedelta(hours=1)
 
         #######################################################
 
 
         ####################### NAP ############################
-        event_type = "nap"
-        event_name = "Siesta"
-        description = "Rest easy with a 20 minute nap."
-        best_nap_time_shift = (int(wake_up_time[0:2]) / 2) - 1.5 # slice to get the hour
+        all_events = Events.all()
+        all_events.filter('event_type =', self.NAP)
+        specific_event = all_events.get()
+
+        best_nap_time_shift = (int(wake_up_time[0:2]) / 2) - 1.5  # slice to get the hour
         best_nap_time = cur_time
-        
-        if cur_time.hour >= 12: # PM so we need to add a day for nap
+
+        if cur_time.hour >= 12:  # PM so we need to add a day for nap
             best_nap_time += timedelta(days=1)
 
         best_nap_time = best_nap_time.replace(hour=int(best_nap_time_shift))
@@ -169,19 +182,23 @@ class Schedule(webapp2.RequestHandler):
 
         best_nap_time = best_nap_time + timedelta(hours=utc_offset)
         
-        events.append({'name': event_name, 'type': event_type, 'description': description, 'datetime': calendar.timegm((best_nap_time + timedelta(hours=utc_offset)).timetuple())})
+        events.append({'name': specific_event.name,
+                       'type': specific_event.event_type,
+                       'description': specific_event.description,
+                       'datetime': calendar.timegm((best_nap_time + timedelta(hours=utc_offset)).timetuple())})
 
         # TODO: Check to make sure there is no water break overlap with the nap
 
         #######################################################
 
         ########################### WALK ######################
-        event_type = "walk"
-        event_name = "Freshen Up"
-        description = "Go for a 10 minute walk"
+        all_events = Events.all()
+        all_events.filter('event_type =', self.WALK)
+        specific_event = all_events.get()
 
-        if end_time.hour < 5 and cur_time.hour <= 23: # end_time is before 5 AM and it's currently before midnight
-            # walk should be set to near beginning
+        if end_time.hour < 5 and cur_time.hour <= 23:
+            # end_time is before 5 AM and it's currently before midnight
+            #  so walk should be set to near beginning
             best_walk_time = cur_time + timedelta(hours=1)
             rand_min = random.randrange(0, 60)
             # TODO add while loop to catch for time collisions
@@ -192,34 +209,43 @@ class Schedule(webapp2.RequestHandler):
             rand_min = random.randrange(0, 60)
             best_walk_time = best_walk_time - timedelta(minutes=rand_min)
 
-        events.append({'name': event_name, 'type': event_type, 'description': description, 'datetime': calendar.timegm((best_walk_time + timedelta(hours=utc_offset)).timetuple())})
+        events.append({'name': specific_event.name,
+                       'type': specific_event.event_type,
+                       'description': specific_event.description,
+                       'datetime': calendar.timegm((best_walk_time + timedelta(hours=utc_offset)).timetuple())})
 
         ######################################################
 
 
         ################### CAFFEINE #########################
-        # Put it right before nap so it kicks in as they wake up
-        event_type = "caffeine"
-        event_name = "CAFFEINE!"
-        description = "Get hyped up with the world's favorite chemical. It takes about 20 minutes, so this is the perfect time to nap."
+        all_events = Events.all()
+        all_events.filter('event_type =', self.CAFFEINE)
+        specific_event = all_events.get()
 
+        # Put it right before nap so it kicks in as they wake up
         best_caffeine_time = best_nap_time - timedelta(minutes=5)
 
-        events.append({'name': event_name, 'type': event_type, 'description': description, 'datetime': calendar.timegm((best_caffeine_time + timedelta(hours=utc_offset)).timetuple())})
+        events.append({'name': specific_event.name,
+                       'type': specific_event.event_type,
+                       'description': specific_event.description,
+                       'datetime': calendar.timegm((best_caffeine_time + timedelta(hours=utc_offset)).timetuple())})
 
         ######################################################
 
 
         ####################### FOOD #########################
         # Every two hours until halfway point, then every hour
-        event_type = "food"
-        event_name = "Feast"
-        description = "Bulk up with some protein and eat something nutritious. Carbs are evil."
+        all_events = Events.all()
+        all_events.filter('event_type =', self.FOOD)
+        specific_event = all_events.get()
 
         food_time = cur_time + timedelta(hours=1)
 
         while food_time < end_time:
-            events.append({'name': event_name, 'type': event_type, 'description': description, 'datetime': calendar.timegm((food_time + timedelta(hours=utc_offset)).timetuple())})
+            events.append({'name': specific_event.name,
+                           'type': specific_event.event_type,
+                           'description': specific_event.description,
+                           'datetime': calendar.timegm((food_time + timedelta(hours=utc_offset)).timetuple())})
 
             if food_time >= halfway_time:
                 food_time += timedelta(hours=1)
@@ -230,21 +256,21 @@ class Schedule(webapp2.RequestHandler):
 
         ####################### EXERCISE #####################
         # Ever-y two hours until halfway point, then every hour
+        all_events = Events.all(keys_only=True)
+        all_events.filter('event_type =', self.EXERCISE)
+        item_keys = all_events.fetch(1000)
 
         # TODO get stretching pics
-        exercises = [{'name': 'Pump It', 'description': "Let's get old-fashioned with ten pushups."},
-                     {'name': 'Jumper', 'description': "Bet you can't do twenty."},
-                     {'name': 'Bend That Body', 'description': "Get flexible. Try these easy stretches."}]
-        event_type = "exercise"
-        event_name = "Feast"
-        description = "Bulk up with some protein and eat something nutritious. Carbs are evil."
-
         exercise_time = cur_time + timedelta(hours=1) + timedelta(minutes=15)
 
-
         while exercise_time < end_time:
-            exercise = random.choice(exercises)
-            events.append({'name': exercise['name'], 'type': event_type, 'description': exercise['description'], 'datetime': calendar.timegm((exercise_time + timedelta(hours=utc_offset)).timetuple())})
+            exercise_key = random.choice(item_keys)
+            specific_event = Events.get(exercise_key)
+
+            events.append({'name': specific_event.name,
+                           'type': specific_event.event_type,
+                           'description': specific_event.description,
+                           'datetime': calendar.timegm((exercise_time + timedelta(hours=utc_offset)).timetuple())})
 
             if exercise_time >= halfway_time:
                 exercise_time += timedelta(hours=1)
@@ -285,6 +311,25 @@ class Schedule(webapp2.RequestHandler):
 
         return True
 
+class Extra(webapp2.RequestHandler):
+    EXTRA = "extra" # event type
+
+    def post(self):
+        '''
+        API for quick help tips when user is tired
+        '''
+        all_events = Events.all(keys_only=True)
+        all_events.filter('event_type =', self.EXTRA)
+        item_keys = all_events.fetch(1000)
+
+        specific_event = Events.get(random.choice(item_keys))
+
+        self.response.out.write(json.dumps({'name': specific_event.name,
+                                            'type': specific_event.event_type,
+                                            'description': specific_event.description}))
+
+
+
 dthandler = lambda obj: (
     obj.isoformat()
     if isinstance(obj, datetime)
@@ -294,5 +339,6 @@ dthandler = lambda obj: (
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
     ('/clock.html', Clock),
-    ('/schedule', Schedule)
+    ('/schedule', Schedule),
+    ('/extra', Extra)
     ], debug=True)

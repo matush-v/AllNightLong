@@ -4,50 +4,27 @@ $(document).ready(function() {
     if (top.location.pathname == '/clock.html') {
         document.documentElement.style.overflowX = 'hidden';
 
-        QUOTES = ['With the new day comes new strength and new thoughts.',
-                  'In the middle of every difficulty lies opportunity.',
-                  'All we have to decide is what to do with the time that is given us.',
-                  'Don&#39;t let the muggles get you down.',
-                  'Good things come to people who wait, but better things come to those who go out and get them.',
-                  'If you do what you always did, you will get what you always got.',
-                  'If you&#39;re going through hell keep going.',
-                  'No masterpiece was ever created by a lazy artist.'];
+        // Quotes/info box
+        set_up_quotes();
 
-        ICONS = {'exercise': 'img/exercise_icon.png', 
-                 'hydration': 'img/water_icon.png', 
-                 'food': 'img/food_icon.png', 
-                 'walk': 'img/walk_icon.png', 
-                 'nap': 'img/nap_icon.png', 
-                 'caffeine': 'img/caffeine_icon.png'}; // Const icon locations
+        // Icons for notifications
+        set_up_icons();
 
         var events = JSON.parse(localStorage.getItem(EVENTS_LIST));
         var today = new Date();
         cur_event = 0; // Global counter for event list index
-        cur_quote = 0; // Global counter for quote list index
 
-        $('#motivate_box').append('<p>' + QUOTES[cur_quote] + '</p>');
 
         draw_events(events);
 
+        // Mousing over events will change the box info
         set_up_event_mouseover();
 
         // Notification is set for first event in the queue
         set_up_notification();
 
         // For fancy end animation
-        document.getElementById("expander").addEventListener( 
-         'webkitTransitionEnd', function( e ) { 
-            if (event.propertyName == 'height') {
-                $("#finish_text").text('Congratulations champ! You nailed it!');
-                $("#expander").append('<button id="reward_btn" class="btn btn-info">Reap your reward</button>');
-                $("#done_btn").unbind();
-
-                $("#reward_btn").click(function () {
-                    location.href = "https://www.youtube.com/watch?v=wDajqW561KM";
-                })
-            }
-         }, false
-        );
+        set_up_end_animation();
     }
 });
 
@@ -217,10 +194,15 @@ function set_up_event_mouseover() {
             }
 
             var time = 'Time: ' + hour + ':' + minutes + am_pm;
-            $('#motivate_box').empty();
-            $('#motivate_box').append('<h1>' + events_list[event_index].name + '</h1>');
-            $('#motivate_box').append('<p>' + events_list[event_index].description + '</p>');
-            $('#motivate_box').append('<p>' + time + '</p>');
+
+            close_curtains(300);
+
+            setTimeout(function() {
+                $('#motivate_box').empty();
+                $('#motivate_box').append('<p>' + events_list[event_index].description + '</p>');
+                $('#motivate_box').append('<p>' + time + '</p>');
+                open_curtains(300);
+            }, 300);
         });
 
         $(this).mouseleave(function() {
@@ -228,10 +210,12 @@ function set_up_event_mouseover() {
             var num = (new Date()) - start_time;
             var den = (new Date(get_cookie('end_time'))) - start_time;
 
-            // Update quote based on how far into all nighter the user is
-            cur_quote = Math.floor(num / den * QUOTES.length);
-            $('#motivate_box').empty();
-            $('#motivate_box').append('<p>' + QUOTES[cur_quote] + '</p>');
+            close_curtains(300);
+            setTimeout(function() {
+                $('#motivate_box').empty();
+                $('#motivate_box').append('<p>' + QUOTES[cur_quote] + '</p>');
+                open_curtains(300);
+            }, 300);
         });
     });
 }
@@ -276,6 +260,16 @@ function set_up_notification() {
     cur_event++;
 }
 
+function set_up_icons() {
+    // Const, global icon file locations
+    ICONS = {'exercise': 'img/exercise_icon.png',
+             'hydration': 'img/water_icon.png',
+             'food': 'img/food_icon.png',
+             'walk': 'img/walk_icon.png',
+             'nap': 'img/nap_icon.png',
+             'caffeine': 'img/caffeine_icon.png',
+             'extra': 'img/discomfort_icon.jpg'};
+}
 
 function notify_user(title, icon, short_message, long_description) {
     if (!Notification) {
@@ -303,8 +297,10 @@ function notify_user(title, icon, short_message, long_description) {
             keyboard: false
         });
 
+        show_modal('event_modal', icon, title, description);
 
         // TODO modularize these into helper function
+        // Also, these next 5 lines were not in Matush's code and we had a conflict... maybe remove?
         $('#event_modal').find('#modal-image').empty()
         $('#event_modal').find('#modal-image').append("<div class='modal-icon'><img src='" + icon + "' alt='event icon'>");
         $('#event_modal').find('.modal-title').text(title);
@@ -317,15 +313,75 @@ function notify_user(title, icon, short_message, long_description) {
     };
 
     // Notification is set for next event in the queue
-    set_up_notification(); 
+    set_up_notification();
 }
 
+function show_modal(modal_name, event_icon, event_name, event_description) {
+    $('#' + modal_name).find('#modal-image').empty();
+    $('#' + modal_name).find('#modal-image').append("<div class='modal-icon'><img src='" + event_icon + "' alt='event icon'></div>");
+    $('#' + modal_name).find('.modal-title').text(event_name);
+    $('#' + modal_name).find('.modal-body').text(event_description);
+    $('#' + modal_name).modal('show');
+}
 
+/******************************************************************************
+*
+*                          QUOTES
+*
+******************************************************************************/
+function set_up_quotes() {
+    QUOTES = ['With the new day comes new strength and new thoughts.',
+              'In the middle of every difficulty lies opportunity.',
+              'All we have to decide is what to do with the time that is given us.',
+              'Don&#39;t let the muggles get you down.',
+              'Good things come to people who wait, but better things come to those who go out and get them.',
+              'If you do what you always did, you will get what you always got.',
+              'If you&#39;re going through hell keep going.',
+              'No masterpiece was ever created by a lazy artist.'];
+
+    cur_quote = 0; // Global counter for quote list index
+
+    open_curtains(500);
+    $('#motivate_box').append('<p>' + QUOTES[cur_quote] + '</p>');
+    // Change quote every hour
+    setInterval(change_quote, 1000 * 60 * 60);
+}
+
+function change_quote() {
+    random_quote = Math.floor((Math.random() * QUOTES.length) + 1);
+
+    $('#motivate_box').append('<p>' + QUOTES[random_quote] + '</p>');
+}
+
+function open_curtains(delay) {
+    $('.leftcurtain').stop().animate({width: '60px'}, delay);
+    $('.rightcurtain').stop().animate({width: '60px'}, delay);
+}
+
+function close_curtains(delay) {
+    $('.leftcurtain').stop().animate({width: '50%'}, delay);
+    $('.rightcurtain').stop().animate({width: '51%'}, delay);
+}
 /******************************************************************************
 *
 *                          BUTTONS
 *
 ******************************************************************************/
+function set_up_end_animation() {
+    document.getElementById('expander').addEventListener(
+        'webkitTransitionEnd', function(e) {
+            if (event.propertyName == 'height') {
+                $('#finish_text').text('Congratulations champ! You nailed it!');
+                $('#expander').append('<button id="reward_btn" class="btn btn-info">Reap your reward</button>');
+                $('#done_btn').unbind();
+
+                $('#reward_btn').click(function() {
+                    location.href = 'https://www.youtube.com/watch?v=wDajqW561KM';
+                });
+            }
+        }, false
+    );
+}
 
 $('#done_btn').mousedown(function() {
         $('body').css('user-select', 'none').prop('unselectable', 'on').on('selectstart', false);
@@ -369,20 +425,14 @@ function minimize () {
     expander.removeClass('notransition'); // Re-enable transitions
 }
 
+/* Gets a random extra event from the server */
 $('#tired_btn').click(function() {
-    var extras = [{"name": "Quick Spark" , "description": "Splash yourself with cold water", "icon": "img/discomfort_icon.jpg"}, 
-    {"name": "Why you hittin’ yourself?", "description": "Pinch your thigh, eyebrow, or cheek", "icon": "img/discomfort_icon.jpg"}, 
-    {"name": "Get your jam on", "description": "Put some rousing tunes on and pump yourself up for an intense night", "icon": "img/music_icon.jpg"}];
-    var rand = Math.random();
-    rand *= extras.length;
-    rand = Math.floor(rand);
-    var choice = extras[rand];
+    $.post('/extra', function(data) {
+        extra_event = JSON.parse(data);
+        event_type = extra_event.type;
 
-    $('#event_modal').find('#modal-image').empty()
-    $('#event_modal').find('#modal-image').append("<div class='modal-icon'><img src='" + choice.icon + "' alt='event icon'></div>");
-    $('#event_modal').find('.modal-title').text(choice.name);
-    $('#event_modal').find('.modal-body').append(choice.description);
-    $('#event_modal').modal('show');
+        show_modal('event_modal', ICON[event_type], extra_event.name, extra_event.description);
+    });
 });
 
 
@@ -428,8 +478,8 @@ function validate_times(wake_up_time, end_time) {
 }
 
 /* Given a 24hr time string (i.e. 19:30), return the dictionary
-   with separate fields for both the hour and minute 
-   ( i.e. {'hour: 19', 'min: 30'} ) 
+   with separate fields for both the hour and minute
+   ( i.e. {'hour: 19', 'min: 30'} )
  */
 function get_hour_min(time_string) {
     var time_arr = time_string.split(':');
@@ -453,17 +503,14 @@ var get_css = function(prop, fromClass) {
 };
 
 function create_cookie(name, value, days) {
-    var expires = null;
+    var max_age = null;
 
     if (days) {
-        var date = new Date();
-
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-        expires = '; expires=' + date.toGMTString();
+        max_age = '; max-age=' + 24 * 60 * 60;
     }
-    else expires = '';
+    else max_age = '';
 
-    document.cookie = name + '=' + value + expires + '; path=/';
+    document.cookie = name + '=' + value + max_age + '; path=/';
 }
 
 function get_cookie(name) {
