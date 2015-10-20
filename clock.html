@@ -19,7 +19,7 @@
         <link href="css/allnightlong.css" rel="stylesheet">
 
         <!-- Clock CSS -->
-        <link href="css/clock.css" rel="stylesheet">        
+        <link href="css/new_clock.css" rel="stylesheet">
 
         <!-- Modal CSS -->
         <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
@@ -37,19 +37,69 @@
         <div class="container header">
             <div id="top_row" class="row">
                 <div class="col-sm-6 col-sm-offset-1">
-                    <div id="liveclock" class="outer_face">
+
+                    <!-- OLD CLOCK HTML -->
+                    <!-- <div id="liveclock" class="outer_face">
                         <div class="marker oneseven"></div>
                         <div class="marker twoeight"></div>
                         <div class="marker fourten"></div>
                         <div class="marker fiveeleven"></div>
-
-                        <div class="inner_face">
-                            <div class="hand hour"></div>
-                            <div class="hand minute"></div>
-                            <div class="hand second"></div>
-                        </div>
                     </div>
-                </div>
+                    <div class="inner_face">
+                        <div class="hand hour"></div>
+                        <div class="hand minute"></div>
+                        <div class="hand second"></div>
+                    </div> -->
+                    
+                    <!-- NEW CLOCK HTML -->
+                    <div class='clock-wrapper'>
+                        <div class='clock-border'>
+                        	<div class='clock'>
+                                <ul class='minute-marks'>
+									<li class='five'></li>
+									<li></li>
+									<li></li>
+									<li></li>
+									<li></li>
+									<li class='five'></li>
+									<li></li>
+									<li></li>
+									<li></li>
+									<li></li>
+									<li class='five'></li>
+									<li></li>
+									<li></li>
+									<li></li>
+									<li></li>
+									<li class='five'></li>
+									<li></li>
+									<li></li>
+									<li></li>
+									<li></li>
+									<li class='five'></li>
+									<li></li>
+									<li></li>
+									<li></li>
+									<li></li>
+									<li class='five'></li>
+									<li></li>
+									<li></li>
+									<li></li>
+									<li></li>
+                          		</ul>
+                        		<div class='hour'>
+                        			<div class='hand'></div>
+                        		</div>
+                        		<div class='minute'>
+                        			<div class='hand'></div>
+                        		</div>
+                                <div class='second'>
+                                	<div class='hand'></div>
+                                </div>
+                      		</div> <!-- ./clock -->
+                 		</div> <!-- ./clock-border -->
+              		</div> <!-- ./clock-wrapper -->
+                </div> <!-- ./col-sm-6 col-sm-offset-1 -->
 
                 <div id="side_panel" class="col-sm-4">
                     <div id="box_container" class="panel panel-primary">
@@ -65,9 +115,8 @@
                     <div id="tired_btn" class="btn btn-dark btn-large">
                         <p>I'm Tired!</p>
                     </div>
-                    
-
                 </div>
+
             </div>
         </div> 
 

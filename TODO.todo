@@ -1,0 +1,69 @@
+☐ ALWAYS USE UNDERSCORE CASING
+
+TODO for Alpha Testing:
+  Mathurshan:
+    Clock page:
+      ☐ Sexy graphics (clock, box, buttons, etc.)
+      ☐ Anything user does is added to the localstorage
+      ☐ very nice clock with hour and minute hand (optional second hand)
+      ☐ Make Hour and Minute hand pointed like in luxury watches
+    Algo:
+      ☐ Check for time collisions
+    Prettify:
+    Notifications:
+      ☐ modals for each event
+        ☐ Every time a user does not complete an event, add it to localstorage and adjust schedule
+        ☐ If completed, send feedback to server
+
+  Sean:
+    Clock page:
+      ☐ create master function for the draw event stuff in (doc).ready. - SEAN
+      ☐ When event is over, remove the dot dynamically - SEAN
+    Quotes:
+      ☐ curtains CSS fix up - SEAN
+    Prettify:
+      ☐ Faint lines for each depth - SEAN
+    Creating a schedule:
+      ☐ sexy graphics and JS
+      ☐ Color code events
+      ☐ EC: Scroll down to see later events, scroll up to see recent events
+ 
+ ☐ Bugs from Hackathon presentation
+  ☐ Stop notifications when they get to Congratulations page
+ 
+ Late Game:
+ ☐ Add site feedback/suggestions button
+ ☐ YSLOW, Audit, and W3 validator (last validated 5/3 9:24 PM)
+ ☐ Restrict CORS access
+ ☐ Ensure that everything still works with bad user input
+
+TODO for Beta Testing:
+  * Tailor site using user feedback
+
+  * EC: Schedule Adjustment
+    * events known about previous event completion (e.g. you didn't walk last time)
+    * based off science and user feedback from notifications
+
+  * Extreme Motivation
+    * fun surprises (motivational quotes n stuff)
+
+  * Prettify
+    * Add unique way to tell user why we want desktop notifications TODO exists
+    * Info box parts like curtains to show event info onmouseover and animates back after
+    * Have progress bar to let person know how close they are to finishing the all nighter
+      * Bar is along clock based on hour hand and goes from light green to dark green with % next to it
+    * Optional seconds hand
+
+  * Eyes Hurt?
+    * Recommend F.lux
+
+  * Checkbox for caffine option and reminder to not drink beforehand
+
+  * Ergonomic Recommendations under tips
+
+  * Optimization!
+
+IDEAS:
+ ☐ Sexual innuendos
+ ☐ Review raizlabs slides
+ ☐ Red: Nap, Blue: Water, Black: Exercise, Yellow: Food
