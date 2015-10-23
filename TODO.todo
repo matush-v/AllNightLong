@@ -18,13 +18,13 @@ TODO for Alpha Testing:
 
   Sean:
     Clock page:
-      ☐ create master function for the draw event stuff in (doc).ready. - SEAN
+      ☐ create master function for the draw event stuff in (doc).ready
       ☐ When event is over, remove the dot dynamically - SEAN
-      ☐ Events show up at 12 oclock for some reason, happens beginning with depth rings commit I believe
+      ☐ Add ratings when 'Done' button is clicked in modal via ajax call to add_rating endpoint
     Quotes:
-      ☐ curtains CSS fix up - SEAN
+      ☐ curtains CSS fix up
     Prettify:
-      ☐ Faint lines for each depth - SEAN
+      ☐ Faint lines for each depth
     Creating a schedule:
       ☐ sexy graphics and JS
       ☐ Color code events

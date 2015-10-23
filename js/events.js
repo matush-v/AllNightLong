@@ -183,8 +183,6 @@ function draw_depth_rings() {
     // as the clock center (i.e. keep them concentric)
     var new_left = dist;
     var new_top = dist;
-    width -= 2 * dist;
-    height -= 2 * dist;
     for (var i = 0; i < MAX_DEPTH; i++) {
         $('.clock').append('<div class="ring" style="left:' + new_left + 'px; top:' + new_top + 'px; border-radius:' + border_radius + '%; width:' + width + 'px; height:' + height + 'px;"></div>');
 
@@ -202,44 +200,22 @@ function set_up_event_mouseover() {
         $(this).mouseover(function() {
             var event_index = $(this).attr('id').slice(ID_LENGTH);
             var date = (new Date(events_list[event_index].datetime * 1000));
-            var hour = date.getHours();
-            var minutes = date.getMinutes();
-            am_pm = 'am';
-
-            if (hour > 12) {
-                hour -= 12;
-                am_pm = 'pm';
-            } else if (hour == 0) {
-                hour = 12;
-            }
-
-            if (minutes < 10) {
-                minutes = '0' + minutes;
-            }
-
-            var time = 'Time: ' + hour + ':' + minutes + am_pm;
-
-            close_curtains(300);
-
-            setTimeout(function() {
-                $('#motivate_box').empty();
-                $('#motivate_box').append('<p>' + events_list[event_index].description + '</p>');
-                $('#motivate_box').append('<p>' + time + '</p>');
-                open_curtains(300);
-            }, 300);
+            var time = 'Time: ' + to_ampm(date);
+            var elements_to_display = [
+                '<p>' + events_list[event_index].description + '</p>',
+                '<p>' + time + '</p>'
+            ];
+                        
+            update_motivate_box(elements_to_display);
         });
 
         $(this).mouseleave(function() {
             var start_time = new Date(get_cookie('start_time'));
             var num = (new Date()) - start_time;
             var den = (new Date(get_cookie('end_time'))) - start_time;
-
-            close_curtains(300);
-            setTimeout(function() {
-                $('#motivate_box').empty();
-                $('#motivate_box').append('<p>' + QUOTES[cur_quote] + '</p>');
-                open_curtains(300);
-            }, 300);
+            var elements_to_display = ['<p>' + QUOTES[cur_quote] + '</p>'];
+            
+            update_motivate_box(elements_to_display);
         });
     });
 }
@@ -274,11 +250,12 @@ function set_up_notification() {
     var milli_till_event = new Date(event_to_notify.datetime * 1000);
     milli_till_event -= now;
 
-    if (milli_till_event < 0) 
+    if (milli_till_event < 0) {
         // console.log("bad time for event: " + event_to_notify.name);
         return;
-    else
+    } else {
         setTimeout(notify_user, milli_till_event, 'BREAK TIME!', ICONS[event_type], event_to_notify.name, event_to_notify.description);
+    }
 
     cur_event++;
 }
@@ -383,7 +360,7 @@ function open_curtains(delay) {
 
 function close_curtains(delay) {
     $('.leftcurtain').stop().animate({width: '50%'}, delay);
-    $('.rightcurtain').stop().animate({width: '51%'}, delay);
+    $('.rightcurtain').stop().animate({width: '50%'}, delay);
 }
 /******************************************************************************
 *
@@ -454,7 +431,7 @@ $('#tired_btn').click(function() {
         if (data) {
             extra_event = JSON.parse(data);
             event_type = extra_event.type;
-            show_modal('event_modal', ICON[event_type], extra_event.name, extra_event.description);
+            show_modal('event_modal', ICONS[event_type], extra_event.name, extra_event.description);
         } else {
             // TODO handle case when no extra events
             console.log("no events");
@@ -478,6 +455,24 @@ Date.prototype.stdTimezoneOffset = function() {
 Date.prototype.dst = function() {
     return this.getTimezoneOffset() < this.stdTimezoneOffset();
 };
+
+/* Given an array of string DOM elements, clears motiviate box and appends the elements in it instead */
+function update_motivate_box(elements) {
+    var ANIMATION_TIME = 300; // const in milliseconds for how long curtains animation lasts
+
+    close_curtains(ANIMATION_TIME);
+    var num_elements = elements.length;
+
+    setTimeout(function() {
+        $('#motivate_box').empty();
+
+        for (var i = 0; i < num_elements; i++) {
+            $('#motivate_box').append(elements[i]);
+        }
+        open_curtains(ANIMATION_TIME);
+    }, ANIMATION_TIME);
+}
+
 
 /* Validate that the range of wake_up_time is within 3am to 3pm */
 function validate_times(wake_up_time, end_time) {
@@ -513,6 +508,19 @@ function get_hour_min(time_string) {
     var hour = time_arr[0];
     var minute = time_arr[1];
     return {'hour': parseInt(hour), 'min': parseInt(minute)};
+}
+
+/* Given a 24 hr JS Date object, return 12 hr time string */
+function to_ampm(date) {
+  var hours = date.getHours();
+  var minutes = date.getMinutes();
+
+  var ampm = hours >= 12 ? 'pm' : 'am';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  minutes = minutes < 10 ? '0'+minutes : minutes;
+  
+  return hours + ':' + minutes + ' ' + ampm;
 }
 
 /* Gets the CSS property of a class that hasn't been used yet in the DOM */
