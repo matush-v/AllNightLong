@@ -85,7 +85,7 @@ function draw_events(events) {
     // Moves the dots of 0 depth slightly inward so they
     // aren't right on the edge of the clock
     INITIAL_OFFSET = 0.5;
-    SPACING_FACTOR = 2.5; // Determines space between depth levels
+    SPACING_FACTOR = 2.0; // Determines space between depth levels
     FADE_FACTOR = 0.1; // Lower = more faded
     MAX_DEPTH = 3; // number of rings in clock
 
@@ -95,8 +95,7 @@ function draw_events(events) {
         // datetime is a unix timestamp (in seconds), convert to JS Date object after converting to milliseconds        
         // So datetime becomes the JS Date for when the event should occur
         events[i].datetime = new Date(events[i].datetime * 1000);
-        console.log(events[i].datetime);
-        draw_event('red', i, events[i].datetime);
+        draw_event('yellow', i, events[i].datetime);
     }
 
     draw_depth_rings();
@@ -112,64 +111,82 @@ function draw_event(color, index, datetime) {
     var now = new Date();
     var dist = null;
     var x_offset, y_offset = null;
-    var hour, minute = null;
+    var minute = null;
+    var depth;
 
     if (datetime < now) {
         return; // event is in the past
     }
 
     // depth is difference in hours
-    datetime_stamp = new Date(datetime.setMinutes(0)).setMilliseconds(0);
-    now = new Date(now.setMinutes(0)).setMilliseconds(0);
-    var depth = Math.floor((datetime_stamp - now) / (1000 * 60 * 60)); // converting milliseconds difference to hours difference
+    depth = find_depth(datetime);
 
-    //console.log(depth);
     // depth can be 0, 1, 2 for max depth of 3... so use >=
     if (depth >= MAX_DEPTH) {
-        return; // don't draw events that close to the center
+        return; // don't draw events that close to the center, they are too far in the future
     }
 
-    hour = datetime.getHours();
+    // calculate angle of dot on clock given which minute it is at
     minute = datetime.getMinutes();
-
-    angle = (minute / minutes_in_hour) * rads_in_circle - Math.PI / 2;
+    angle = (minute / minutes_in_hour) * rads_in_circle - Math.PI / 2; // offset -pi/2 so minute 0 corresponds to top of clock
 
     // Distance to move toward center of circle
     dist = (depth + INITIAL_OFFSET) * dot_width * SPACING_FACTOR;
     x_offset = dist * Math.cos(Math.PI - angle);
     y_offset = dist * Math.sin(Math.PI + angle);
 
-    radius = ($('.outer_face').width()) / 2;
-    new_top = (($('.outer_face').height() / 2) + radius * Math.sin(angle));
-    new_left = (($('.outer_face').width() / 2) + radius * Math.cos(angle));
+    // Find new_top and new_left to be points on circle border based on angle
+    radius = ($('.clock').width()) / 2;
+    new_top = (($('.clock').height() / 2) + radius * Math.sin(angle));
+    new_left = (($('.clock').width() / 2) + radius * Math.cos(angle));
 
     // Center dots at point on circle border, and then add offset
-    //  needed to bring them closer to the center.
+    // needed to bring them closer to the center.
     new_left = new_left - dot_width / 2 + x_offset;
     new_top = new_top - dot_height / 2 + y_offset;
-    $('.outer_face').append('<div id="event_' + index + '" class="dot" style="left:' + new_left + 'px;top:' + new_top + 'px; background-color: ' + color + '"></div>');
+
+    // Add event to the DOM, at position found, with color given, and with opacity depending on depth
+    $('.clock').append('<div id="event_' + index + '" class="dot" style="left:' + new_left + 'px;top:' + new_top + 'px; background-color: ' + color + '"></div>');
     $('#event_' + index).css('opacity', (MAX_DEPTH - depth + FADE_FACTOR) / (MAX_DEPTH + FADE_FACTOR)); // faded based on depth: 1.0 opacity is fully visible, and 0.0 is fully transparent
+}
+
+
+// Given the datetime of an event, calculate its depth, by finding the difference between the 
+// event time and the current time in hours (solely based off hour values)
+function find_depth(datetime) {
+    var now = new Date();
+    var datetime_stamp = new Date(datetime);
+    
+    // Remove minutes, seconds, and millseconds so there is no rounding error when subtracting later
+    datetime_stamp.setMinutes(0);
+    datetime_stamp.setSeconds(0);
+    datetime_stamp.setMilliseconds(0);
+    now.setMinutes(0);
+    now.setSeconds(0);
+    now.setMilliseconds(0);
+    
+    return Math.floor((datetime_stamp - now) / (1000 * 60 * 60)); // converting milliseconds difference to hours difference
 }
 
 
 function draw_depth_rings() {
     var dot_width = parseInt(get_css('width', 'dot'));
     var dot_height = parseInt(get_css('height', 'dot'));
-    var dist = INITIAL_OFFSET * dot_width * SPACING_FACTOR; // distance to first ring from outer_face
+    var dist = INITIAL_OFFSET * dot_width * SPACING_FACTOR; // distance to first ring from clock
 
-    var border_radius = parseInt($('.outer_face').css('border-radius'));
-    var width = $('.outer_face').width();
-    var height = $('.outer_face').height();
+    // Get same border radius (right now in %), as the clock so the circles are concentric
+    var border_radius = parseInt($('.clock').css('border-radius'));
+    var width = $('.clock').width();
+    var height = $('.clock').height();
     
     // since circle is getting smaller, have to move center to keep it in the same place
-    // as the outer_face center (i.e. keep them concentric)
+    // as the clock center (i.e. keep them concentric)
     var new_left = dist;
     var new_top = dist;
-    border_radius -= 2 * dist;
     width -= 2 * dist;
     height -= 2 * dist;
     for (var i = 0; i < MAX_DEPTH; i++) {
-        $('.outer_face').append('<div class="ring" style="left:' + new_left + 'px; top:' + new_top + 'px; border-radius:' + border_radius + 'px; width:' + width + 'px; height:' + height + 'px;"></div>');
+        $('.clock').append('<div class="ring" style="left:' + new_left + 'px; top:' + new_top + 'px; border-radius:' + border_radius + '%; width:' + width + 'px; height:' + height + 'px;"></div>');
 
         // TODO draw other two rings
     }
@@ -192,6 +209,8 @@ function set_up_event_mouseover() {
             if (hour > 12) {
                 hour -= 12;
                 am_pm = 'pm';
+            } else if (hour == 0) {
+                hour = 12;
             }
 
             if (minutes < 10) {
