@@ -18,13 +18,15 @@ TODO for Alpha Testing:
 
   Sean:
     Clock page:
-      ☐ create master function for the draw event stuff in (doc).ready
-      ☐ When event is over, remove the dot dynamically - SEAN
+      ☐ Change global event counter to be in localstorage so it persists over refresh @critical
+      ☐ When event is over, remove the dot dynamically (Written, but test when above critical is fixed)
       ☐ Add ratings when 'Done' button is clicked in modal via ajax call to add_rating endpoint
+      ☐ Make clock.html page inaccessible if all events in localstorage are in the past
+      ☐ Save ratings in localstorage (with time?) so that they can be added to modal even after page refresh
+        - Right now stars will be same across all modals (extra or event) until the page is refreshed and they all revert to 0 stars
     Quotes:
       ☐ curtains CSS fix up
     Prettify:
-      ☐ Faint lines for each depth
     Creating a schedule:
       ☐ sexy graphics and JS
       ☐ Color code events
@@ -32,7 +34,6 @@ TODO for Alpha Testing:
  
  ☐ Bugs from Hackathon presentation
   ☐ Stop notifications when they get to Congratulations page
-  ☐ Clear modal descriptions before adding next description
  
  Late Game:
  ☐ Add site feedback/suggestions button
@@ -73,6 +74,11 @@ IDEAS:
 
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:
+<<<<<<< HEAD
  ✔ Fix bug @done (15-10-23 16:30)
  ✔ make methods within schedule class @done (15-10-23 16:23) @project(TODO for Alpha Testing / Mathurshan / Backend)
  ✔ very nice clock with hour and minute hand @done (15-10-23 16:27) @project(TODO for Alpha Testing / Mathurshan / Clock page)
+=======
+ ✔ Clear modal descriptions before adding next description @done (15-10-23 14:55) @project(TODO for Alpha Testing)
+ ✔ Faint lines for each depth @done (15-10-23 14:55) @project(TODO for Alpha Testing / Sean / Prettify)
+>>>>>>> 711c8f7409d64c1a79ec86fe10d5d94c04bc62c0
