@@ -1,7 +1,10 @@
+☐ Fix bug
+☐ MVC
 ☐ ALWAYS USE UNDERSCORE CASING
-
 TODO for Alpha Testing:
   Mathurshan:
+    Backend:
+      ☐ make methods within schedule class
     Clock page:
       ☐ Sexy graphics (clock, box, buttons, etc.)
       ☐ Anything user does is added to the localstorage
