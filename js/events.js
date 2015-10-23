@@ -183,6 +183,8 @@ function draw_depth_rings() {
     // as the clock center (i.e. keep them concentric)
     var new_left = dist;
     var new_top = dist;
+    width -= 2 * dist;
+    height -= 2 * dist;
     for (var i = 0; i < MAX_DEPTH; i++) {
         $('.clock').append('<div class="ring" style="left:' + new_left + 'px; top:' + new_top + 'px; border-radius:' + border_radius + '%; width:' + width + 'px; height:' + height + 'px;"></div>');
 
