@@ -92,7 +92,10 @@ function draw_events(events) {
     // Drawing events from localStorage
     var len = events.length;
     for (i = 0; i < len; i++) {
+        // datetime is a unix timestamp (in seconds), convert to JS Date object after converting to milliseconds        
+        // So datetime becomes the JS Date for when the event should occur
         events[i].datetime = new Date(events[i].datetime * 1000);
+        console.log(events[i].datetime);
         draw_event('red', i, events[i].datetime);
     }
 
@@ -113,15 +116,16 @@ function draw_event(color, index, datetime) {
 
     if (datetime < now) {
         return; // event is in the past
-    } 
+    }
 
     // depth is difference in hours
     datetime_stamp = new Date(datetime.setMinutes(0)).setMilliseconds(0);
     now = new Date(now.setMinutes(0)).setMilliseconds(0);
     var depth = Math.floor((datetime_stamp - now) / (1000 * 60 * 60)); // converting milliseconds difference to hours difference
 
-    console.log(depth);
-    if (depth > MAX_DEPTH - 1) {
+    //console.log(depth);
+    // depth can be 0, 1, 2 for max depth of 3... so use >=
+    if (depth >= MAX_DEPTH) {
         return; // don't draw events that close to the center
     }
 

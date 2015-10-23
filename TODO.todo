@@ -9,6 +9,7 @@ TODO for Alpha Testing:
       ☐ Make Hour and Minute hand pointed like in luxury watches
     Algo:
       ☐ Check for time collisions
+      ☐ As of 10/22/15, the scheduler generates events up to an hour after inputted end time (I put in 5:30am end time and the last event was at 6:30am)
     Prettify:
     Notifications:
       ☐ modals for each event
