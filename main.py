@@ -203,7 +203,7 @@ class Schedule(webapp2.RequestHandler):
         return fuel_events
 
     def get_exercise_events(self, cur_time, end_time, utc_offset):
-        # Ever-y two hours until halfway point, then every hour
+        # Every two hours until halfway point, then every hour
         all_events = Events.all(keys_only=True)
         all_events.filter('event_type =', self.EXERCISE)
         item_keys = all_events.fetch(1000)
@@ -233,8 +233,6 @@ class Schedule(webapp2.RequestHandler):
         '''
         Returns list of times and events that should be done at those times
         '''
-        # TODO create sub-routines for each section
-
         events = []
 
         cur_time = datetime.fromtimestamp(cur_time)
