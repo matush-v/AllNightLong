@@ -134,7 +134,7 @@ body > .header {
 
 .ring {
     position: absolute;
-    border: 3px solid yellow;
+    border: .15em solid yellow;
     z-index: 1001;
 }
 

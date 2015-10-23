@@ -13,7 +13,7 @@ $(document).ready(function() {
 
         var events = JSON.parse(localStorage.getItem(EVENTS_LIST));
         var today = new Date();
-        cur_event = 0; // Global counter for event list index
+        cur_event = 0; // Global counter for event list index, TODO change to localstorage
 
 
         draw_events(events);
@@ -86,7 +86,7 @@ function draw_events(events) {
     // aren't right on the edge of the clock
     INITIAL_OFFSET = 0.5;
     SPACING_FACTOR = 2.0; // Determines space between depth levels
-    FADE_FACTOR = 0.1; // Lower = more faded
+    FADE_FACTOR = 0.1; // Higher = more faded
     MAX_DEPTH = 3; // number of rings in clock
 
     // Drawing events from localStorage
@@ -147,7 +147,7 @@ function draw_event(color, index, datetime) {
 
     // Add event to the DOM, at position found, with color given, and with opacity depending on depth
     $('.clock').append('<div id="event_' + index + '" class="dot" style="left:' + new_left + 'px;top:' + new_top + 'px; background-color: ' + color + '"></div>');
-    $('#event_' + index).css('opacity', (MAX_DEPTH - depth + FADE_FACTOR) / (MAX_DEPTH + FADE_FACTOR)); // faded based on depth: 1.0 opacity is fully visible, and 0.0 is fully transparent
+    $('#event_' + index).css('opacity', (MAX_DEPTH - depth) / MAX_DEPTH - FADE_FACTOR); // faded based on depth: 1.0 opacity is fully visible, and 0.0 is fully transparent
 }
 
 
@@ -172,7 +172,9 @@ function find_depth(datetime) {
 function draw_depth_rings() {
     var dot_width = parseInt(get_css('width', 'dot'));
     var dot_height = parseInt(get_css('height', 'dot'));
-    var dist = INITIAL_OFFSET * dot_width * SPACING_FACTOR; // distance to first ring from clock
+    var dist; // distance to ring from border of clock
+    var ring_width;
+    var ring_height;
 
     // Get same border radius (right now in %), as the clock so the circles are concentric
     var border_radius = parseInt($('.clock').css('border-radius'));
@@ -181,14 +183,13 @@ function draw_depth_rings() {
     
     // since circle is getting smaller, have to move center to keep it in the same place
     // as the clock center (i.e. keep them concentric)
-    var new_left = dist;
-    var new_top = dist;
-    width -= 2 * dist;
-    height -= 2 * dist;
-    for (var i = 0; i < MAX_DEPTH; i++) {
-        $('.clock').append('<div class="ring" style="left:' + new_left + 'px; top:' + new_top + 'px; border-radius:' + border_radius + '%; width:' + width + 'px; height:' + height + 'px;"></div>');
-
-        // TODO draw other two rings
+    for (var depth = 0; depth < MAX_DEPTH; depth++) {
+        dist = (depth + INITIAL_OFFSET) * dot_width * SPACING_FACTOR;
+        // Subtract the dist from left and right sides to get width of ring, similarly for height
+        ring_width = width - 2 * dist;
+        ring_height = height - 2 * dist;
+        $('.clock').append('<div id="ring_' + depth + '" class="ring" style="left:' + dist + 'px; top:' + dist + 'px; border-radius:' + border_radius + '%; width:' + ring_width + 'px; height:' + ring_height + 'px;"></div>');
+        $('#ring_' + depth).css('opacity', (MAX_DEPTH - depth) / MAX_DEPTH - FADE_FACTOR); // faded based on depth: 1.0 opacity is fully visible, and 0.0 is fully transparent
     }
 }
 
@@ -231,6 +232,32 @@ function get_schedule(params) {
 }
 
 
+function remove_event_from_clock(name) {
+    // Find index of event in local storage
+    var index = get_event_index(name);
+
+    // Using index, you know id of event is #event_ + index
+    if (index !== null) {
+        $("#event_" + index).remove();
+    }
+}
+
+/******************************************************************************
+*
+*                               RATINGS
+*
+******************************************************************************/
+
+/* Retrieves the number of stars currently filled out to find the rating for the given
+ * event name, and then adds the rating to localstorage at the same index as the event.
+ * It also sends an AJAX post request to the server to save the rating */
+function add_rating(event_name) {
+    var index = get_event_index(name);
+
+    // TODO add rating here
+}
+
+
 /******************************************************************************
 *
 *                            NOTIFICATIONS
@@ -252,11 +279,12 @@ function set_up_notification() {
     var milli_till_event = new Date(event_to_notify.datetime * 1000);
     milli_till_event -= now;
 
-    if (milli_till_event < 0) {
+    console.log(milli_till_event);
+    if (milli_till_event <= 0) {
         // console.log("bad time for event: " + event_to_notify.name);
         return;
     } else {
-        setTimeout(notify_user, milli_till_event, 'BREAK TIME!', ICONS[event_type], event_to_notify.name, event_to_notify.description);
+        setTimeout(notify_user, milli_till_event, 'BREAK TIME!', event_to_notify);
     }
 
     cur_event++;
@@ -273,7 +301,10 @@ function set_up_icons() {
              'extra': 'img/discomfort_icon.jpg'};
 }
 
-function notify_user(title, icon, short_message, long_description) {
+function notify_user(title, event) {
+    var icon = ICONS[event.type];
+    var event_date = new Date(event.datetime);
+
     if (!Notification) {
         alert('Please upgrade to a modern version of Chrome, Firefox, Opera or Firefox.');
         return;
@@ -287,43 +318,39 @@ function notify_user(title, icon, short_message, long_description) {
 
     var notification = new Notification(title, {
         icon: icon,
-        body: short_message
+        body: event.name +  " (" + to_ampm(event_date) + ")"
     });
 
     notification.onclick = function() {
         window.focus();
 
-        // Remove default modal dismissal
-        $('#event_modal').modal({
-            backdrop: 'static',
-            keyboard: false
-        });
-
-        show_modal('event_modal', icon, title, description);
-
-        // TODO modularize these into helper function
-        // Also, these next 5 lines were not in Matush's code and we had a conflict... maybe remove?
-        $('#event_modal').find('#modal-image').empty()
-        $('#event_modal').find('#modal-image').append("<div class='modal-icon'><img src='" + icon + "' alt='event icon'>");
-        $('#event_modal').find('.modal-title').text(title);
-        $('#event_modal').find('.modal-body').append(long_description);
-        $('#event_modal').modal('show');
-
-        $("#event_done_btn").click(function () {
-            $('#event_modal').modal('dismiss');            
-        });
+        show_modal('event_modal', icon, title, event.description);
     };
 
     // Notification is set for next event in the queue
     set_up_notification();
+
+    // Event is over, so remove from clock
+    remove_event_from_clock(event.name);
 }
 
 function show_modal(modal_name, event_icon, event_name, event_description) {
+    // Remove default modal dismissal
+    $('#event_modal').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
+
     $('#' + modal_name).find('#modal-image').empty();
     $('#' + modal_name).find('#modal-image').append("<div class='modal-icon'><img src='" + event_icon + "' alt='event icon'></div>");
     $('#' + modal_name).find('.modal-title').text(event_name);
     $('#' + modal_name).find('.modal-body').text(event_description);
     $('#' + modal_name).modal('show');
+
+    $("#event_done_btn").click(function () {
+        add_rating(event_name);
+        $('#event_modal').modal('hide');
+    });
 }
 
 /******************************************************************************
@@ -457,6 +484,26 @@ Date.prototype.stdTimezoneOffset = function() {
 Date.prototype.dst = function() {
     return this.getTimezoneOffset() < this.stdTimezoneOffset();
 };
+
+/* Given the name of an event, finds its index in the events array in localstorage.
+ * Returns null if the event is not found
+ */
+function get_event_index(name) {
+    var events = JSON.parse(localStorage.getItem(EVENTS_LIST));
+    var len = events.length;
+    var index = null;
+
+    for (var i = 0; i < len; i++) {
+        if (events[i].name == name) {
+            index = i;
+        }
+    }
+
+    if (index === null) {
+        console.log("Could not find index of event with name: ", name);
+    }
+    return index;
+}
 
 /* Given an array of string DOM elements, clears motiviate box and appends the elements in it instead */
 function update_motivate_box(elements) {

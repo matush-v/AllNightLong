@@ -22,6 +22,7 @@ class Events(db.Model):
     event_type = db.StringProperty()  # water, food, or exercise
     description = db.StringProperty()
     # Sean isn't sure if we need to store the times of ratings as well --- 10/22/2015
+    # A possible reason for this is to see at what time in the night the events worked best for the user
         # it currently is implemented as a list of string integers
     ratings = db.StringListProperty()  # list of {"rating": x, "time": y} objects as strings
 
