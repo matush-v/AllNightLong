@@ -1,5 +1,6 @@
+EVENTS_LIST = 'events'; // Const name of schedule item in localStorage
+
 $(document).ready(function() {
-    EVENTS_LIST = 'events'; // Const name of schedule item in localStorage
 
     if (top.location.pathname == '/clock.html') {
         document.documentElement.style.overflowX = 'hidden';
@@ -11,25 +12,11 @@ $(document).ready(function() {
         set_up_icons();
 
         var events = JSON.parse(localStorage.getItem(EVENTS_LIST));
-        var len = events.length;
         var today = new Date();
         cur_event = 0; // Global counter for event list index
 
 
-        // Drawing events from localStorage
-        for (i = 0; i < len; i++) {
-            // Convert from Python datetime to JS Date
-            // if (today.dst()) {
-            //     events[i].datetime = new Date(events[i].datetime * 1000)
-            //     events[i].datetime = new Date(events[i].datetime + "GMT+60");
-            // }
-            // else {
-            //     events[i].datetime = new Date(events[i].datetime * 1000)
-            //     events[i].datetime = new Date(events[i].datetime + "GMT");
-            // }
-            events[i].datetime = new Date(events[i].datetime * 1000);
-            draw_event('red', i, events[i].datetime);
-        }
+        draw_events(events);
 
         // Mousing over events will change the box info
         set_up_event_mouseover();
@@ -94,55 +81,117 @@ $('#times_form').submit(function(e) {
 *
 ******************************************************************************/
 
+function draw_events(events) {
+    // Moves the dots of 0 depth slightly inward so they
+    // aren't right on the edge of the clock
+    INITIAL_OFFSET = 0.5;
+    SPACING_FACTOR = 2.0; // Determines space between depth levels
+    FADE_FACTOR = 0.1; // Lower = more faded
+    MAX_DEPTH = 3; // number of rings in clock
+
+    // Drawing events from localStorage
+    var len = events.length;
+    for (i = 0; i < len; i++) {
+        // datetime is a unix timestamp (in seconds), convert to JS Date object after converting to milliseconds        
+        // So datetime becomes the JS Date for when the event should occur
+        events[i].datetime = new Date(events[i].datetime * 1000);
+        draw_event('yellow', i, events[i].datetime);
+    }
+
+    draw_depth_rings();
+}
+
+
+
 /* draw colored circle based off minute at the passed in depth */
 function draw_event(color, index, datetime) {
     var minutes_in_hour = 60, rads_in_circle = 2 * Math.PI;
-    // Moves the dots of 0 depth slightly inward so they
-    //  aren't right on the edge of the clock
-    var initial_offset = 0.5;
-    var spacing_factor = 2.5; // Determines space between depth levels
-    var fade_factor = 0.1; // Lower = more faded
     var dot_width = parseInt(get_css('width', 'dot'));
     var dot_height = parseInt(get_css('height', 'dot'));
-    var max_depth = 3;
     var now = new Date();
     var dist = null;
-    var x_offset = null;
-    var y_offset = null;
+    var x_offset, y_offset = null;
+    var minute = null;
+    var depth;
 
     if (datetime < now) {
         return; // event is in the past
     }
-    // depth is difference in hours
-    var depth = Math.abs(datetime.getHours() - now.getHours());
 
-    if (depth > max_depth - 1) {
-        return; // don't draw events that close to the center
-    } else if (depth < 0) {
-        return; // don't draw past events
+    // depth is difference in hours
+    depth = find_depth(datetime);
+
+    // depth can be 0, 1, 2 for max depth of 3... so use >=
+    if (depth >= MAX_DEPTH) {
+        return; // don't draw events that close to the center, they are too far in the future
     }
 
-    var hour = datetime.getHours();
-    var minute = datetime.getMinutes();
-
-    angle = (minute / minutes_in_hour) * rads_in_circle - Math.PI / 2;
+    // calculate angle of dot on clock given which minute it is at
+    minute = datetime.getMinutes();
+    angle = (minute / minutes_in_hour) * rads_in_circle - Math.PI / 2; // offset -pi/2 so minute 0 corresponds to top of clock
 
     // Distance to move toward center of circle
-    dist = (depth + initial_offset) * dot_width * spacing_factor;
+    dist = (depth + INITIAL_OFFSET) * dot_width * SPACING_FACTOR;
     x_offset = dist * Math.cos(Math.PI - angle);
     y_offset = dist * Math.sin(Math.PI + angle);
 
-    radius = ($('.outer_face').width()) / 2;
-    new_top = (($('.outer_face').height() / 2) + radius * Math.sin(angle));
-    new_left = (($('.outer_face').width() / 2) + radius * Math.cos(angle));
+    // Find new_top and new_left to be points on circle border based on angle
+    radius = ($('.clock').width()) / 2;
+    new_top = (($('.clock').height() / 2) + radius * Math.sin(angle));
+    new_left = (($('.clock').width() / 2) + radius * Math.cos(angle));
 
     // Center dots at point on circle border, and then add offset
-    //  needed to bring them closer to the center.
-    new_left = new_left - dot_height / 2 + x_offset;
+    // needed to bring them closer to the center.
+    new_left = new_left - dot_width / 2 + x_offset;
     new_top = new_top - dot_height / 2 + y_offset;
-    $('.outer_face').append('<div id="event_' + index + '" class="dot" style="left:' + new_left + 'px;top:' + new_top + 'px; background-color: ' + color + '"></div>');
-    $('#event_' + index).css('opacity', (max_depth - depth + fade_factor) / (max_depth + fade_factor)); // faded based on depth: 1.0 opacity is fully visible, and 0.0 is fully transparent
+
+    // Add event to the DOM, at position found, with color given, and with opacity depending on depth
+    $('.clock').append('<div id="event_' + index + '" class="dot" style="left:' + new_left + 'px;top:' + new_top + 'px; background-color: ' + color + '"></div>');
+    $('#event_' + index).css('opacity', (MAX_DEPTH - depth + FADE_FACTOR) / (MAX_DEPTH + FADE_FACTOR)); // faded based on depth: 1.0 opacity is fully visible, and 0.0 is fully transparent
 }
+
+
+// Given the datetime of an event, calculate its depth, by finding the difference between the 
+// event time and the current time in hours (solely based off hour values)
+function find_depth(datetime) {
+    var now = new Date();
+    var datetime_stamp = new Date(datetime);
+    
+    // Remove minutes, seconds, and millseconds so there is no rounding error when subtracting later
+    datetime_stamp.setMinutes(0);
+    datetime_stamp.setSeconds(0);
+    datetime_stamp.setMilliseconds(0);
+    now.setMinutes(0);
+    now.setSeconds(0);
+    now.setMilliseconds(0);
+    
+    return Math.floor((datetime_stamp - now) / (1000 * 60 * 60)); // converting milliseconds difference to hours difference
+}
+
+
+function draw_depth_rings() {
+    var dot_width = parseInt(get_css('width', 'dot'));
+    var dot_height = parseInt(get_css('height', 'dot'));
+    var dist = INITIAL_OFFSET * dot_width * SPACING_FACTOR; // distance to first ring from clock
+
+    // Get same border radius (right now in %), as the clock so the circles are concentric
+    var border_radius = parseInt($('.clock').css('border-radius'));
+    var width = $('.clock').width();
+    var height = $('.clock').height();
+    
+    // since circle is getting smaller, have to move center to keep it in the same place
+    // as the clock center (i.e. keep them concentric)
+    var new_left = dist;
+    var new_top = dist;
+    width -= 2 * dist;
+    height -= 2 * dist;
+    for (var i = 0; i < MAX_DEPTH; i++) {
+        $('.clock').append('<div class="ring" style="left:' + new_left + 'px; top:' + new_top + 'px; border-radius:' + border_radius + '%; width:' + width + 'px; height:' + height + 'px;"></div>');
+
+        // TODO draw other two rings
+    }
+}
+
 
 /* Sets up mouseover for events */
 function set_up_event_mouseover() {
@@ -153,52 +202,29 @@ function set_up_event_mouseover() {
         $(this).mouseover(function() {
             var event_index = $(this).attr('id').slice(ID_LENGTH);
             var date = (new Date(events_list[event_index].datetime * 1000));
-            var hour = date.getHours();
-            var minutes = date.getMinutes();
-            am_pm = 'am';
-
-            if (hour > 12) {
-                hour -= 12;
-                am_pm = 'pm';
-            }
-
-            if (minutes < 10) {
-                minutes = '0' + minutes;
-            }
-
-            var time = 'Time: ' + hour + ':' + minutes + am_pm;
-
-            close_curtains(300);
-
-            setTimeout(function() {
-                $('#motivate_box').empty();
-                $('#motivate_box').append('<p>' + events_list[event_index].description + '</p>');
-                $('#motivate_box').append('<p>' + time + '</p>');
-                open_curtains(300);
-            }, 300)
-
+            var time = 'Time: ' + to_ampm(date);
+            var elements_to_display = [
+                '<p>' + events_list[event_index].description + '</p>',
+                '<p>' + time + '</p>'
+            ];
+                        
+            update_motivate_box(elements_to_display);
         });
 
         $(this).mouseleave(function() {
             var start_time = new Date(get_cookie('start_time'));
             var num = (new Date()) - start_time;
             var den = (new Date(get_cookie('end_time'))) - start_time;
-
-            close_curtains(300);
-            setTimeout(function() {
-                $('#motivate_box').empty();
-                $('#motivate_box').append('<p>' + QUOTES[cur_quote] + '</p>');
-                open_curtains(300);
-            }, 300);
+            var elements_to_display = ['<p>' + QUOTES[cur_quote] + '</p>'];
+            
+            update_motivate_box(elements_to_display);
         });
     });
 }
 
-/* Handles post request to get event schedule based on input times and
- * then calls the draw_event function */
+/* Handles post request to get event schedule based on input times */
 function get_schedule(params) {
     $.post('/schedule', params, function(data) {
-
         localStorage.setItem(EVENTS_LIST, data);
         window.location.href = 'clock.html';
     });
@@ -226,11 +252,12 @@ function set_up_notification() {
     var milli_till_event = new Date(event_to_notify.datetime * 1000);
     milli_till_event -= now;
 
-    if (milli_till_event < 0) 
+    if (milli_till_event < 0) {
         // console.log("bad time for event: " + event_to_notify.name);
         return;
-    else
+    } else {
         setTimeout(notify_user, milli_till_event, 'BREAK TIME!', ICONS[event_type], event_to_notify.name, event_to_notify.description);
+    }
 
     cur_event++;
 }
@@ -274,8 +301,16 @@ function notify_user(title, icon, short_message, long_description) {
 
         show_modal('event_modal', icon, title, description);
 
-        $('#event_done_btn').click(function () {
-            $('#event_modal').modal('dismiss');
+        // TODO modularize these into helper function
+        // Also, these next 5 lines were not in Matush's code and we had a conflict... maybe remove?
+        $('#event_modal').find('#modal-image').empty()
+        $('#event_modal').find('#modal-image').append("<div class='modal-icon'><img src='" + icon + "' alt='event icon'>");
+        $('#event_modal').find('.modal-title').text(title);
+        $('#event_modal').find('.modal-body').append(long_description);
+        $('#event_modal').modal('show');
+
+        $("#event_done_btn").click(function () {
+            $('#event_modal').modal('dismiss');            
         });
     };
 
@@ -327,7 +362,7 @@ function open_curtains(delay) {
 
 function close_curtains(delay) {
     $('.leftcurtain').stop().animate({width: '50%'}, delay);
-    $('.rightcurtain').stop().animate({width: '51%'}, delay);
+    $('.rightcurtain').stop().animate({width: '50%'}, delay);
 }
 /******************************************************************************
 *
@@ -395,10 +430,14 @@ function minimize () {
 /* Gets a random extra event from the server */
 $('#tired_btn').click(function() {
     $.post('/extra', function(data) {
-        extra_event = JSON.parse(data);
-        event_type = extra_event.type;
-
-        show_modal('event_modal', ICON[event_type], extra_event.name, extra_event.description);
+        if (data) {
+            extra_event = JSON.parse(data);
+            event_type = extra_event.type;
+            show_modal('event_modal', ICONS[event_type], extra_event.name, extra_event.description);
+        } else {
+            // TODO handle case when no extra events
+            console.log("no events");
+        }
     });
 });
 
@@ -418,6 +457,24 @@ Date.prototype.stdTimezoneOffset = function() {
 Date.prototype.dst = function() {
     return this.getTimezoneOffset() < this.stdTimezoneOffset();
 };
+
+/* Given an array of string DOM elements, clears motiviate box and appends the elements in it instead */
+function update_motivate_box(elements) {
+    var ANIMATION_TIME = 300; // const in milliseconds for how long curtains animation lasts
+
+    close_curtains(ANIMATION_TIME);
+    var num_elements = elements.length;
+
+    setTimeout(function() {
+        $('#motivate_box').empty();
+
+        for (var i = 0; i < num_elements; i++) {
+            $('#motivate_box').append(elements[i]);
+        }
+        open_curtains(ANIMATION_TIME);
+    }, ANIMATION_TIME);
+}
+
 
 /* Validate that the range of wake_up_time is within 3am to 3pm */
 function validate_times(wake_up_time, end_time) {
@@ -453,6 +510,19 @@ function get_hour_min(time_string) {
     var hour = time_arr[0];
     var minute = time_arr[1];
     return {'hour': parseInt(hour), 'min': parseInt(minute)};
+}
+
+/* Given a 24 hr JS Date object, return 12 hr time string */
+function to_ampm(date) {
+  var hours = date.getHours();
+  var minutes = date.getMinutes();
+
+  var ampm = hours >= 12 ? 'pm' : 'am';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  minutes = minutes < 10 ? '0'+minutes : minutes;
+  
+  return hours + ':' + minutes + ' ' + ampm;
 }
 
 /* Gets the CSS property of a class that hasn't been used yet in the DOM */

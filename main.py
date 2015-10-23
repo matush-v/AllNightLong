@@ -19,9 +19,11 @@ DATABASE
 '''
 class Events(db.Model):
     name = db.StringProperty()
-    event_type = db.StringProperty() # water, food, or exercise
+    event_type = db.StringProperty()  # water, food, or exercise
     description = db.StringProperty()
-    ratings = db.StringListProperty() # list of {"rating": x, "time": y} objects as strings
+    # Sean isn't sure if we need to store the times of ratings as well --- 10/22/2015
+        # it currently is implemented as a list of string integers
+    ratings = db.StringListProperty()  # list of {"rating": x, "time": y} objects as strings
 
 
 '''
@@ -66,8 +68,7 @@ class Schedule(webapp2.RequestHandler):
 
     def post(self):
         '''
-        API for adding an event, getting a schedule, or adding a rating
-        rating must be an integer 
+        API for getting a schedule
         '''
         self.response.headers['Access-Control-Allow-Origin'] = '*'
         self.response.headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept'
@@ -79,55 +80,15 @@ class Schedule(webapp2.RequestHandler):
         cur_time = int(cur_time) if cur_time else cur_time
         utc_offset = self.request.get("utc_offset")
         utc_offset = int(utc_offset) if utc_offset else utc_offset
-
-        name = self.request.get("name")
-        event_type = self.request.get("event_type")
-        description = self.request.get("description")
         
-        rating = self.request.get("rating") # assumed to be {"rating": x, "time": y}
-        rating = int(rating) if rating else rating # convert to int
-
-        if name and event_type and description:
-            # adds event
-            if self.add_event(name, event_type, description):
-                self.response.out.write("Successfully Added!")
-            else:
-                self.response.out.write("Error in Adding Event!")
-
-        elif wake_up_time and end_time and cur_time and utc_offset:
+        
+        if wake_up_time and end_time and cur_time and utc_offset:
             # creates schedule for user
             schedule = self.get_schedule(wake_up_time, end_time, cur_time, utc_offset)
 
             self.response.out.write(json.dumps(schedule))
-
-        elif name and rating:
-            # adds rating
-            if self.add_rating(name, rating):
-                self.response.out.write("Successfully Added!")
-            else:
-                self.response.out.write("Error in Adding Rating!")
         else:
             self.response.out.write("Please provide correct parameters")
-
-    def add_event(self, name, event_type, description):
-        '''
-        Adds a new event to the database
-        Event cannot exist already
-        Returns True if successful, False if failed
-        '''
-        try:
-            all_events = Events.all()
-            all_events.filter("name =", name) # query event
-
-            if all_events.count():
-                logging.error("Event already exists")
-                raise
-
-            Events(name=name, event_type=event_type, description=description, ratings=[]).put()
-        except Exception:
-            return False
-
-        return True
 
     def get_schedule(self, wake_up_time, end_time, cur_time, utc_offset):
         '''
@@ -142,14 +103,14 @@ class Schedule(webapp2.RequestHandler):
         cur_time = cur_time - timedelta(hours=utc_offset)
 
         end_time = datetime.fromtimestamp(end_time)
-        end_time = end_time - timedelta(hours=utc_offset) 
+        end_time = end_time - timedelta(hours=utc_offset)
 
         halfway_time = cur_time + (end_time - cur_time) / 2
 
         ###################### WATER ##########################
         all_events = Events.all()
         all_events.filter('event_type =', self.WATER)
-        specific_event = all_events.get() # assumes only one water event
+        specific_event = all_events.get()  # assumes only one water event
 
         water_time = cur_time + timedelta(minutes=45)
 
@@ -168,10 +129,10 @@ class Schedule(webapp2.RequestHandler):
         all_events.filter('event_type =', self.NAP)
         specific_event = all_events.get()
 
-        best_nap_time_shift = (int(wake_up_time[0:2]) / 2) - 1.5 # slice to get the hour
+        best_nap_time_shift = (int(wake_up_time[0:2]) / 2) - 1.5  # slice to get the hour
         best_nap_time = cur_time
-        
-        if cur_time.hour >= 12: # PM so we need to add a day for nap
+
+        if cur_time.hour >= 12:  # PM so we need to add a day for nap
             best_nap_time += timedelta(days=1)
 
         best_nap_time = best_nap_time.replace(hour=int(best_nap_time_shift))
@@ -283,7 +244,57 @@ class Schedule(webapp2.RequestHandler):
 
         return events
 
-    def add_rating(self, name, rating):
+
+# Endpoint for adding new events to the DB
+class NewEvent(webapp2.RequestHandler):
+    def post(self):
+        name = self.request.get("name")
+        event_type = self.request.get("event_type")
+        description = self.request.get("description")
+
+        if name and event_type and description:
+            # adds event
+            if self.save_event(name, event_type, description):
+                self.response.out.write("Successfully Added!")
+            else:
+                self.response.out.write("Error in Adding Event!")
+
+    def save_event(self, name, event_type, description):
+        '''
+        Adds a new event to the database
+        Event cannot exist already
+        Returns True if successful, False if failed
+        '''
+        try:
+            all_events = Events.all()
+            all_events.filter("name =", name)  # query event
+
+            if all_events.count():
+                logging.error("Event already exists")
+                raise
+
+            Events(name=name, event_type=event_type, description=description, ratings=[]).put()
+        except Exception:
+            return False
+
+        return True
+
+class AddRating(webapp2.RequestHandler):
+    def post(self):
+        name = self.request.get("name")
+        rating = self.request.get("rating") # assumed to be {"rating": x, "time": y} <----- why would we want to do this?? -Sean 10/22/15
+        rating = int(rating) if rating else rating # convert to int
+
+        if name and rating:
+            # adds rating
+            if self.save_rating(name, rating):
+                self.response.out.write("Successfully Added!")
+            else:
+                self.response.out.write("Error in Adding Rating!")
+        else:
+            self.response.out.write("Error: please provide the event name and rating")
+
+    def save_rating(self, name, rating):
         '''
         Adds rating to specified event
         Event must exist
@@ -311,6 +322,8 @@ class Schedule(webapp2.RequestHandler):
 
         return True
 
+
+# Returns a random event of type "extra", returns empty string if no extra events exist in DB
 class Extra(webapp2.RequestHandler):
     EXTRA = "extra" # event type
 
@@ -322,11 +335,13 @@ class Extra(webapp2.RequestHandler):
         all_events.filter('event_type =', self.EXTRA)
         item_keys = all_events.fetch(1000)
 
-        specific_event = Events.get(random.choice(item_keys))
-
-        self.response.out.write(json.dumps({'name': specific_event.name,
-                                            'type': specific_event.event_type,
-                                            'description': specific_event.description}))
+        if (not item_keys):
+            self.response.out.write('')
+        else:
+            specific_event = Events.get(random.choice(item_keys))
+            self.response.out.write(json.dumps({'name': specific_event.name,
+                                                'type': specific_event.event_type,
+                                                'description': specific_event.description}))
 
 
 
@@ -340,5 +355,7 @@ app = webapp2.WSGIApplication([
     ('/', MainHandler),
     ('/clock.html', Clock),
     ('/schedule', Schedule),
+    ('/new_event', NewEvent),
+    ('/add_rating', AddRating),
     ('/extra', Extra)
     ], debug=True)

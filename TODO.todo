@@ -12,6 +12,7 @@ TODO for Alpha Testing:
       ☐ Make Hour and Minute hand pointed like in luxury watches
     Algo:
       ☐ Check for time collisions
+      ☐ As of 10/22/15, the scheduler generates events up to an hour after inputted end time (I put in 5:30am end time and the last event was at 6:30am)
     Prettify:
     Notifications:
       ☐ modals for each event
@@ -20,12 +21,13 @@ TODO for Alpha Testing:
 
   Sean:
     Clock page:
-      ☐ create master function for the draw event stuff in (doc).ready. - SEAN
+      ☐ create master function for the draw event stuff in (doc).ready
       ☐ When event is over, remove the dot dynamically - SEAN
+      ☐ Add ratings when 'Done' button is clicked in modal via ajax call to add_rating endpoint
     Quotes:
-      ☐ curtains CSS fix up - SEAN
+      ☐ curtains CSS fix up
     Prettify:
-      ☐ Faint lines for each depth - SEAN
+      ☐ Faint lines for each depth
     Creating a schedule:
       ☐ sexy graphics and JS
       ☐ Color code events
@@ -33,6 +35,7 @@ TODO for Alpha Testing:
  
  ☐ Bugs from Hackathon presentation
   ☐ Stop notifications when they get to Congratulations page
+  ☐ Clear modal descriptions before adding next description
  
  Late Game:
  ☐ Add site feedback/suggestions button
