@@ -1,5 +1,6 @@
+EVENTS_LIST = 'events'; // Const name of schedule item in localStorage
+
 $(document).ready(function() {
-    EVENTS_LIST = 'events'; // Const name of schedule item in localStorage
 
     if (top.location.pathname == '/clock.html') {
         document.documentElement.style.overflowX = 'hidden';
@@ -223,7 +224,6 @@ function set_up_event_mouseover() {
 /* Handles post request to get event schedule based on input times */
 function get_schedule(params) {
     $.post('/schedule', params, function(data) {
-
         localStorage.setItem(EVENTS_LIST, data);
         window.location.href = 'clock.html';
     });
@@ -428,10 +428,14 @@ function minimize () {
 /* Gets a random extra event from the server */
 $('#tired_btn').click(function() {
     $.post('/extra', function(data) {
-        extra_event = JSON.parse(data);
-        event_type = extra_event.type;
-
-        show_modal('event_modal', ICON[event_type], extra_event.name, extra_event.description);
+        if (data) {
+            extra_event = JSON.parse(data);
+            event_type = extra_event.type;
+            show_modal('event_modal', ICON[event_type], extra_event.name, extra_event.description);
+        } else {
+            // TODO handle case when no extra events
+            console.log("no events");
+        }
     });
 });
 
