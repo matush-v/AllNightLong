@@ -1,4 +1,5 @@
 EVENTS_LIST = 'events'; // Const name of schedule item in localStorage
+LS_RATINGS_KEY = 'ratings';
 LS_CUR_EVENT_KEY = 'cur_event';
 
 $(document).ready(function() {
@@ -12,6 +13,11 @@ $(document).ready(function() {
         // Icons for notifications
         set_up_icons();
 
+        // Initialize ratings array in localStorage
+        if (!localStorage.getItem(LS_RATINGS_KEY)) {
+            localStorage.setItem(LS_RATINGS_KEY, '[]');
+        }
+
         var events = JSON.parse(localStorage.getItem(EVENTS_LIST));
         var today = new Date();
         
@@ -20,11 +26,10 @@ $(document).ready(function() {
             // No events have been completed yet, so start at the first event
             cur_event = 0; // Global counter for event list index
             localStorage.setItem(LS_CUR_EVENT_KEY, 0);
-
-            // Notification is set for first event in the queue
-            set_up_notification();
         }
 
+        // Notification is set for first event in the queue
+        set_up_notification();
 
         draw_events(events);
 
@@ -54,7 +59,7 @@ $('#times_form').submit(function(e) {
     var end_date = new Date();
     var end_hour_min = get_hour_min(end_time);
     var cur_time = new Date();
-    var offset = cur_time.getTimezoneOffset() / 60; // get difference in hours between local timezone and UTC timezone
+    var offset = get_offset_to_UTC(); // get difference in hours between local timezone and UTC timezone
     // Set seconds and milliseconds to 0 so any events created are based off the minute and not sec or ms
     cur_time.setSeconds(0);
     cur_time.setMilliseconds(0);
@@ -253,12 +258,47 @@ function get_schedule(params) {
 *
 ******************************************************************************/
 
-/* Retrieves the number of stars currently filled out to find the rating for the given
- * event name, and then adds the rating to localstorage in dictionary with keys as names
- * and an array of rating/time objects as values
- * It also sends an AJAX post request to the server to save the rating */
-function add_rating(event_name) {
-    // TODO add rating here
+/* Retrieves the number of stars currently filled out to find the rating for event in the modal,
+ * and then adds the rating to localstorage in array with the key as event index and a rating/time
+ * object as the value
+ * It also sends an AJAX post request to the server to save the rating
+ * NOTE: event_index is an optional parameter, if it is set, then the event is from the schedule, otherwise
+ * it must be from the extra events list. So, only set localstorage if the index exists
+ */
+function add_rating(event_index) {
+    // Get ratings list and events list from localStorage
+    var ratings = JSON.parse(localStorage.getItem(LS_RATINGS_KEY));
+    var events = JSON.parse(localStorage.getItem(EVENTS_LIST));
+    // Get rating from modal radio input
+    var rating = $('input[name="event_rating"]:checked').val();
+
+    if (rating === undefined) {
+        // no rating, return
+        return;
+    }
+
+    event_name = $(".modal-title").text();
+
+    var rating_dict = {
+        event_name : event_name,
+        rating : rating, // integer value 1-5
+        event_time : new Date()  // timestamp (ms) of event completion for statistics collection
+    };
+
+    // If event_index exists, update localstorage 
+    if (event_index !== undefined) {
+        ratings[event_index] = rating_dict;
+        // Update localStorage with new rating
+        localStorage.setItem(LS_RATINGS_KEY, JSON.stringify(ratings));
+    }
+
+    // Send rating to server asynchronously to save to DB
+    var post_params = rating_dict;
+    post_params['utc_offset'] = get_offset_to_UTC();
+    $.post('/add_rating', post_params)
+        .fail(function () {
+            console.log("Rating failed to save");
+        });
 }
 
 
@@ -288,9 +328,6 @@ function set_up_notification() {
     } else {
         setTimeout(notify_user, milli_till_event, 'BREAK TIME!', event_to_notify);
     }
-
-    cur_event++;
-    localStorage.setItem(LS_CUR_EVENT_KEY, cur_event);
 }
 
 function set_up_icons() {
@@ -305,6 +342,10 @@ function set_up_icons() {
 }
 
 function notify_user(title, event) {
+    // This event is done, move on to next one
+    cur_event++;
+    localStorage.setItem(LS_CUR_EVENT_KEY, cur_event);
+
     var icon = ICONS[event.type];
 
     if (!Notification) {
@@ -325,21 +366,23 @@ function notify_user(title, event) {
 
     notification.onclick = function() {
         window.focus();
-        show_modal('event_modal', icon, title, event.description);
+        // The index of the event is always cur_event - 1 since that counter is incremented every time
+        // a notification is set up to occur. Since this event's notification already went off (hence removal from clock),
+        // the counter must have been incremented to the next event already
+        var event_index = cur_event - 1;
+        show_modal('event_modal', icon, event.name, event.description, event_index);
+        // Event is over, so remove from clock
+        $("#event_" + event_index).remove();
+
     };
 
-    // Event is over, so remove from clock
-    // The index of the event is always cur_event - 1 since that counter is incremented every time
-    // a notification is set up to occur. Since this event's notification already went off (hence removal from clock),
-    // the counter must have been incremented to the next event already
-    var event_index = cur_event - 1;
-    $("#event_" + event_index).remove();
 
+    
     // Notification is set for next event in the queue
     set_up_notification();
 }
 
-function show_modal(modal_name, event_icon, event_name, event_description) {
+function show_modal(modal_name, event_icon, event_name, event_description, event_index) {
     // Remove default modal dismissal
     $('#event_modal').modal({
         backdrop: 'static',
@@ -354,7 +397,7 @@ function show_modal(modal_name, event_icon, event_name, event_description) {
 
     $("#event_done_btn").click(function () {
         // Add the user's rating
-        add_rating(event_name);
+        add_rating(event_index);
         $('#event_modal').modal('hide');
     });
 }
@@ -556,6 +599,12 @@ function to_ampm(date) {
   minutes = minutes < 10 ? '0'+minutes : minutes;
   
   return hours + ':' + minutes + ' ' + ampm;
+}
+
+/* Gets difference in hours between local timezone and UTC timezone */
+function get_offset_to_UTC() {
+    var d = new Date();
+    return d.getTimezoneOffset() / 60;
 }
 
 /* Gets the CSS property of a class that hasn't been used yet in the DOM */

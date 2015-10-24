@@ -24,7 +24,7 @@ class Events(db.Model):
     # Sean isn't sure if we need to store the times of ratings as well --- 10/22/2015
     # A possible reason for this is to see at what time in the night the events worked best for the user
         # it currently is implemented as a list of string integers
-    ratings = db.StringListProperty()  # list of {"rating": x, "time": y} objects as strings
+    ratings = db.StringListProperty()  # list of {"rating": x, "event_time": y, "utc_offset": z} objects as strings
 
 
 '''
@@ -264,7 +264,7 @@ class Schedule(webapp2.RequestHandler):
 
         end_time = datetime.fromtimestamp(end_time)
         end_time = end_time - timedelta(hours=utc_offset)
-        
+
         # Order of below gets are based on priority of events
         events += self.get_nap_event(cur_time, end_time, wake_up_time, utc_offset)
         events += self.get_caffeine_event(cur_time, end_time, wake_up_time, utc_offset)
@@ -316,20 +316,25 @@ class NewEvent(webapp2.RequestHandler):
 # Endpoint for adding new rating to the DB
 class AddRating(webapp2.RequestHandler):
     def post(self):
+        logging.warn("IN ADDRATING POST!!!!!!!!!")
         event_name = self.request.get("event_name")
-        rating = self.request.get("rating") # assumed to be {"rating": x, "time": y} <----- why would we want to do this?? -Sean 10/22/15
-        rating = int(rating) if rating else rating # convert to int
+        rating = self.request.get("rating")  # assumed to be {"rating": x, "time": y} <----- why would we want to do this?? -Sean 10/22/15
+        rating = int(rating) if rating else rating  # convert to int
+        event_time = self.request.get("event_time")
+        utc_offset = self.request.get("utc_offset")
+        utc_offset = int(utc_offset) if utc_offset else utc_offset
+        event_time = event_time
 
-        if event_name and rating:
+        if event_name and rating and event_time:
             # adds rating
-            if self.save_rating(event_name, rating):
+            if self.save_rating(event_name, rating, event_time, utc_offset):
                 self.response.out.write("Successfully Added!")
             else:
                 self.response.out.write("Error in Adding Rating!")
         else:
-            self.response.out.write("Error: please provide the event name and rating")
+            self.response.out.write("Error: please provide the event name, rating, and event_time")
 
-    def save_rating(self, event_name, rating):
+    def save_rating(self, event_name, rating, event_time, utc_offset):
         '''
         Adds rating to specified event
         Event must exist
@@ -343,12 +348,13 @@ class AddRating(webapp2.RequestHandler):
                 raise
 
             all_events = Events.all()
-            all_events.filter("name =", event_name) # query event
-            specific_event = all_events.get() # get event instance
+            all_events.filter("name =", event_name)  # query event
+            specific_event = all_events.get()  # get event instance
 
             if specific_event:
-                specific_event.ratings.append(str(rating)) # add rating
-                specific_event.put() # update event
+                rating_dict = {'rating': rating, 'event_time': event_time, 'utc_offset': utc_offset}
+                specific_event.ratings.append(json.dumps(rating))  # add rating
+                specific_event.put()  # update event
             else:
                 logging.error("Event does not exist")
                 raise
