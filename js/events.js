@@ -54,7 +54,7 @@ $('#times_form').submit(function(e) {
     var end_date = new Date();
     var end_hour_min = get_hour_min(end_time);
     var cur_time = new Date();
-    var offset = cur_time.getTimezoneOffset() / 60 // get difference in hours between local timezone and UTC timezone
+    var offset = cur_time.getTimezoneOffset() / 60; // get difference in hours between local timezone and UTC timezone
     // Set seconds and milliseconds to 0 so any events created are based off the minute and not sec or ms
     cur_time.setSeconds(0);
     cur_time.setMilliseconds(0);
@@ -102,19 +102,16 @@ function draw_events(events) {
     // Drawing events from localStorage
     var len = events.length;
     for (i = 0; i < len; i++) {
-        // datetime is a unix timestamp (in seconds), convert to JS Date object after converting to milliseconds        
-        // So datetime becomes the JS Date for when the event should occur
-        events[i].datetime = new Date(events[i].datetime * 1000);
-        draw_event('yellow', i, events[i].datetime);
+        draw_event('yellow', i, new Date(events[i].datetime));
     }
 
     draw_depth_rings();
 }
 
 
-
-/* draw colored circle based off minute at the passed in depth */
-function draw_event(color, index, datetime) {
+/* Given a CSS color, index of the event, and the JS date of the event,
+/* draw colored circle based off minute at depth based off hour */
+function draw_event(color, index, date) {
     var minutes_in_hour = 60, rads_in_circle = 2 * Math.PI;
     var dot_width = parseInt(get_css('width', 'dot'));
     var dot_height = parseInt(get_css('height', 'dot'));
@@ -124,12 +121,12 @@ function draw_event(color, index, datetime) {
     var minute = null;
     var depth;
 
-    if (datetime < now) {
+    if (date < now) {
         return; // event is in the past
     }
 
     // depth is difference in hours
-    depth = find_depth(datetime);
+    depth = find_depth(date);
 
     // depth can be 0, 1, 2 for max depth of 3... so use >=
     if (depth >= MAX_DEPTH) {
@@ -137,7 +134,7 @@ function draw_event(color, index, datetime) {
     }
 
     // calculate angle of dot on clock given which minute it is at
-    minute = datetime.getMinutes();
+    minute = date.getMinutes();
     angle = (minute / minutes_in_hour) * rads_in_circle - Math.PI / 2; // offset -pi/2 so minute 0 corresponds to top of clock
 
     // Distance to move toward center of circle
@@ -161,21 +158,21 @@ function draw_event(color, index, datetime) {
 }
 
 
-// Given the datetime of an event, calculate its depth, by finding the difference between the 
+// Given the JS date of an event, calculate its depth, by finding the difference between the 
 // event time and the current time in hours (solely based off hour values)
-function find_depth(datetime) {
+function find_depth(date) {
     var now = new Date();
-    var datetime_stamp = new Date(datetime);
+    var date_stamp = new Date(date);
     
     // Remove minutes, seconds, and millseconds so there is no rounding error when subtracting later
-    datetime_stamp.setMinutes(0);
-    datetime_stamp.setSeconds(0);
-    datetime_stamp.setMilliseconds(0);
+    date_stamp.setMinutes(0);
+    date_stamp.setSeconds(0);
+    date_stamp.setMilliseconds(0);
     now.setMinutes(0);
     now.setSeconds(0);
     now.setMilliseconds(0);
     
-    return Math.floor((datetime_stamp - now) / (1000 * 60 * 60)); // converting milliseconds difference to hours difference
+    return Math.floor((date_stamp - now) / (1000 * 60 * 60)); // converting milliseconds difference to hours difference
 }
 
 
@@ -212,7 +209,7 @@ function set_up_event_mouseover() {
 
         $(this).mouseover(function() {
             var event_index = $(this).attr('id').slice(ID_LENGTH);
-            var date = (new Date(events_list[event_index].datetime * 1000));
+            var date = new Date(events_list[event_index].datetime);
             var time = 'Time: ' + to_ampm(date);
             var elements_to_display = [
                 '<p>' + events_list[event_index].description + '</p>',
@@ -236,7 +233,16 @@ function set_up_event_mouseover() {
 /* Handles post request to get event schedule based on input times */
 function get_schedule(params) {
     $.post('/schedule', params, function(data) {
-        localStorage.setItem(EVENTS_LIST, data);
+        events = JSON.parse(data);
+        // Run through given datetimes and convert to milliseconds before storing in localStorage
+        var num_events = events.length;
+        for (var i = 0; i < num_events; i++) {
+            // datetime is a unix timestamp (in seconds), converting to milliseconds for easy conversion to JS Date later
+            // with the line: new Date(events[i].datetime)
+            events[i].datetime = events[i].datetime * 1000;
+        }
+
+        localStorage.setItem(EVENTS_LIST, JSON.stringify(events));
         window.location.href = 'clock.html';
     });
 }
@@ -274,8 +280,7 @@ function set_up_notification() {
     var event_to_notify = events_list[cur_event];
     var event_type = event_to_notify.type;
     var now = new Date();
-    var milli_till_event = new Date(event_to_notify.datetime * 1000);
-    milli_till_event -= now;
+    var milli_till_event = new Date(event_to_notify.datetime) - now;
 
     if (milli_till_event <= 0) {
         // console.log("bad time for event: " + event_to_notify.name);
@@ -301,7 +306,6 @@ function set_up_icons() {
 
 function notify_user(title, event) {
     var icon = ICONS[event.type];
-    var event_date = new Date(event.datetime);
 
     if (!Notification) {
         alert('Please upgrade to a modern version of Chrome, Firefox, Opera or Firefox.');
@@ -316,7 +320,7 @@ function notify_user(title, event) {
 
     var notification = new Notification(title, {
         icon: icon,
-        body: event.name +  " (" + to_ampm(event_date) + ")"
+        body: event.name +  " (" + to_ampm(new Date(event.datetime)) + ")"
     });
 
     notification.onclick = function() {

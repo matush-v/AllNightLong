@@ -30,6 +30,7 @@ TODO for Alpha Testing:
       ☐ Make clock.html page inaccessible if all events in localstorage are in the past
       ☐ Save ratings in localstorage (with time?) so that they can be added to modal even after page refresh
         - Right now stars will be same across all modals (extra or event) until the page is refreshed and they all revert to 0 stars
+      ☐ Dynamically update events to new ring every hour
     Quotes:
       ☐ curtains CSS fix up
       ☐ API call to quotes site for a random quote (don't hardcode)
