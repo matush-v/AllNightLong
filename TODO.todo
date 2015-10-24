@@ -4,13 +4,18 @@ TODO for Alpha Testing:
   Mathurshan:
     Clock page:
       ☐ Sexy graphics (clock, box, buttons, etc.) @high
+      ✔ background @done (15-10-23 21:12)
+      ✔ optional second hand - clock onclick and subtle button in corner @done (15-10-23 21:43)
+      ☐ curtains
+      ☐ Eager.io apps
       ☐ Anything user does is added to the localstorage
-      ☐ optional second hand - clock onclick and subtle button in corner
-      ☐ Make Hour and Minute hand pointed like in luxury watches @low
+      ☐ Big Button for "I'M DONE" that plays rocky song
     Algo:
-      ☐ Check for time collisions @high
-      ☐ Comment above each function with how it determines the event
-      ☐ As of 10/22/15, the scheduler generates events up to an hour after inputted end time (I put in 5:30am end time and the last event was at 6:30am) @critical
+      ✔ Check for time collisions @high @done (15-10-23 20:48)
+        ✔ water should just be removed if there is a collision @done (15-10-23 20:48)
+      ✔ if no good nap time, no caffeine @done (15-10-23 20:52)
+      ✔ Comment above each function with how it determines the event @done (15-10-23 20:52)
+      ✔ As of 10/22/15, the scheduler generates events up to an hour after inputted end time (I put in 5:30am end time and the last event was at 6:30am) @critical @done (15-10-23 18:55)
     Notifications:
       ☐ Every time a user does not complete an event, add it to localstorage and adjust schedule
       ☐ If completed, send feedback to server

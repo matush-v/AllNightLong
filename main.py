@@ -176,6 +176,7 @@ class Schedule(webapp2.RequestHandler):
 
     def get_caffeine_event(self, cur_time, end_time, wake_up_time, utc_offset):
         # Right before nap so it kicks in as he/she wakes up
+        # No nap, no caffeine
         all_events = Events.all()
         all_events.filter('event_type =', self.CAFFEINE)
         specific_event = all_events.get()
@@ -186,7 +187,7 @@ class Schedule(webapp2.RequestHandler):
         # is it worth taking a nap
         if end_time >= (best_nap_time + timedelta(hours=3)):
             # Put it right before nap so it kicks in as they wake up
-            best_caffeine_time =  best_nap_time - timedelta(minutes=5)
+            best_caffeine_time = best_nap_time - timedelta(minutes=5)
             caffeine_event.append({'name': specific_event.name,
                            'type': specific_event.event_type,
                            'description': specific_event.description,
