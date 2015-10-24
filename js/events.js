@@ -1,6 +1,7 @@
 EVENTS_LIST = 'events'; // Const name of schedule item in localStorage
 LS_RATINGS_KEY = 'ratings';
 LS_CUR_EVENT_KEY = 'cur_event';
+LS_END_TIME_KEY = 'end_time';
 
 $(document).ready(function() {
 
@@ -15,6 +16,8 @@ $(document).ready(function() {
 
         // Icons for notifications
         set_up_icons();
+
+        $("#end_time").text("All Nighter End Time: " + to_ampm(new Date(localStorage.getItem(LS_END_TIME_KEY))));
 
         // Initialize ratings array in localStorage
         if (!localStorage.getItem(LS_RATINGS_KEY)) {
@@ -75,6 +78,7 @@ $('#times_form').submit(function(e) {
 
         end_date.setHours(end_hour_min.hour);
         end_date.setMinutes(end_hour_min.min);
+        localStorage.setItem(LS_END_TIME_KEY, end_date); // Save end time to local storage
 
         create_cookie('wake_up_time', wake_up_time, expires_in);
         create_cookie('end_time', end_date, expires_in);
