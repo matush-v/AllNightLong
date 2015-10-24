@@ -1,31 +1,26 @@
-☐ Fix bug
 ☐ MVC
 ☐ ALWAYS USE UNDERSCORE CASING
 TODO for Alpha Testing:
   Mathurshan:
-    Backend:
-      ☐ make methods within schedule class
     Clock page:
-      ☐ Sexy graphics (clock, box, buttons, etc.)
+      ☐ Sexy graphics (clock, box, buttons, etc.) @high
       ☐ Anything user does is added to the localstorage
-      ☐ very nice clock with hour and minute hand (optional second hand)
-      ☐ Make Hour and Minute hand pointed like in luxury watches
+      ☐ optional second hand - clock onclick and subtle button in corner
+      ☐ Make Hour and Minute hand pointed like in luxury watches @low
     Algo:
-      ☐ Check for time collisions
-      ☐ As of 10/22/15, the scheduler generates events up to an hour after inputted end time (I put in 5:30am end time and the last event was at 6:30am)
-    Prettify:
+      ☐ Check for time collisions @high
+      ☐ Comment above each function with how it determines the event
+      ☐ As of 10/22/15, the scheduler generates events up to an hour after inputted end time (I put in 5:30am end time and the last event was at 6:30am) @critical
     Notifications:
-      ☐ modals for each event
-        ☐ Every time a user does not complete an event, add it to localstorage and adjust schedule
-        ☐ If completed, send feedback to server
-      ☐ Old notifications pop up on refresh
+      ☐ Every time a user does not complete an event, add it to localstorage and adjust schedule
+      ☐ If completed, send feedback to server
+      ☐ refreshing page during event time gives multiple notifications
 
   Sean:
     Events:
      ☐ Add more events for exercise and extra
      ☐ For fuel -- give random example of food to user (maybe API call?)
     Clock page:
-      ☐ After receiving schedule from server, run through events and change the datetimes to JS date objects for easier access
       ☐ Add ratings when 'Done' button is clicked in modal via ajax call to add_rating endpoint
       ☐ Make clock.html page inaccessible if all events in localstorage are in the past
       ☐ Save ratings in localstorage (with time?) so that they can be added to modal even after page refresh
@@ -82,7 +77,11 @@ IDEAS:
 
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:
- ✔ Change global event counter to be in localstorage so it persists over refresh @critical @done (15-10-23 19:08) @project(TODO for Alpha Testing / Sean / Clock page)
+ ✔ After receiving schedule from server, run through events and change the datetimes to JS date objects for easier access @done (15-10-23 21:09) @project(TODO for Alpha Testing / Sean / Clock page)
  ✔ When event is over, remove the dot dynamically (Written, but test when above critical is fixed) @done (15-10-23 20:21) @project(TODO for Alpha Testing / Sean / Clock page)
- ✔ Clear modal descriptions before adding next description @done (15-10-23 14:55) @project(TODO for Alpha Testing)
+ ✔ Change global event counter to be in localstorage so it persists over refresh @critical @done (15-10-23 19:08) @project(TODO for Alpha Testing / Sean / Clock page)
+ ✔ Fix bug @done (15-10-23 16:30)
+ ✔ very nice clock with hour and minute hand @done (15-10-23 16:27) @project(TODO for Alpha Testing / Mathurshan / Clock page)
+ ✔ make methods within schedule class @done (15-10-23 16:23) @project(TODO for Alpha Testing / Mathurshan / Backend)
  ✔ Faint lines for each depth @done (15-10-23 14:55) @project(TODO for Alpha Testing / Sean / Prettify)
+ ✔ Clear modal descriptions before adding next description @done (15-10-23 14:55) @project(TODO for Alpha Testing)
