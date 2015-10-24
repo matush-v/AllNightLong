@@ -30,7 +30,7 @@ TODO for Alpha Testing:
       ☐ EC: Scroll down to see later events, scroll up to see recent events
  
  Late Game:
- ☐ Add site feedback/suggestions button
+ ✔ Add site feedback/suggestions button @done (15-10-24 00:51)
  ☐ YSLOW, Audit, and W3 validator (last validated 5/3 9:24 PM)
  ☐ Restrict CORS access
  ☐ Ensure that everything still works with bad user input
@@ -47,17 +47,10 @@ TODO for Beta Testing:
 
   * Prettify
     * Add unique way to tell user why we want desktop notifications TODO exists
-    * Info box parts like curtains to show event info onmouseover and animates back after
     * Have progress bar to let person know how close they are to finishing the all nighter
       * Bar is along clock based on hour hand and goes from light green to dark green with % next to it
-    * Optional seconds hand
-
-  * Eyes Hurt?
-    * Recommend F.lux
 
   * Checkbox for caffine option and reminder to not drink beforehand
-
-  * Ergonomic Recommendations under tips
 
   * Optimization!
 
