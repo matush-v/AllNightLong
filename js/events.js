@@ -7,6 +7,9 @@ $(document).ready(function() {
     if (top.location.pathname == '/clock.html') {
         document.documentElement.style.overflowX = 'hidden';
 
+        // Vertically center clock based on screen size
+        center_clock();
+
         // Quotes/info box
         set_up_quotes();
 
@@ -419,8 +422,8 @@ function set_up_quotes() {
 
     cur_quote = 0; // Global counter for quote list index
 
-    open_curtains(500);
-    $('#motivate_box').append('<p>' + QUOTES[cur_quote] + '</p>');
+    update_motivate_box(['<p>' + QUOTES[cur_quote] + '</p>']);
+
     // Change quote every hour
     setInterval(change_quote, 1000 * 60 * 60);
 }
@@ -533,6 +536,15 @@ Date.prototype.stdTimezoneOffset = function() {
 Date.prototype.dst = function() {
     return this.getTimezoneOffset() < this.stdTimezoneOffset();
 };
+
+// Vertically centers clock based on screen height and clock height
+function center_clock() {
+    var screen_height = $(document).height();
+    var clock_height = parseInt($(".clock-wrapper").css("height"), 10);
+    var new_top = (screen_height - clock_height) / 2;
+
+    $(".clock-wrapper").css("top", new_top);
+}
 
 /* Given an array of string DOM elements, clears motiviate box and appends the elements in it instead */
 function update_motivate_box(elements) {
