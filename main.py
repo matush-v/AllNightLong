@@ -81,8 +81,7 @@ class Schedule(webapp2.RequestHandler):
         cur_time = int(cur_time) if cur_time else cur_time
         utc_offset = self.request.get("utc_offset")
         utc_offset = int(utc_offset) if utc_offset else utc_offset
-        
-        
+
         if wake_up_time and end_time and cur_time and utc_offset:
             # creates schedule for user
             schedule = self.get_schedule(wake_up_time, end_time, cur_time, utc_offset)
@@ -101,9 +100,9 @@ class Schedule(webapp2.RequestHandler):
 
         while water_time < end_time:
             hydration_events.append({'name': specific_event.name,
-                           'type': specific_event.event_type,
-                           'description': specific_event.description,
-                           'datetime': calendar.timegm((water_time + timedelta(hours=utc_offset)).timetuple())})
+                                     'type': specific_event.event_type,
+                                     'description': specific_event.description,
+                                     'datetime': calendar.timegm((water_time + timedelta(hours=utc_offset)).timetuple())})
             water_time += timedelta(hours=1)
 
         return hydration_events
@@ -115,9 +114,9 @@ class Schedule(webapp2.RequestHandler):
         nap_event = []
 
         nap_event.append({'name': specific_event.name,
-                       'type': specific_event.event_type,
-                       'description': specific_event.description,
-                       'datetime': calendar.timegm((self.get_best_nap_time(cur_time, wake_up_time) + timedelta(hours=utc_offset)).timetuple())})
+                          'type': specific_event.event_type,
+                          'description': specific_event.description,
+                          'datetime': calendar.timegm((self.get_best_nap_time(cur_time, wake_up_time) + timedelta(hours=utc_offset)).timetuple())})
 
         # TODO: Check to make sure there is no water break overlap with the nap
         return nap_event
@@ -131,8 +130,8 @@ class Schedule(webapp2.RequestHandler):
             best_nap_time += timedelta(days=1)
 
         best_nap_time = best_nap_time.replace(hour=int(best_nap_time_shift))
-        
-        if best_nap_time_shift % 1 != 0: # has .5 so we need to add 30 min
+
+        if best_nap_time_shift % 1 != 0:  # has .5 so we need to add 30 min
             half_hour = 30
             best_nap_time = best_nap_time.replace(minute=half_hour)
 

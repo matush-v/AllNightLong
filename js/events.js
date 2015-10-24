@@ -1,4 +1,5 @@
 EVENTS_LIST = 'events'; // Const name of schedule item in localStorage
+LS_CUR_EVENT_KEY = 'cur_event';
 
 $(document).ready(function() {
 
@@ -13,16 +14,22 @@ $(document).ready(function() {
 
         var events = JSON.parse(localStorage.getItem(EVENTS_LIST));
         var today = new Date();
-        cur_event = 0; // Global counter for event list index, TODO change to localstorage
+        
+        cur_event = localStorage.getItem(LS_CUR_EVENT_KEY);
+        if (cur_event === null) {
+            // No events have been completed yet, so start at the first event
+            cur_event = 0; // Global counter for event list index
+            localStorage.setItem(LS_CUR_EVENT_KEY, 0);
+
+            // Notification is set for first event in the queue
+            set_up_notification();
+        }
 
 
         draw_events(events);
 
         // Mousing over events will change the box info
         set_up_event_mouseover();
-
-        // Notification is set for first event in the queue
-        set_up_notification();
 
         // For fancy end animation
         set_up_end_animation();
@@ -48,6 +55,9 @@ $('#times_form').submit(function(e) {
     var end_hour_min = get_hour_min(end_time);
     var cur_time = new Date();
     var offset = cur_time.getTimezoneOffset() / 60 // get difference in hours between local timezone and UTC timezone
+    // Set seconds and milliseconds to 0 so any events created are based off the minute and not sec or ms
+    cur_time.setSeconds(0);
+    cur_time.setMilliseconds(0);
 
     if (validate_times(wake_up_time, end_time)) {
 
@@ -231,17 +241,6 @@ function get_schedule(params) {
     });
 }
 
-
-function remove_event_from_clock(name) {
-    // Find index of event in local storage
-    var index = get_event_index(name);
-
-    // Using index, you know id of event is #event_ + index
-    if (index !== null) {
-        $("#event_" + index).remove();
-    }
-}
-
 /******************************************************************************
 *
 *                               RATINGS
@@ -249,11 +248,10 @@ function remove_event_from_clock(name) {
 ******************************************************************************/
 
 /* Retrieves the number of stars currently filled out to find the rating for the given
- * event name, and then adds the rating to localstorage at the same index as the event.
+ * event name, and then adds the rating to localstorage in dictionary with keys as names
+ * and an array of rating/time objects as values
  * It also sends an AJAX post request to the server to save the rating */
 function add_rating(event_name) {
-    var index = get_event_index(name);
-
     // TODO add rating here
 }
 
@@ -279,7 +277,6 @@ function set_up_notification() {
     var milli_till_event = new Date(event_to_notify.datetime * 1000);
     milli_till_event -= now;
 
-    console.log(milli_till_event);
     if (milli_till_event <= 0) {
         // console.log("bad time for event: " + event_to_notify.name);
         return;
@@ -288,6 +285,7 @@ function set_up_notification() {
     }
 
     cur_event++;
+    localStorage.setItem(LS_CUR_EVENT_KEY, cur_event);
 }
 
 function set_up_icons() {
@@ -323,15 +321,18 @@ function notify_user(title, event) {
 
     notification.onclick = function() {
         window.focus();
-
         show_modal('event_modal', icon, title, event.description);
     };
 
+    // Event is over, so remove from clock
+    // The index of the event is always cur_event - 1 since that counter is incremented every time
+    // a notification is set up to occur. Since this event's notification already went off (hence removal from clock),
+    // the counter must have been incremented to the next event already
+    var event_index = cur_event - 1;
+    $("#event_" + event_index).remove();
+
     // Notification is set for next event in the queue
     set_up_notification();
-
-    // Event is over, so remove from clock
-    remove_event_from_clock(event.name);
 }
 
 function show_modal(modal_name, event_icon, event_name, event_description) {
@@ -348,6 +349,7 @@ function show_modal(modal_name, event_icon, event_name, event_description) {
     $('#' + modal_name).modal('show');
 
     $("#event_done_btn").click(function () {
+        // Add the user's rating
         add_rating(event_name);
         $('#event_modal').modal('hide');
     });
@@ -484,26 +486,6 @@ Date.prototype.stdTimezoneOffset = function() {
 Date.prototype.dst = function() {
     return this.getTimezoneOffset() < this.stdTimezoneOffset();
 };
-
-/* Given the name of an event, finds its index in the events array in localstorage.
- * Returns null if the event is not found
- */
-function get_event_index(name) {
-    var events = JSON.parse(localStorage.getItem(EVENTS_LIST));
-    var len = events.length;
-    var index = null;
-
-    for (var i = 0; i < len; i++) {
-        if (events[i].name == name) {
-            index = i;
-        }
-    }
-
-    if (index === null) {
-        console.log("Could not find index of event with name: ", name);
-    }
-    return index;
-}
 
 /* Given an array of string DOM elements, clears motiviate box and appends the elements in it instead */
 function update_motivate_box(elements) {
