@@ -1,4 +1,5 @@
 EVENTS_LIST = 'events'; // Const name of schedule item in localStorage
+LS_CUR_EVENT_KEY = 'cur_event';
 
 $(document).ready(function() {
 
@@ -13,16 +14,22 @@ $(document).ready(function() {
 
         var events = JSON.parse(localStorage.getItem(EVENTS_LIST));
         var today = new Date();
-        cur_event = 0; // Global counter for event list index, TODO change to localstorage
+        
+        cur_event = localStorage.getItem(LS_CUR_EVENT_KEY);
+        if (cur_event === null) {
+            // No events have been completed yet, so start at the first event
+            cur_event = 0; // Global counter for event list index
+            localStorage.setItem(LS_CUR_EVENT_KEY, 0);
+
+            // Notification is set for first event in the queue
+            set_up_notification();
+        }
 
 
         draw_events(events);
 
         // Mousing over events will change the box info
         set_up_event_mouseover();
-
-        // Notification is set for first event in the queue
-        set_up_notification();
 
         // For fancy end animation
         set_up_end_animation();
@@ -47,7 +54,10 @@ $('#times_form').submit(function(e) {
     var end_date = new Date();
     var end_hour_min = get_hour_min(end_time);
     var cur_time = new Date();
-    var offset = cur_time.getTimezoneOffset() / 60 // get difference in hours between local timezone and UTC timezone
+    var offset = cur_time.getTimezoneOffset() / 60; // get difference in hours between local timezone and UTC timezone
+    // Set seconds and milliseconds to 0 so any events created are based off the minute and not sec or ms
+    cur_time.setSeconds(0);
+    cur_time.setMilliseconds(0);
 
     if (validate_times(wake_up_time, end_time)) {
 
@@ -92,19 +102,16 @@ function draw_events(events) {
     // Drawing events from localStorage
     var len = events.length;
     for (i = 0; i < len; i++) {
-        // datetime is a unix timestamp (in seconds), convert to JS Date object after converting to milliseconds        
-        // So datetime becomes the JS Date for when the event should occur
-        events[i].datetime = new Date(events[i].datetime * 1000);
-        draw_event('yellow', i, events[i].datetime);
+        draw_event('yellow', i, new Date(events[i].datetime));
     }
 
     draw_depth_rings();
 }
 
 
-
-/* draw colored circle based off minute at the passed in depth */
-function draw_event(color, index, datetime) {
+/* Given a CSS color, index of the event, and the JS date of the event,
+/* draw colored circle based off minute at depth based off hour */
+function draw_event(color, index, date) {
     var minutes_in_hour = 60, rads_in_circle = 2 * Math.PI;
     var dot_width = parseInt(get_css('width', 'dot'));
     var dot_height = parseInt(get_css('height', 'dot'));
@@ -114,12 +121,12 @@ function draw_event(color, index, datetime) {
     var minute = null;
     var depth;
 
-    if (datetime < now) {
+    if (date < now) {
         return; // event is in the past
     }
 
     // depth is difference in hours
-    depth = find_depth(datetime);
+    depth = find_depth(date);
 
     // depth can be 0, 1, 2 for max depth of 3... so use >=
     if (depth >= MAX_DEPTH) {
@@ -127,7 +134,7 @@ function draw_event(color, index, datetime) {
     }
 
     // calculate angle of dot on clock given which minute it is at
-    minute = datetime.getMinutes();
+    minute = date.getMinutes();
     angle = (minute / minutes_in_hour) * rads_in_circle - Math.PI / 2; // offset -pi/2 so minute 0 corresponds to top of clock
 
     // Distance to move toward center of circle
@@ -151,21 +158,21 @@ function draw_event(color, index, datetime) {
 }
 
 
-// Given the datetime of an event, calculate its depth, by finding the difference between the 
+// Given the JS date of an event, calculate its depth, by finding the difference between the 
 // event time and the current time in hours (solely based off hour values)
-function find_depth(datetime) {
+function find_depth(date) {
     var now = new Date();
-    var datetime_stamp = new Date(datetime);
+    var date_stamp = new Date(date);
     
     // Remove minutes, seconds, and millseconds so there is no rounding error when subtracting later
-    datetime_stamp.setMinutes(0);
-    datetime_stamp.setSeconds(0);
-    datetime_stamp.setMilliseconds(0);
+    date_stamp.setMinutes(0);
+    date_stamp.setSeconds(0);
+    date_stamp.setMilliseconds(0);
     now.setMinutes(0);
     now.setSeconds(0);
     now.setMilliseconds(0);
     
-    return Math.floor((datetime_stamp - now) / (1000 * 60 * 60)); // converting milliseconds difference to hours difference
+    return Math.floor((date_stamp - now) / (1000 * 60 * 60)); // converting milliseconds difference to hours difference
 }
 
 
@@ -202,7 +209,7 @@ function set_up_event_mouseover() {
 
         $(this).mouseover(function() {
             var event_index = $(this).attr('id').slice(ID_LENGTH);
-            var date = (new Date(events_list[event_index].datetime * 1000));
+            var date = new Date(events_list[event_index].datetime);
             var time = 'Time: ' + to_ampm(date);
             var elements_to_display = [
                 '<p>' + events_list[event_index].description + '</p>',
@@ -226,20 +233,18 @@ function set_up_event_mouseover() {
 /* Handles post request to get event schedule based on input times */
 function get_schedule(params) {
     $.post('/schedule', params, function(data) {
-        localStorage.setItem(EVENTS_LIST, data);
+        events = JSON.parse(data);
+        // Run through given datetimes and convert to milliseconds before storing in localStorage
+        var num_events = events.length;
+        for (var i = 0; i < num_events; i++) {
+            // datetime is a unix timestamp (in seconds), converting to milliseconds for easy conversion to JS Date later
+            // with the line: new Date(events[i].datetime)
+            events[i].datetime = events[i].datetime * 1000;
+        }
+
+        localStorage.setItem(EVENTS_LIST, JSON.stringify(events));
         window.location.href = 'clock.html';
     });
-}
-
-
-function remove_event_from_clock(name) {
-    // Find index of event in local storage
-    var index = get_event_index(name);
-
-    // Using index, you know id of event is #event_ + index
-    if (index !== null) {
-        $("#event_" + index).remove();
-    }
 }
 
 /******************************************************************************
@@ -249,11 +254,10 @@ function remove_event_from_clock(name) {
 ******************************************************************************/
 
 /* Retrieves the number of stars currently filled out to find the rating for the given
- * event name, and then adds the rating to localstorage at the same index as the event.
+ * event name, and then adds the rating to localstorage in dictionary with keys as names
+ * and an array of rating/time objects as values
  * It also sends an AJAX post request to the server to save the rating */
 function add_rating(event_name) {
-    var index = get_event_index(name);
-
     // TODO add rating here
 }
 
@@ -276,10 +280,8 @@ function set_up_notification() {
     var event_to_notify = events_list[cur_event];
     var event_type = event_to_notify.type;
     var now = new Date();
-    var milli_till_event = new Date(event_to_notify.datetime * 1000);
-    milli_till_event -= now;
+    var milli_till_event = new Date(event_to_notify.datetime) - now;
 
-    console.log(milli_till_event);
     if (milli_till_event <= 0) {
         // console.log("bad time for event: " + event_to_notify.name);
         return;
@@ -288,6 +290,7 @@ function set_up_notification() {
     }
 
     cur_event++;
+    localStorage.setItem(LS_CUR_EVENT_KEY, cur_event);
 }
 
 function set_up_icons() {
@@ -303,7 +306,6 @@ function set_up_icons() {
 
 function notify_user(title, event) {
     var icon = ICONS[event.type];
-    var event_date = new Date(event.datetime);
 
     if (!Notification) {
         alert('Please upgrade to a modern version of Chrome, Firefox, Opera or Firefox.');
@@ -318,20 +320,23 @@ function notify_user(title, event) {
 
     var notification = new Notification(title, {
         icon: icon,
-        body: event.name +  " (" + to_ampm(event_date) + ")"
+        body: event.name +  " (" + to_ampm(new Date(event.datetime)) + ")"
     });
 
     notification.onclick = function() {
         window.focus();
-
         show_modal('event_modal', icon, title, event.description);
     };
 
+    // Event is over, so remove from clock
+    // The index of the event is always cur_event - 1 since that counter is incremented every time
+    // a notification is set up to occur. Since this event's notification already went off (hence removal from clock),
+    // the counter must have been incremented to the next event already
+    var event_index = cur_event - 1;
+    $("#event_" + event_index).remove();
+
     // Notification is set for next event in the queue
     set_up_notification();
-
-    // Event is over, so remove from clock
-    remove_event_from_clock(event.name);
 }
 
 function show_modal(modal_name, event_icon, event_name, event_description) {
@@ -348,6 +353,7 @@ function show_modal(modal_name, event_icon, event_name, event_description) {
     $('#' + modal_name).modal('show');
 
     $("#event_done_btn").click(function () {
+        // Add the user's rating
         add_rating(event_name);
         $('#event_modal').modal('hide');
     });
@@ -484,26 +490,6 @@ Date.prototype.stdTimezoneOffset = function() {
 Date.prototype.dst = function() {
     return this.getTimezoneOffset() < this.stdTimezoneOffset();
 };
-
-/* Given the name of an event, finds its index in the events array in localstorage.
- * Returns null if the event is not found
- */
-function get_event_index(name) {
-    var events = JSON.parse(localStorage.getItem(EVENTS_LIST));
-    var len = events.length;
-    var index = null;
-
-    for (var i = 0; i < len; i++) {
-        if (events[i].name == name) {
-            index = i;
-        }
-    }
-
-    if (index === null) {
-        console.log("Could not find index of event with name: ", name);
-    }
-    return index;
-}
 
 /* Given an array of string DOM elements, clears motiviate box and appends the elements in it instead */
 function update_motivate_box(elements) {

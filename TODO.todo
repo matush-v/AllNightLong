@@ -22,15 +22,18 @@ TODO for Alpha Testing:
       ☐ refreshing page during event time gives multiple notifications
 
   Sean:
+    Events:
+     ☐ Add more events for exercise and extra
+     ☐ For fuel -- give random example of food to user (maybe API call?)
     Clock page:
-      ☐ Change global event counter to be in localstorage so it persists over refresh @critical
-      ☐ When event is over, remove the dot dynamically (Written, but test when above critical is fixed)
       ☐ Add ratings when 'Done' button is clicked in modal via ajax call to add_rating endpoint
       ☐ Make clock.html page inaccessible if all events in localstorage are in the past
       ☐ Save ratings in localstorage (with time?) so that they can be added to modal even after page refresh
         - Right now stars will be same across all modals (extra or event) until the page is refreshed and they all revert to 0 stars
+      ☐ Dynamically update events to new ring every hour
     Quotes:
       ☐ curtains CSS fix up
+      ☐ API call to quotes site for a random quote (don't hardcode)
     Prettify:
     Creating a schedule:
       ☐ sexy graphics and JS
@@ -79,11 +82,11 @@ IDEAS:
 
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:
-<<<<<<< HEAD
+ ✔ After receiving schedule from server, run through events and change the datetimes to JS date objects for easier access @done (15-10-23 21:09) @project(TODO for Alpha Testing / Sean / Clock page)
+ ✔ When event is over, remove the dot dynamically (Written, but test when above critical is fixed) @done (15-10-23 20:21) @project(TODO for Alpha Testing / Sean / Clock page)
+ ✔ Change global event counter to be in localstorage so it persists over refresh @critical @done (15-10-23 19:08) @project(TODO for Alpha Testing / Sean / Clock page)
  ✔ Fix bug @done (15-10-23 16:30)
- ✔ make methods within schedule class @done (15-10-23 16:23) @project(TODO for Alpha Testing / Mathurshan / Backend)
  ✔ very nice clock with hour and minute hand @done (15-10-23 16:27) @project(TODO for Alpha Testing / Mathurshan / Clock page)
-=======
- ✔ Clear modal descriptions before adding next description @done (15-10-23 14:55) @project(TODO for Alpha Testing)
+ ✔ make methods within schedule class @done (15-10-23 16:23) @project(TODO for Alpha Testing / Mathurshan / Backend)
  ✔ Faint lines for each depth @done (15-10-23 14:55) @project(TODO for Alpha Testing / Sean / Prettify)
->>>>>>> 711c8f7409d64c1a79ec86fe10d5d94c04bc62c0
+ ✔ Clear modal descriptions before adding next description @done (15-10-23 14:55) @project(TODO for Alpha Testing)
