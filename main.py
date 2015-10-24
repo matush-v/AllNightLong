@@ -91,7 +91,8 @@ class Schedule(webapp2.RequestHandler):
         else:
             self.response.out.write("Please provide correct parameters")
 
-    def get_hydration_events(self, cur_time, end_time, utc_offset):
+    def get_hydration_events(self, events, cur_time, end_time, utc_offset):
+        # Every 45 mins that does have collide with another event
         all_events = Events.all()
         all_events.filter('event_type =', self.HYDRATION)
         specific_event = all_events.get()  # assumes only one water event
@@ -100,30 +101,37 @@ class Schedule(webapp2.RequestHandler):
         water_time = cur_time + timedelta(minutes=45)
 
         while water_time < end_time:
-            hydration_events.append({'name': specific_event.name,
-                           'type': specific_event.event_type,
-                           'description': specific_event.description,
-                           'datetime': calendar.timegm((water_time + timedelta(hours=utc_offset)).timetuple())})
+            if not self.has_collision(events, water_time):
+                hydration_events.append({'name': specific_event.name,
+                               'type': specific_event.event_type,
+                               'description': specific_event.description,
+                               'datetime': calendar.timegm((water_time + timedelta(hours=utc_offset)).timetuple())})
             water_time += timedelta(hours=1)
 
         return hydration_events
 
-    def get_nap_event(self, cur_time, wake_up_time, utc_offset):
+    def get_nap_event(self, cur_time, end_time, wake_up_time, utc_offset):
+        # Based on get_best_nap_time
         all_events = Events.all()
         all_events.filter('event_type =', self.NAP)
         specific_event = all_events.get()
         nap_event = []
+        
+        best_nap_time = self.get_best_nap_time(cur_time, wake_up_time)
+        # SOURCE: http://www.ncbi.nlm.nih.gov/pubmed/21075238
+        # Nap's benefit lasts for 1-3 hours so it's worth taking a nap
+        if end_time >= (best_nap_time + timedelta(hours=3)):
+            nap_event.append({'name': specific_event.name,
+                           'type': specific_event.event_type,
+                           'description': specific_event.description,
+                           'datetime': calendar.timegm((best_nap_time + timedelta(hours=utc_offset)).timetuple())})
 
-        nap_event.append({'name': specific_event.name,
-                       'type': specific_event.event_type,
-                       'description': specific_event.description,
-                       'datetime': calendar.timegm((self.get_best_nap_time(cur_time, wake_up_time) + timedelta(hours=utc_offset)).timetuple())})
-
-        # TODO: Check to make sure there is no water break overlap with the nap
         return nap_event
 
     @staticmethod
     def get_best_nap_time(cur_time, wake_up_time):
+        # Formula: (Wake up hour / 2) - 1.5 
+        # SOURCE: http://saramednick.com/htmls/book/napwheel.htm
         best_nap_time = cur_time
         best_nap_time_shift = (int(wake_up_time[0:2]) / 2) - 1.5  # slice to get the hour
 
@@ -139,6 +147,9 @@ class Schedule(webapp2.RequestHandler):
         return best_nap_time
 
     def get_walk_event(self, cur_time, end_time, utc_offset):
+        # If all nighter ends before 5 AM and it's currently before midnight
+        #  walk should be set to random time near beginning, otherwise set 
+        #  to random time near end
         all_events = Events.all()
         all_events.filter('event_type =', self.WALK)
         specific_event = all_events.get()
@@ -149,7 +160,6 @@ class Schedule(webapp2.RequestHandler):
             #  so walk should be set to near beginning
             best_walk_time = cur_time + timedelta(hours=1)
             rand_min = random.randrange(0, 60)
-            # TODO add while loop to catch for time collisions
             best_walk_time = best_walk_time + timedelta(minutes=rand_min)
         else:
             # walk should be set to near end
@@ -164,30 +174,35 @@ class Schedule(webapp2.RequestHandler):
 
         return walk_event
 
-    def get_caffeine_event(self, cur_time, wake_up_time, utc_offset):
+    def get_caffeine_event(self, cur_time, end_time, wake_up_time, utc_offset):
+        # Right before nap so it kicks in as he/she wakes up
         all_events = Events.all()
         all_events.filter('event_type =', self.CAFFEINE)
         specific_event = all_events.get()
         caffeine_event = []
 
-        # Put it right before nap so it kicks in as they wake up
-        best_caffeine_time = self.get_best_nap_time(cur_time, wake_up_time) - timedelta(minutes=5)
+        best_nap_time = self.get_best_nap_time(cur_time, wake_up_time)
 
-        caffeine_event.append({'name': specific_event.name,
-                       'type': specific_event.event_type,
-                       'description': specific_event.description,
-                       'datetime': calendar.timegm((best_caffeine_time + timedelta(hours=utc_offset)).timetuple())})
+        # is it worth taking a nap
+        if end_time >= (best_nap_time + timedelta(hours=3)):
+            # Put it right before nap so it kicks in as they wake up
+            best_caffeine_time =  best_nap_time - timedelta(minutes=5)
+            caffeine_event.append({'name': specific_event.name,
+                           'type': specific_event.event_type,
+                           'description': specific_event.description,
+                           'datetime': calendar.timegm((best_caffeine_time + timedelta(hours=utc_offset)).timetuple())})
 
         return caffeine_event
 
     def get_fuel_events(self, cur_time, end_time, utc_offset):
         # Every two hours until halfway point, then every hour
+        #  fuel events are offset by 15 mins from exercise events
         all_events = Events.all()
         all_events.filter('event_type =', self.FUEL)
         specific_event = all_events.get()
         fuel_events = []
 
-        food_time = cur_time + timedelta(hours=1)
+        food_time = cur_time + timedelta(hours=2, minutes=15)
         halfway_time = cur_time + (end_time - cur_time) / 2
 
         while food_time < end_time:
@@ -211,7 +226,7 @@ class Schedule(webapp2.RequestHandler):
         exercise_events = []
 
         # TODO get stretching pics
-        exercise_time = cur_time + timedelta(hours=1) + timedelta(minutes=15)
+        exercise_time = cur_time + timedelta(hours=2)
         halfway_time = cur_time + (end_time - cur_time) / 2
 
         while exercise_time < end_time:
@@ -230,6 +245,15 @@ class Schedule(webapp2.RequestHandler):
 
         return exercise_events
 
+    @staticmethod
+    def has_collision(events, new_event_time):
+        new_time = calendar.timegm(new_event_time.timetuple())
+
+        if new_time in map(lambda k: k['datetime'], events):
+            return True
+
+        return False
+
     def get_schedule(self, wake_up_time, end_time, cur_time, utc_offset):
         '''
         Returns list of times and events that should be done at those times
@@ -241,144 +265,14 @@ class Schedule(webapp2.RequestHandler):
 
         end_time = datetime.fromtimestamp(end_time)
         end_time = end_time - timedelta(hours=utc_offset)
-
-
-        ###################### HYDRATION ##########################
-        # all_events = Events.all()
-        # all_events.filter('event_type =', self.HYDRATION)
-        # specific_event = all_events.get()  # assumes only one water event
-
-        # water_time = cur_time + timedelta(minutes=45)
-
-        # while water_time < end_time:
-        #     events.append({'name': specific_event.name,
-        #                    'type': specific_event.event_type,
-        #                    'description': specific_event.description,
-        #                    'datetime': calendar.timegm((water_time + timedelta(hours=utc_offset)).timetuple())})
-        #     water_time += timedelta(hours=1)
-        events += self.get_hydration_events(cur_time, end_time, utc_offset)
-        #######################################################
-
-
-        ####################### NAP ############################
-        # all_events = Events.all()
-        # all_events.filter('event_type =', self.NAP)
-        # specific_event = all_events.get()
-
-        # best_nap_time_shift = (int(wake_up_time[0:2]) / 2) - 1.5  # slice to get the hour
-        # best_nap_time = cur_time
-
-        # if cur_time.hour >= 12:  # PM so we need to add a day for nap
-        #     best_nap_time += timedelta(days=1)
-
-        # best_nap_time = best_nap_time.replace(hour=int(best_nap_time_shift))
         
-        # if best_nap_time_shift % 1 != 0: # has .5 so we need to add 30 min
-        #     half_hour = 30
-        #     best_nap_time = best_nap_time.replace(minute=half_hour)
-
-        # best_nap_time = best_nap_time + timedelta(hours=utc_offset) # TODO: dafaq why is here twice?
-        
-        # events.append({'name': specific_event.name,
-        #                'type': specific_event.event_type,
-        #                'description': specific_event.description,
-        #                'datetime': calendar.timegm((best_nap_time + timedelta(hours=utc_offset)).timetuple())})
-
-        # # TODO: Check to make sure there is no water break overlap with the nap
-        events += self.get_nap_event(cur_time, wake_up_time, utc_offset)
-        #######################################################
-
-        ########################### WALK ######################
-        # all_events = Events.all()
-        # all_events.filter('event_type =', self.WALK)
-        # specific_event = all_events.get()
-
-        # if end_time.hour < 5 and cur_time.hour <= 23:
-        #     # end_time is before 5 AM and it's currently before midnight
-        #     #  so walk should be set to near beginning
-        #     best_walk_time = cur_time + timedelta(hours=1)
-        #     rand_min = random.randrange(0, 60)
-        #     # TODO add while loop to catch for time collisions
-        #     best_walk_time = best_walk_time + timedelta(minutes=rand_min)
-        # else:
-        #     # walk should be set to near end
-        #     best_walk_time = end_time - timedelta(hours=1)
-        #     rand_min = random.randrange(0, 60)
-        #     best_walk_time = best_walk_time - timedelta(minutes=rand_min)
-
-        # events.append({'name': specific_event.name,
-        #                'type': specific_event.event_type,
-        #                'description': specific_event.description,
-        #                'datetime': calendar.timegm((best_walk_time + timedelta(hours=utc_offset)).timetuple())})
+        # Order of below gets are based on priority of events
+        events += self.get_nap_event(cur_time, end_time, wake_up_time, utc_offset)
+        events += self.get_caffeine_event(cur_time, end_time, wake_up_time, utc_offset)
         events += self.get_walk_event(cur_time, end_time, utc_offset)
-
-        ######################################################
-
-
-        ################### CAFFEINE #########################
-        # all_events = Events.all()
-        # all_events.filter('event_type =', self.CAFFEINE)
-        # specific_event = all_events.get()
-
-        # # Put it right before nap so it kicks in as they wake up
-        # best_caffeine_time = best_nap_time - timedelta(minutes=5)
-
-        # events.append({'name': specific_event.name,
-        #                'type': specific_event.event_type,
-        #                'description': specific_event.description,
-        #                'datetime': calendar.timegm((best_caffeine_time + timedelta(hours=utc_offset)).timetuple())})
-
-        events += self.get_caffeine_event(cur_time, wake_up_time, utc_offset)
-        ######################################################
-
-
-        ####################### FUEL #########################
-        # # Every two hours until halfway point, then every hour
-        # all_events = Events.all()
-        # all_events.filter('event_type =', self.FUEL)
-        # specific_event = all_events.get()
-
-        # food_time = cur_time + timedelta(hours=1)
-
-        # while food_time < end_time:
-        #     events.append({'name': specific_event.name,
-        #                    'type': specific_event.event_type,
-        #                    'description': specific_event.description,
-        #                    'datetime': calendar.timegm((food_time + timedelta(hours=utc_offset)).timetuple())})
-
-        #     if food_time >= halfway_time:
-        #         food_time += timedelta(hours=1)
-        #     else:
-        #         food_time += timedelta(hours=2)
-
         events += self.get_fuel_events(cur_time, end_time, utc_offset)
-        ######################################################
-
-        ####################### EXERCISE #####################
-        # # Ever-y two hours until halfway point, then every hour
-        # all_events = Events.all(keys_only=True)
-        # all_events.filter('event_type =', self.EXERCISE)
-        # item_keys = all_events.fetch(1000)
-
-        # # TODO get stretching pics
-        # exercise_time = cur_time + timedelta(hours=1) + timedelta(minutes=15)
-
-        # while exercise_time < end_time:
-        #     exercise_key = random.choice(item_keys)
-        #     specific_event = Events.get(exercise_key)
-
-        #     events.append({'name': specific_event.name,
-        #                    'type': specific_event.event_type,
-        #                    'description': specific_event.description,
-        #                    'datetime': calendar.timegm((exercise_time + timedelta(hours=utc_offset)).timetuple())})
-
-        #     if exercise_time >= halfway_time:
-        #         exercise_time += timedelta(hours=1)
-        #     else:
-        #         exercise_time += timedelta(hours=2)
-
         events += self.get_exercise_events(cur_time, end_time, utc_offset)
-        ######################################################
+        events += self.get_hydration_events(events, cur_time, end_time, utc_offset)
 
         events = sorted(events, key=lambda k: k['datetime'])
 
