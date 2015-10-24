@@ -369,7 +369,7 @@ class AddRating(webapp2.RequestHandler):
 
 # Returns a random event of type "extra", returns empty string if no extra events exist in DB
 class Extra(webapp2.RequestHandler):
-    EXTRA = "extra" # event type
+    EXTRA = "extra"  # event type
 
     def post(self):
         '''

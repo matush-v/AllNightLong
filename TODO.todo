@@ -10,7 +10,6 @@ TODO for Alpha Testing:
     Notifications:
       ☐ Every time a user does not complete an event, add it to localstorage and adjust schedule
       ☐ If completed, send feedback to server
-      ☐ refreshing page during event time gives multiple notifications
 
   Sean:
     Events:
@@ -21,7 +20,6 @@ TODO for Alpha Testing:
       ☐ Make clock.html page inaccessible if all events in localstorage are in the past @low
       ☐ Stop notifications when they get to Congratulations page @low
     Quotes:
-      ☐ curtains CSS fix up
       ☐ API call to quotes site for a random quote (don't hardcode)
     Prettify:
     Creating a schedule:
@@ -30,7 +28,6 @@ TODO for Alpha Testing:
       ☐ EC: Scroll down to see later events, scroll up to see recent events
  
  Late Game:
- ✔ Add site feedback/suggestions button @done (15-10-24 00:51)
  ☐ YSLOW, Audit, and W3 validator (last validated 5/3 9:24 PM)
  ☐ Restrict CORS access
  ☐ Ensure that everything still works with bad user input
@@ -61,6 +58,8 @@ IDEAS:
 
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:
+ ✔ refreshing page during event time gives multiple notifications @done (15-10-24 02:42) @project(TODO for Alpha Testing / Mathurshan / Notifications)
+ ✔ Add site feedback/suggestions button @done (15-10-24 00:51) @project(TODO for Alpha Testing)
  ✔ curtains @done (15-10-24 00:13) @project(TODO for Alpha Testing / Mathurshan / Clock page)
  ✔ Save ratings in localstorage (with time?) so that they can be added to modal even after page refresh @done (15-10-23 23:56) @project(TODO for Alpha Testing / Sean / Clock page)
  ✔ Add ratings when 'Done' button is clicked in modal via ajax call to add_rating endpoint @done (15-10-23 23:56) @project(TODO for Alpha Testing / Sean / Clock page)
