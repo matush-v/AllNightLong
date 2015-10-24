@@ -101,6 +101,7 @@ hr.small {
     position: relative;
     width: 100%;
     height: 100%;
+    color: white;
 }
 
 body > .header {
@@ -122,6 +123,9 @@ body > .header {
     margin-top: -3em;
 }
 
+#footer p {
+    color: white;
+}
 /* Event Styling */
 
 .dot {
@@ -196,6 +200,7 @@ body > .header {
 
 .big-label {
     font-size: 18px;
+    color: white;
 }
 
 input[type=time] {

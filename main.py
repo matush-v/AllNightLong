@@ -47,6 +47,7 @@ class MainHandler(webapp2.RequestHandler):
         template = JINJA_ENVIRONMENT.get_template('index.html')
         self.response.write(template.render(template_values))
 
+
 class Clock(webapp2.RequestHandler):
     '''
     Handler for clock and events page
@@ -58,6 +59,7 @@ class Clock(webapp2.RequestHandler):
         template_values = {}
         template = JINJA_ENVIRONMENT.get_template('clock.html')
         self.response.write(template.render(template_values))
+
 
 class Schedule(webapp2.RequestHandler):
     HYDRATION = "hydration"

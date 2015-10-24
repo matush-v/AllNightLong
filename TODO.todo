@@ -4,10 +4,10 @@ TODO for Alpha Testing:
   Mathurshan:
     Clock page:
       ☐ Sexy graphics (clock, box, buttons, etc.) @high
+      ✔ Eager.io apps @done (15-10-23 23:18)
       ☐ curtains
-      ☐ Eager.io apps
       ☐ Anything user does is added to the localstorage
-      ☐ Big Button for "I'M DONE" that plays rocky song
+      ☐ "I'M DONE" plays rocky song
     Algo:
     Notifications:
       ☐ Every time a user does not complete an event, add it to localstorage and adjust schedule
