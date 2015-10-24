@@ -7,6 +7,9 @@ $(document).ready(function() {
 
     if (top.location.pathname == '/clock.html') {
         document.documentElement.style.overflowX = 'hidden';
+        // added here so it can be removed later so confetti shows and
+        //  reap reward button works
+        $("#expander").css("position", "absolute");
 
         // Vertically center clock based on screen size
         center_clock();
@@ -475,6 +478,7 @@ function set_up_end_animation() {
                 $('#expander').append('<button id="reward_btn" class="btn btn-info">Reap your reward</button>');
                 $('#done_btn').unbind();
                 $(document).unbind("mouseup");
+                $('#expander').css("position", ""); // allows reap reward button to work
                 $('#reward_btn').click(function() {
                     location.href = 'https://www.youtube.com/watch?v=wDajqW561KM';
                 });

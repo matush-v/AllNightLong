@@ -3,9 +3,8 @@
 TODO for Alpha Testing:
   Mathurshan:
     Clock page:
-      ☐ Sexy graphics (clock, box, buttons, etc.) @high
+      ✔ Sexy graphics (clock, box, buttons, etc.) @high @done (15-10-24 03:55)
       ☐ Anything user does is added to the localstorage
-      ☐ "I'M DONE" plays rocky song
     Algo:
     Notifications:
       ☐ Every time a user does not complete an event, add it to localstorage and adjust schedule

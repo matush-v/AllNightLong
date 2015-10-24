@@ -300,7 +300,6 @@ label.star:before {
     -webkit-transition-property: all;
     -webkit-transition-timing-function: ease-in-out;
     overflow: hidden;
-    position: absolute;
     z-index: 2000;
     border-radius: 7px;
     border: 5px solid gray;
@@ -326,6 +325,7 @@ label.star:before {
     right: 0;
     margin: 0 auto;
     bottom: 25%;
+    z-index: 2200;
 }
 
 #reward_btn:hover {
