@@ -1,17 +1,23 @@
 EVENTS_LIST = 'events'; // Const name of schedule item in localStorage
 LS_RATINGS_KEY = 'ratings';
 LS_CUR_EVENT_KEY = 'cur_event';
+LS_END_TIME_KEY = 'end_time';
 
 $(document).ready(function() {
 
     if (top.location.pathname == '/clock.html') {
         document.documentElement.style.overflowX = 'hidden';
 
+        // Vertically center clock based on screen size
+        center_clock();
+
         // Quotes/info box
         set_up_quotes();
 
         // Icons for notifications
         set_up_icons();
+
+        $("#end_time").text("All Nighter End Time: " + to_ampm(new Date(localStorage.getItem(LS_END_TIME_KEY))));
 
         // Initialize ratings array in localStorage
         if (!localStorage.getItem(LS_RATINGS_KEY)) {
@@ -72,6 +78,7 @@ $('#times_form').submit(function(e) {
 
         end_date.setHours(end_hour_min.hour);
         end_date.setMinutes(end_hour_min.min);
+        localStorage.setItem(LS_END_TIME_KEY, end_date); // Save end time to local storage
 
         create_cookie('wake_up_time', wake_up_time, expires_in);
         create_cookie('end_time', end_date, expires_in);
@@ -443,7 +450,7 @@ function set_up_quotes() {
 
     cur_quote = 0; // Global counter for quote list index
 
-    $('#motivate_box').append('<p>' + QUOTES[cur_quote] + '</p>');
+    update_motivate_box(['<p>' + QUOTES[cur_quote] + '</p>']);
     // Change quote every hour
     setInterval(change_quote, 1000 * 60 * 60);
 }
@@ -466,6 +473,7 @@ function set_up_end_animation() {
                 $('#finish_text').text('Congratulations champ! You nailed it!');
                 $('#expander').append('<button id="reward_btn" class="btn btn-info">Reap your reward</button>');
                 $('#done_btn').unbind();
+                $(document).unbind("mouseup");
 
                 $('#reward_btn').click(function() {
                     location.href = 'https://www.youtube.com/watch?v=wDajqW561KM';
@@ -475,12 +483,17 @@ function set_up_end_animation() {
     );
 }
 
+// Mousedown on button causes expansion of ending screen
 $('#done_btn').mousedown(function() {
-        $('body').css('user-select', 'none').prop('unselectable', 'on').on('selectstart', false);
-        expand();
-}).bind('mouseup mouseleave', function() {
-        minimize();
+    $('body').css('user-select', 'none').prop('unselectable', 'on').on('selectstart', false);
+    expand();
 });
+
+// Mouseup anywhere causes ending screen to be minimized
+$(document).mouseup(function () {
+    minimize();
+});
+
 
 /* Expansion screen for I'm Done button */
 function expand () {
@@ -547,6 +560,15 @@ Date.prototype.stdTimezoneOffset = function() {
 Date.prototype.dst = function() {
     return this.getTimezoneOffset() < this.stdTimezoneOffset();
 };
+
+// Vertically centers clock based on screen height and clock height
+function center_clock() {
+    var screen_height = $(document).height();
+    var clock_height = parseInt($(".clock-wrapper").css("height"), 10);
+    var new_top = (screen_height - clock_height) / 2;
+
+    $(".clock-wrapper").css("top", new_top);
+}
 
 /* Given an array of string DOM elements, clears motiviate box and appends the elements in it instead */
 function update_motivate_box(elements) {
