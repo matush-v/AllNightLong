@@ -19,11 +19,9 @@ TODO for Alpha Testing:
      ☐ Add more events for exercise and extra
      ☐ For fuel -- give random example of food to user (maybe API call?)
     Clock page:
-      ☐ Add ratings when 'Done' button is clicked in modal via ajax call to add_rating endpoint
-      ☐ Make clock.html page inaccessible if all events in localstorage are in the past
-      ☐ Save ratings in localstorage (with time?) so that they can be added to modal even after page refresh
-        - Right now stars will be same across all modals (extra or event) until the page is refreshed and they all revert to 0 stars
-      ☐ Dynamically update events to new ring every hour
+      ☐ Dynamically update events to new ring every hour @low
+      ☐ Make clock.html page inaccessible if all events in localstorage are in the past @low
+      ☐ Stop notifications when they get to Congratulations page @low
     Quotes:
       ☐ curtains CSS fix up
       ☐ API call to quotes site for a random quote (don't hardcode)
@@ -32,9 +30,6 @@ TODO for Alpha Testing:
       ☐ sexy graphics and JS
       ☐ Color code events
       ☐ EC: Scroll down to see later events, scroll up to see recent events
- 
- ☐ Bugs from Hackathon presentation
-  ☐ Stop notifications when they get to Congratulations page
  
  Late Game:
  ☐ Add site feedback/suggestions button
@@ -75,6 +70,8 @@ IDEAS:
 
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:
+ ✔ Add ratings when 'Done' button is clicked in modal via ajax call to add_rating endpoint @done (15-10-23 23:56) @project(TODO for Alpha Testing / Sean / Clock page)
+ ✔ Save ratings in localstorage (with time?) so that they can be added to modal even after page refresh @done (15-10-23 23:56) @project(TODO for Alpha Testing / Sean / Clock page)
  ✔ optional second hand - clock onclick and subtle button in corner @done (15-10-23 21:43) @project(TODO for Alpha Testing / Mathurshan / Clock page)
  ✔ background @done (15-10-23 21:12) @project(TODO for Alpha Testing / Mathurshan / Clock page)
  ✔ After receiving schedule from server, run through events and change the datetimes to JS date objects for easier access @done (15-10-23 21:09) @project(TODO for Alpha Testing / Sean / Clock page)
