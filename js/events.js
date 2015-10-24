@@ -419,7 +419,6 @@ function set_up_quotes() {
 
     cur_quote = 0; // Global counter for quote list index
 
-    open_curtains(500);
     $('#motivate_box').append('<p>' + QUOTES[cur_quote] + '</p>');
     // Change quote every hour
     setInterval(change_quote, 1000 * 60 * 60);
@@ -431,15 +430,6 @@ function change_quote() {
     $('#motivate_box').append('<p>' + QUOTES[random_quote] + '</p>');
 }
 
-function open_curtains(delay) {
-    $('.leftcurtain').stop().animate({width: '60px'}, delay);
-    $('.rightcurtain').stop().animate({width: '60px'}, delay);
-}
-
-function close_curtains(delay) {
-    $('.leftcurtain').stop().animate({width: '50%'}, delay);
-    $('.rightcurtain').stop().animate({width: '50%'}, delay);
-}
 /******************************************************************************
 *
 *                          BUTTONS
@@ -536,19 +526,13 @@ Date.prototype.dst = function() {
 
 /* Given an array of string DOM elements, clears motiviate box and appends the elements in it instead */
 function update_motivate_box(elements) {
-    var ANIMATION_TIME = 300; // const in milliseconds for how long curtains animation lasts
-
-    close_curtains(ANIMATION_TIME);
     var num_elements = elements.length;
 
-    setTimeout(function() {
-        $('#motivate_box').empty();
+    $('#motivate_box').empty();
 
-        for (var i = 0; i < num_elements; i++) {
-            $('#motivate_box').append(elements[i]);
-        }
-        open_curtains(ANIMATION_TIME);
-    }, ANIMATION_TIME);
+    for (var i = 0; i < num_elements; i++) {
+        $('#motivate_box').append(elements[i]);
+    }
 }
 
 

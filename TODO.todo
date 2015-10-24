@@ -4,8 +4,6 @@ TODO for Alpha Testing:
   Mathurshan:
     Clock page:
       ☐ Sexy graphics (clock, box, buttons, etc.) @high
-      ✔ Eager.io apps @done (15-10-23 23:18)
-      ☐ curtains
       ☐ Anything user does is added to the localstorage
       ☐ "I'M DONE" plays rocky song
     Algo:
@@ -70,8 +68,10 @@ IDEAS:
 
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:
- ✔ Add ratings when 'Done' button is clicked in modal via ajax call to add_rating endpoint @done (15-10-23 23:56) @project(TODO for Alpha Testing / Sean / Clock page)
+ ✔ curtains @done (15-10-24 00:13) @project(TODO for Alpha Testing / Mathurshan / Clock page)
  ✔ Save ratings in localstorage (with time?) so that they can be added to modal even after page refresh @done (15-10-23 23:56) @project(TODO for Alpha Testing / Sean / Clock page)
+ ✔ Add ratings when 'Done' button is clicked in modal via ajax call to add_rating endpoint @done (15-10-23 23:56) @project(TODO for Alpha Testing / Sean / Clock page)
+ ✔ Eager.io apps @done (15-10-23 23:18) @project(TODO for Alpha Testing / Mathurshan / Clock page)
  ✔ optional second hand - clock onclick and subtle button in corner @done (15-10-23 21:43) @project(TODO for Alpha Testing / Mathurshan / Clock page)
  ✔ background @done (15-10-23 21:12) @project(TODO for Alpha Testing / Mathurshan / Clock page)
  ✔ After receiving schedule from server, run through events and change the datetimes to JS date objects for easier access @done (15-10-23 21:09) @project(TODO for Alpha Testing / Sean / Clock page)
