@@ -4,18 +4,11 @@ TODO for Alpha Testing:
   Mathurshan:
     Clock page:
       ☐ Sexy graphics (clock, box, buttons, etc.) @high
-      ✔ background @done (15-10-23 21:12)
-      ✔ optional second hand - clock onclick and subtle button in corner @done (15-10-23 21:43)
       ☐ curtains
       ☐ Eager.io apps
       ☐ Anything user does is added to the localstorage
       ☐ Big Button for "I'M DONE" that plays rocky song
     Algo:
-      ✔ Check for time collisions @high @done (15-10-23 20:48)
-        ✔ water should just be removed if there is a collision @done (15-10-23 20:48)
-      ✔ if no good nap time, no caffeine @done (15-10-23 20:52)
-      ✔ Comment above each function with how it determines the event @done (15-10-23 20:52)
-      ✔ As of 10/22/15, the scheduler generates events up to an hour after inputted end time (I put in 5:30am end time and the last event was at 6:30am) @critical @done (15-10-23 18:55)
     Notifications:
       ☐ Every time a user does not complete an event, add it to localstorage and adjust schedule
       ☐ If completed, send feedback to server
@@ -82,9 +75,16 @@ IDEAS:
 
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:
+ ✔ optional second hand - clock onclick and subtle button in corner @done (15-10-23 21:43) @project(TODO for Alpha Testing / Mathurshan / Clock page)
+ ✔ background @done (15-10-23 21:12) @project(TODO for Alpha Testing / Mathurshan / Clock page)
  ✔ After receiving schedule from server, run through events and change the datetimes to JS date objects for easier access @done (15-10-23 21:09) @project(TODO for Alpha Testing / Sean / Clock page)
+ ✔ if no good nap time, no caffeine @done (15-10-23 20:52) @project(TODO for Alpha Testing / Mathurshan / Algo)
+ ✔ Comment above each function with how it determines the event @done (15-10-23 20:52) @project(TODO for Alpha Testing / Mathurshan / Algo)
+ ✔ water should just be removed if there is a collision @done (15-10-23 20:48) @project(TODO for Alpha Testing / Mathurshan / Algo)
+ ✔ Check for time collisions @high @done (15-10-23 20:48) @project(TODO for Alpha Testing / Mathurshan / Algo)
  ✔ When event is over, remove the dot dynamically (Written, but test when above critical is fixed) @done (15-10-23 20:21) @project(TODO for Alpha Testing / Sean / Clock page)
  ✔ Change global event counter to be in localstorage so it persists over refresh @critical @done (15-10-23 19:08) @project(TODO for Alpha Testing / Sean / Clock page)
+ ✔ As of 10/22/15, the scheduler generates events up to an hour after inputted end time (I put in 5:30am end time and the last event was at 6:30am) @critical @done (15-10-23 18:55) @project(TODO for Alpha Testing / Mathurshan / Algo)
  ✔ Fix bug @done (15-10-23 16:30)
  ✔ very nice clock with hour and minute hand @done (15-10-23 16:27) @project(TODO for Alpha Testing / Mathurshan / Clock page)
  ✔ make methods within schedule class @done (15-10-23 16:23) @project(TODO for Alpha Testing / Mathurshan / Backend)
