@@ -194,7 +194,7 @@
   width: 460px;
   height: 460px;
   border-width: 18px;
-  border-color: transparent #d2d8df #d2d8df;
+  border-color: transparent rgba(255,255,50, 0.5) rgba(255,255,50, 0.5);
   border-style: solid;
   -webkit-border-radius: 50%;
   -webkit-background-clip: padding-box;

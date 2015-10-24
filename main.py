@@ -356,7 +356,7 @@ class AddRating(webapp2.RequestHandler):
 
             if specific_event:
                 rating_dict = {'rating': rating, 'event_time': event_time, 'utc_offset': utc_offset}
-                specific_event.ratings.append(json.dumps(rating))  # add rating
+                specific_event.ratings.append(json.dumps(rating_dict))  # add rating
                 specific_event.put()  # update event
             else:
                 logging.error("Event does not exist")
@@ -369,7 +369,7 @@ class AddRating(webapp2.RequestHandler):
 
 # Returns a random event of type "extra", returns empty string if no extra events exist in DB
 class Extra(webapp2.RequestHandler):
-    EXTRA = "extra" # event type
+    EXTRA = "extra"  # event type
 
     def post(self):
         '''
