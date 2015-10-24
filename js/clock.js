@@ -56,4 +56,16 @@ function updateclock() {
 
 $(document).ready(function() {
   requestAnimationFrame(updateclock);
+
+  $(".clock").click(function() {
+    var state = $(".second").css("visibility");
+
+    if (state === "hidden") {
+      $(".second").css("visibility", "visible");
+    }
+    else {
+      $(".second").css("visibility", "hidden"); 
+    }
+  });
+
 });
