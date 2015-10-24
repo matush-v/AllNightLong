@@ -159,6 +159,7 @@ body > .header {
 
 #box_container {
     height: 75%;
+    background-color: transparent;
 }
 
 #motivate_box {
@@ -280,31 +281,6 @@ label.star:before {
 .modal-label {
     padding-right: 0px;
 }
-
-/****************/
-/* Motivate box */
-/****************/
-
-.leftcurtain{
- width: 50%;
- /*height: 495px;*/
- /*top: 0px;*/
- /*left: 0px;*/
- position: absolute;
- z-index: 2;
- }
- .rightcurtain{
- width: 51%;
- /*height: 495px;*/
- right: 0px;
- /*top: 0px;*/
- position: absolute;
- z-index: 3;
- }
- .rightcurtain img, .leftcurtain img{
- width: 100%;
- height: 100%;
- }
 
 /*****************/
 /* The Animation */

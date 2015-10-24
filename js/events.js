@@ -423,7 +423,6 @@ function set_up_quotes() {
     cur_quote = 0; // Global counter for quote list index
 
     update_motivate_box(['<p>' + QUOTES[cur_quote] + '</p>']);
-
     // Change quote every hour
     setInterval(change_quote, 1000 * 60 * 60);
 }
@@ -434,15 +433,6 @@ function change_quote() {
     $('#motivate_box').append('<p>' + QUOTES[random_quote] + '</p>');
 }
 
-function open_curtains(delay) {
-    $('.leftcurtain').stop().animate({width: '60px'}, delay);
-    $('.rightcurtain').stop().animate({width: '60px'}, delay);
-}
-
-function close_curtains(delay) {
-    $('.leftcurtain').stop().animate({width: '50%'}, delay);
-    $('.rightcurtain').stop().animate({width: '50%'}, delay);
-}
 /******************************************************************************
 *
 *                          BUTTONS
@@ -455,6 +445,7 @@ function set_up_end_animation() {
                 $('#finish_text').text('Congratulations champ! You nailed it!');
                 $('#expander').append('<button id="reward_btn" class="btn btn-info">Reap your reward</button>');
                 $('#done_btn').unbind();
+                $(document).unbind("mouseup");
 
                 $('#reward_btn').click(function() {
                     location.href = 'https://www.youtube.com/watch?v=wDajqW561KM';
@@ -464,12 +455,17 @@ function set_up_end_animation() {
     );
 }
 
+// Mousedown on button causes expansion of ending screen
 $('#done_btn').mousedown(function() {
-        $('body').css('user-select', 'none').prop('unselectable', 'on').on('selectstart', false);
-        expand();
-}).bind('mouseup mouseleave', function() {
-        minimize();
+    $('body').css('user-select', 'none').prop('unselectable', 'on').on('selectstart', false);
+    expand();
 });
+
+// Mouseup anywhere causes ending screen to be minimized
+$(document).mouseup(function () {
+    minimize();
+});
+
 
 /* Expansion screen for I'm Done button */
 function expand () {
@@ -548,19 +544,13 @@ function center_clock() {
 
 /* Given an array of string DOM elements, clears motiviate box and appends the elements in it instead */
 function update_motivate_box(elements) {
-    var ANIMATION_TIME = 300; // const in milliseconds for how long curtains animation lasts
-
-    close_curtains(ANIMATION_TIME);
     var num_elements = elements.length;
 
-    setTimeout(function() {
-        $('#motivate_box').empty();
+    $('#motivate_box').empty();
 
-        for (var i = 0; i < num_elements; i++) {
-            $('#motivate_box').append(elements[i]);
-        }
-        open_curtains(ANIMATION_TIME);
-    }, ANIMATION_TIME);
+    for (var i = 0; i < num_elements; i++) {
+        $('#motivate_box').append(elements[i]);
+    }
 }
 
 
