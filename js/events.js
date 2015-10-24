@@ -470,11 +470,11 @@ function set_up_end_animation() {
     document.getElementById('expander').addEventListener(
         'webkitTransitionEnd', function(e) {
             if (event.propertyName == 'height') {
+                start_confetti();
                 $('#finish_text').text('Congratulations champ! You nailed it!');
                 $('#expander').append('<button id="reward_btn" class="btn btn-info">Reap your reward</button>');
                 $('#done_btn').unbind();
                 $(document).unbind("mouseup");
-
                 $('#reward_btn').click(function() {
                     location.href = 'https://www.youtube.com/watch?v=wDajqW561KM';
                 });
