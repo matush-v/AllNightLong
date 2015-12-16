@@ -8,15 +8,17 @@ TODO for Alpha Testing:
     Algo:
     Notifications:
       ☐ Every time a user does not complete an event, add it to localstorage and adjust schedule
-      ☐ If completed, send feedback to server
+      ☐ If an event is skipped, send info about skip to server (maybe with time)
+      ✔ If completed, send feedback to server @done (15-11-03 20:41)
 
   Sean:
     Events:
      ☐ Add more events for exercise and extra
      ☐ For fuel -- give random example of food to user (maybe API call?)
     Clock page:
-      ☐ Dynamically update events to new ring every hour @low
+      ☐ Dynamically update events to new ring every hour @critical
       ☐ Make clock.html page inaccessible if all events in localstorage are in the past @low
+        ☐ clear localstorage once congratz page is reached
       ☐ Stop notifications when they get to Congratulations page @low
     Quotes:
       ☐ API call to quotes site for a random quote (don't hardcode)
