@@ -1,5 +1,7 @@
 ☐ MVC
 ☐ ALWAYS USE UNDERSCORE CASING
+☐ cur_quote needs to be put into local storage like cur_event
+☐ put quotation marks on quotes
 TODO for Alpha Testing:
   Mathurshan:
     Clock page:

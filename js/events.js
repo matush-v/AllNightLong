@@ -348,7 +348,7 @@ function set_up_icons() {
              'walk': 'img/walk_icon.png',
              'nap': 'img/nap_icon.png',
              'caffeine': 'img/caffeine_icon.png',
-             'extra': 'img/discomfort_icon.jpg'};
+             'extra': 'img/quick_burst_icon.jpg'};
 }
 
 function notify_user(title, event) {
@@ -451,17 +451,14 @@ function set_up_quotes() {
               ['You can never cross the ocean until you have the courage to lose sight of the shore.', 'Christopher Columbus']
              ] ;
 
-    cur_quote = 0; // Global counter for quote list index
-
-    update_motivate_box(['<p>' + QUOTES[cur_quote] + '</p>']);
+    change_quote();
     // Change quote every hour
     setInterval(change_quote, 1000 * 60 * 60);
 }
 
 function change_quote() {
-    random_quote = Math.floor((Math.random() * QUOTES.length) + 1);
-
-    $('#motivate_box').append('<p>' + QUOTES[random_quote] + '</p>');
+    cur_quote = Math.floor((Math.random() * QUOTES.length) + 1);
+    update_motivate_box(['<p>&quot;' + QUOTES[cur_quote][0] + '&quot; - ' + QUOTES[cur_quote][1] + '</p>']);
 }
 
 /******************************************************************************
