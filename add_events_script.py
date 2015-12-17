@@ -10,7 +10,7 @@ import sys
 import requests
 
 f = open(sys.argv[1], 'rt')
-URL = "http://localhost:9080/new_event"
+URL = "https://allnightlong.co/new_event"
 
 EVENT_TYPE = 0
 NAME = 1
