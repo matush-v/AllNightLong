@@ -238,9 +238,8 @@ function set_up_event_mouseover() {
             var start_time = new Date(get_cookie('start_time'));
             var num = (new Date()) - start_time;
             var den = (new Date(get_cookie('end_time'))) - start_time;
-            var elements_to_display = ['<p>' + QUOTES[cur_quote] + '</p>'];
+            change_quote(true);
             
-            update_motivate_box(elements_to_display);
         });
     });
 }
@@ -456,8 +455,10 @@ function set_up_quotes() {
     setInterval(change_quote, 1000 * 60 * 60);
 }
 
-function change_quote() {
-    cur_quote = Math.floor((Math.random() * QUOTES.length) + 1);
+function change_quote(use_cur) {
+    if (!use_cur) {
+        cur_quote = Math.floor((Math.random() * QUOTES.length) + 1);
+    }
     update_motivate_box(['<p>&quot;' + QUOTES[cur_quote][0] + '&quot; - ' + QUOTES[cur_quote][1] + '</p>']);
 }
 
@@ -475,6 +476,7 @@ function set_up_end_animation() {
                 $('#expander').append('<button id="reward_btn" class="btn btn-info">Reap your reward</button>');
                 $('#done_btn').unbind();
                 $(document).unbind("mouseup");
+                localStorage.clear();
                 $('#expander').css("position", ""); // allows reap reward button to work
                 $('#reward_btn').click(function() {
                     location.href = 'https://www.youtube.com/watch?v=wDajqW561KM';

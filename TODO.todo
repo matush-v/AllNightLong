@@ -1,17 +1,10 @@
 ☐ MVC
 ☐ ALWAYS USE UNDERSCORE CASING
-☐ cur_quote needs to be put into local storage like cur_event
-☐ put quotation marks on quotes
 TODO for Alpha Testing:
   Mathurshan:
-    Clock page:
-      ✔ Sexy graphics (clock, box, buttons, etc.) @high @done (15-10-24 03:55)
-      ☐ Anything user does is added to the localstorage
-    Algo:
     Notifications:
       ☐ Every time a user does not complete an event, add it to localstorage and adjust schedule
       ☐ If an event is skipped, send info about skip to server (maybe with time)
-      ✔ If completed, send feedback to server @done (15-11-03 20:41)
 
   Sean:
     Events:
@@ -21,14 +14,8 @@ TODO for Alpha Testing:
     Clock page:
       ☐ Dynamically update events to new ring every hour @critical
       ☐ Make clock.html page inaccessible if all events in localstorage are in the past @low
-        ☐ clear localstorage once congratz page is reached
       ☐ Stop notifications when they get to Congratulations page @low
-    Quotes:
-      ☐ API call to quotes site for a random quote (don't hardcode)
-    Prettify:
     Creating a schedule:
-      ☐ sexy graphics and JS
-      ☐ Color code events
       ☐ EC: Scroll down to see later events, scroll up to see recent events
  
  Late Game:
@@ -44,7 +31,7 @@ TODO for Beta Testing:
     * based off science and user feedback from notifications
 
   * Extreme Motivation
-    * fun surprises (motivational quotes n stuff)
+    * random fun surprises
 
   * Prettify
     * Add unique way to tell user why we want desktop notifications TODO exists
@@ -58,10 +45,14 @@ TODO for Beta Testing:
 IDEAS:
  ☐ Sexual innuendos
  ☐ Review raizlabs slides
- ☐ Red: Nap, Blue: Water, Black: Exercise, Yellow: Food
 
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:
+ ✔ put quotation marks on quotes @done (15-12-15 21:59)
+ ✔ clear localstorage once congratz page is reached @done (15-12-15 22:07) @project(TODO for Alpha Testing / Sean / Clock page)
+ ✔ cur_quote needs to be put into local storage like cur_event @done (15-12-15 21:34)
+ ✔ If completed, send feedback to server @done (15-11-03 20:41) @project(TODO for Alpha Testing / Mathurshan / Notifications)
+ ✔ Sexy graphics (clock, box, buttons, etc.) @high @done (15-10-24 03:55) @project(TODO for Alpha Testing / Mathurshan / Clock page)
  ✔ refreshing page during event time gives multiple notifications @done (15-10-24 02:42) @project(TODO for Alpha Testing / Mathurshan / Notifications)
  ✔ Add site feedback/suggestions button @done (15-10-24 00:51) @project(TODO for Alpha Testing)
  ✔ curtains @done (15-10-24 00:13) @project(TODO for Alpha Testing / Mathurshan / Clock page)
