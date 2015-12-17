@@ -78,6 +78,8 @@ label {
     font-size: 50px;
 }
 
+/* End Global Styles */
+
 
 #error {
     padding-top: 50px;
@@ -118,7 +120,7 @@ body > .header {
 }
 
 #content {
-    padding-bottom: 3em;
+    padding-bottom: 40px;
 }
 
 /* Footer */
@@ -127,8 +129,8 @@ body > .header {
     clear: both;
     position: relative;
     z-index: 10;
-    height: 3em;
-    margin-top: -3em;
+    height: 40px;
+    margin-top: -40px;
 }
 
 #footer p {

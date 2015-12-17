@@ -488,12 +488,13 @@ function set_up_end_animation() {
 $('#done_btn').mousedown(function() {
     $('body').css('user-select', 'none').prop('unselectable', 'on').on('selectstart', false);
     expand();
+
+    // Mouseup anywhere causes ending screen to be minimized
+    $(document).mouseup(function () {
+        minimize();
+    });
 });
 
-// Mouseup anywhere causes ending screen to be minimized
-$(document).mouseup(function () {
-    minimize();
-});
 
 
 /* Expansion screen for I'm Done button */
