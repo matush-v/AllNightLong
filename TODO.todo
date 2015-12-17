@@ -9,6 +9,7 @@ TODO for Alpha Testing:
   Sean:
     Events:
      ☐ Add more events for exercise and extra
+     ☐ Error handle if there are no events!!!!!!!!!!!!!!!
      ☐ For fuel -- give random example of food to user (maybe API call?)
     Clock page:
       ☐ Dynamically update events to new ring every hour @critical
