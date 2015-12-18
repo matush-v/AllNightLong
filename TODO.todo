@@ -17,6 +17,9 @@ TODO for Alpha Testing:
       ☐ Stop notifications when they get to Congratulations page @low
     Creating a schedule:
       ☐ EC: Scroll down to see later events, scroll up to see recent events
+
+    Browser Support:
+      ☐ Make it so you don't have to click 'done' button for clock input on home page
  
  Late Game:
  ☐ YSLOW, Audit, and W3 validator (last validated 5/3 9:24 PM)

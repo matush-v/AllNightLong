@@ -95,11 +95,10 @@ $('#times_form').submit(function(e) {
         create_cookie('end_time', end_date, expires_in);
         create_cookie('start_time', cur_time);
 
+
         // send timestamp to server
         end_time = Math.floor(end_date.getTime() / 1000);
         cur_time = Math.floor(cur_time.getTime() / 1000);
-
-
 
         params = {'wake_up_time': wake_up_time, 'end_time': end_time, 'cur_time': cur_time, 'utc_offset': offset};
 
@@ -601,6 +600,12 @@ function update_motivate_box(elements) {
 function validate_times(wake_up_time, end_time) {
     var wake_hour_min = get_hour_min(wake_up_time);
     var end_hour_min = get_hour_min(end_time);
+
+    if (wake_hour_min == false || end_hour_min == false) {
+        $('#error').append('<p class="alert alert-danger">Please specifiy AM or PM for both times</p>');
+        return false;
+    }
+
     var wake_err_msg = '<p class="alert alert-danger">Sorry, but All Night Long currently does not support nocturnal schedules. Please wait for the release of All Day Long. Thank you for your patience.</p>';
 
     $('#error').empty();
@@ -622,13 +627,31 @@ function validate_times(wake_up_time, end_time) {
     return true;
 }
 
-/* Given a 24hr time string (i.e. 19:30), return the dictionary
-   with separate fields for both the hour and minute
-   ( i.e. {'hour: 19', 'min: 30'} )
+/* Given a 24hr time string (i.e. 04:45PM), return the dictionary
+   with separate fields for both the hour and minute in military time
+   ( i.e. {'hour: 16', 'min: 45'} )
+   Returns false if there is an error
  */
 function get_hour_min(time_string) {
-    var time_arr = time_string.split(':');
+    ampm = time_string.substr(5, 2); // get AM or PM
+    time = time_string.substr(0, 5);
+    
+    var time_arr = time.split(':');
     var hour = time_arr[0];
+
+    if (ampm == 'AM') {
+        if (hour == '12') {
+            hour = 0;
+        }
+    } else if (ampm == 'PM') {
+        if (hour != '12') {
+            hour = parseInt(hour) + 12;
+        }
+    } else {
+        // AM PM not entered, return false to signify error
+        return false;
+    }
+
     var minute = time_arr[1];
     return {'hour': parseInt(hour), 'min': parseInt(minute)};
 }

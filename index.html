@@ -18,6 +18,9 @@
         <!-- Bootstrap Core CSS -->
         <link href="css/bootstrap.min.css" rel="stylesheet">
 
+        <!-- Clock picker CSS -->
+        <link href="css/clockpicker.css" rel="stylesheet">
+
         <!-- Custom CSS -->
         <link href="css/allnightlong.css" rel="stylesheet">
 
@@ -40,14 +43,20 @@
                 <br>
                 <div id="error"></div>
                 <form id="times_form" class="form-inline">
-                    <div class="form-group">
-                        <label class="big-label" for="wake_up_time">Typical Wake Up Time</label>
-                        <input id="wake_up_time" type="time" class="form-control" required />
+                    <label class="big-label" for="wake_up_time">Typical Wake Up Time</label>
+                    <div id="wake-up-timepicker" class="input-group clockpicker">
+                        <input id="wake_up_time" type="text" class="form-control" value="--:-- --">
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-time"></span>
+                        </span>
                     </div>
 
-                    <div class="form-group">
-                        <label class="big-label" for="end_time">All Nighter End Time</label>
-                        <input id="end_time" type="time" class="form-control" required/>
+                    <label class="big-label" for="end_time">All Nighter End Time</label>
+                    <div id="end-timepicker" class="input-group clockpicker">
+                        <input id="end_time" type="text" class="form-control" value="--:-- --">
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-time"></span>
+                        </span>
                     </div>
                     <br>
                     <button type="submit" id="go_btn" class="btn btn-dark btn-lg">Lets do this!</button>
@@ -69,6 +78,21 @@
 
         <script src="js/events.js"></script>
 
+        <script src="js/clockpicker.js"></script>
+
+        <script>
+            $('#wake-up-timepicker').clockpicker({
+                donetext: 'Done',
+                twelvehour: true,
+                placement: 'left'
+            });
+
+            $('#end-timepicker').clockpicker({
+                donetext: 'Done',
+                twelvehour: true,
+                placement: 'right'
+            });
+        </script>
     </body>
 
 </html>

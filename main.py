@@ -135,6 +135,10 @@ class Schedule(webapp2.RequestHandler):
         # SOURCE: http://saramednick.com/htmls/book/napwheel.htm
         best_nap_time = cur_time
         best_nap_time_shift = (int(wake_up_time[0:2]) / 2) - 1.5  # slice to get the hour
+        if (best_nap_time_shift < 0):
+            # Account for if shift is less than zero (i.e. wake up time is 1 or 2)
+            # TODO this was done hackily, not sure if right
+            best_nap_time_shift = 24 + best_nap_time_shift
 
         if cur_time.hour >= 12:  # PM so we need to add a day for nap
             best_nap_time += timedelta(days=1)

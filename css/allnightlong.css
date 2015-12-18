@@ -40,9 +40,12 @@ label {
     padding-right: 5px;
 }
 
-.form-group {
-    padding-left: 10px;
-    padding-right: 10px;
+.input-group {
+    width: 125px;
+}
+
+#wake-up-timepicker {
+    margin-right: 20px;
 }
 
 /* Custom Button Styles */
