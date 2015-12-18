@@ -1,11 +1,19 @@
-EVENTS_LIST = 'events'; // Const name of schedule item in localStorage
+LS_EVENTS_LIST = 'events'; // Const name of schedule item in localStorage
 LS_RATINGS_KEY = 'ratings';
 LS_CUR_EVENT_KEY = 'cur_event';
 LS_END_TIME_KEY = 'end_time';
 
+// Redirect to home page from clock page if there aren't any events
+if (top.location.pathname == '/clock.html') {
+    if (!localStorage.getItem(LS_EVENTS_LIST)) {
+        window.location.href = '/';
+    }
+}
+
 $(document).ready(function() {
 
     if (top.location.pathname == '/clock.html') {
+
         document.documentElement.style.overflowX = 'hidden';
         // added here so it can be removed later so confetti shows and
         //  reap reward button works
@@ -27,7 +35,7 @@ $(document).ready(function() {
             localStorage.setItem(LS_RATINGS_KEY, '[]');
         }
 
-        var events = JSON.parse(localStorage.getItem(EVENTS_LIST));
+        var events = JSON.parse(localStorage.getItem(LS_EVENTS_LIST));
         var today = new Date();
         
         cur_event = localStorage.getItem(LS_CUR_EVENT_KEY);
@@ -220,7 +228,7 @@ function draw_depth_rings() {
 function set_up_event_mouseover() {
     $('.dot').each(function() {
         var ID_LENGTH = 6; // length of unnecessary chars in "event_#"
-        var events_list = JSON.parse(localStorage.getItem(EVENTS_LIST));
+        var events_list = JSON.parse(localStorage.getItem(LS_EVENTS_LIST));
 
         $(this).mouseover(function() {
             var event_index = $(this).attr('id').slice(ID_LENGTH);
@@ -256,7 +264,7 @@ function get_schedule(params) {
             events[i].datetime = events[i].datetime * 1000;
         }
 
-        localStorage.setItem(EVENTS_LIST, JSON.stringify(events));
+        localStorage.setItem(LS_EVENTS_LIST, JSON.stringify(events));
         window.location.href = 'clock.html';
     });
 }
@@ -277,11 +285,11 @@ function get_schedule(params) {
 function add_rating(event_index) {
     // Get ratings list and events list from localStorage
     var ratings = JSON.parse(localStorage.getItem(LS_RATINGS_KEY));
-    var events = JSON.parse(localStorage.getItem(EVENTS_LIST));
+    var events = JSON.parse(localStorage.getItem(LS_EVENTS_LIST));
     // Get rating from modal radio input
     var rating = $('input[name="event_rating"]:checked').val();
 
-    if (rating === undefined) {
+    if (rating === undefined || rating == "0") {
         // no rating, return
         return;
     }
@@ -306,7 +314,10 @@ function add_rating(event_index) {
     post_params['utc_offset'] = get_offset_to_UTC();
     $.post('/add_rating', post_params)
         .fail(function () {
-            console.log("Rating failed to save");
+            console.log("Rating failed to save.");
+        }).success(function () {
+            // Clear rating
+            $('input[name="event_rating"]').prop('checked', false);
         });
 }
 
@@ -320,7 +331,7 @@ function add_rating(event_index) {
 /* The notification for the cur_event in the queue is set up
  * based on its event time */
 function set_up_notification() {
-    var events_list = JSON.parse(localStorage.getItem(EVENTS_LIST));
+    var events_list = JSON.parse(localStorage.getItem(LS_EVENTS_LIST));
     var events_len = events_list.length;
 
     if (cur_event >= events_len)
