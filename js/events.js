@@ -281,7 +281,7 @@ function add_rating(event_index) {
     // Get rating from modal radio input
     var rating = $('input[name="event_rating"]:checked').val();
 
-    if (rating === undefined) {
+    if (rating === undefined || rating == "0") {
         // no rating, return
         return;
     }
@@ -306,7 +306,10 @@ function add_rating(event_index) {
     post_params['utc_offset'] = get_offset_to_UTC();
     $.post('/add_rating', post_params)
         .fail(function () {
-            console.log("Rating failed to save");
+            console.log("Rating failed to save.");
+        }).success(function () {
+            // Clear rating
+            $('input[name="event_rating"]').prop('checked', false);
         });
 }
 
