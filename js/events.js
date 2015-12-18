@@ -598,27 +598,29 @@ function update_motivate_box(elements) {
 
 /* Validate that the range of wake_up_time is within 3am to 3pm */
 function validate_times(wake_up_time, end_time) {
-    var wake_hour_min = get_hour_min(wake_up_time);
-    var end_hour_min = get_hour_min(end_time);
-
-    if (wake_hour_min == false || end_hour_min == false) {
-        $('#error').append('<p class="alert alert-danger">Please specifiy AM or PM for both times</p>');
+    
+    // Regex to match hh:mmAM or hh:mm:PM format
+    var regex = new RegExp('([1-9]|0[1-9]|1[0-2]):[0-5][0-9](A|P)M');
+    if (!regex.test(wake_up_time) || !regex.test(end_time)) {
+        // doesn't match required format
+        $('#error').html('<p class="alert alert-danger">Please ensure both times are in hh:mm format with AM or PM specified (i.e. 9:00AM).</p>');
         return false;
     }
 
-    var wake_err_msg = '<p class="alert alert-danger">Sorry, but All Night Long currently does not support nocturnal schedules. Please wait for the release of All Day Long. Thank you for your patience.</p>';
+    var wake_hour_min = get_hour_min(wake_up_time);
+    var end_hour_min = get_hour_min(end_time);
 
-    $('#error').empty();
+    var wake_err_msg = '<p class="alert alert-danger">Sorry, but All Night Long currently does not support nocturnal schedules. Please wait for the release of All Day Long. Thank you for your patience.</p>';
     if (wake_hour_min.hour == 15) {
         if (wake_hour_min.min > 0) {
-            $('#error').append(wake_err_msg);
+            $('#error').html(wake_err_msg);
             return false;
         }
     } else if (wake_hour_min.hour > 15) {
-        $('#error').append(wake_err_msg);
+        $('#error').html(wake_err_msg);
         return false;
     } else if (wake_hour_min.hour < 3) {
-        $('#error').append(wake_err_msg);
+        $('#error').html(wake_err_msg);
         return false;
     }
 
@@ -627,17 +629,16 @@ function validate_times(wake_up_time, end_time) {
     return true;
 }
 
-/* Given a 24hr time string (i.e. 04:45PM), return the dictionary
+/* Given a 12hr time string (i.e. 04:45PM), return the dictionary
    with separate fields for both the hour and minute in military time
    ( i.e. {'hour: 16', 'min: 45'} )
-   Returns false if there is an error
  */
 function get_hour_min(time_string) {
     ampm = time_string.substr(5, 2); // get AM or PM
-    time = time_string.substr(0, 5);
-    
+    time = time_string.substr(0, 5); // get hh:mm
     var time_arr = time.split(':');
     var hour = time_arr[0];
+    var minute = time_arr[1];
 
     if (ampm == 'AM') {
         if (hour == '12') {
@@ -647,12 +648,8 @@ function get_hour_min(time_string) {
         if (hour != '12') {
             hour = parseInt(hour) + 12;
         }
-    } else {
-        // AM PM not entered, return false to signify error
-        return false;
     }
 
-    var minute = time_arr[1];
     return {'hour': parseInt(hour), 'min': parseInt(minute)};
 }
 

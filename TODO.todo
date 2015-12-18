@@ -20,6 +20,8 @@ TODO for Alpha Testing:
 
     Browser Support:
       ☐ Make it so you don't have to click 'done' button for clock input on home page
+      ☐ Let's do this button keeps pulsing if clicked and the input is bad
+      ☐ Footer doesn't stay bottom in Firefox
  
  Late Game:
  ☐ YSLOW, Audit, and W3 validator (last validated 5/3 9:24 PM)

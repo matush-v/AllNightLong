@@ -40,14 +40,6 @@ label {
     padding-right: 5px;
 }
 
-.input-group {
-    width: 125px;
-}
-
-#wake-up-timepicker {
-    margin-right: 20px;
-}
-
 /* Custom Button Styles */
 
 .btn-dark {
@@ -75,22 +67,35 @@ label {
     color: #333;
     background-color: rgba(255,255,255,0.8);
 }
-
-#go_btn {
-    margin-top: 30px;
-    font-size: 50px;
-}
-
 /* End Global Styles */
 
 
+/* Times Form */
+#go_btn {
+    margin-top: 10px;
+    font-size: 50px;
+}
+
 #error {
-    padding-top: 50px;
+    padding-top: 15px;
     display: inline-block;
     margin-left: auto;
     margin-right: auto;
 }
 
+#times_form {
+    margin-top: 60px;
+}
+
+.input-group {
+    width: 125px;
+}
+
+#wake-up-timepicker {
+    margin-right: 20px;
+}
+
+/* End Times Form */
 
 /* Custom Horizontal Rule */
 
